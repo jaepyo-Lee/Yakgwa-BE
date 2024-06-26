@@ -4,11 +4,10 @@ import com.prography.yakgwa.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
 
-@Entity
+@Entity(name = "MEET_TABLE")
 public class Meet extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = IDENTITY)
@@ -16,9 +15,9 @@ public class Meet extends BaseTimeEntity {
 
     private String name;
     private String description;
-    private int endHour;
-    private LocalDate from;
-    private LocalDate to;
+    private int inviteValidHour;
+    private LocalDate startDate;
+    private LocalDate endDate;
     @ManyToOne
     @JoinColumn(name = "meet_theme_id")
     private MeetTheme meetTheme;

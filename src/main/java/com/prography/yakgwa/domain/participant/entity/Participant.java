@@ -5,6 +5,7 @@ import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.user.entity.User;
 import jakarta.persistence.*;
 
+@Entity(name = "PARTICIPANT_TABLE")
 public class Participant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
