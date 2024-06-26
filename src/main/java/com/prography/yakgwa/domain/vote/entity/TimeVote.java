@@ -6,13 +6,13 @@ import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
-@Entity
+@Entity(name = "TIME_VOTE_TABLE")
 public class TimeVote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDateTime start;
-    private LocalDateTime end;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
