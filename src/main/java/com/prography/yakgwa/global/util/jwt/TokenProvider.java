@@ -42,17 +42,17 @@ public class TokenProvider {
      * todo
      * 테스트코드 짜기
      */
-    public TokenSet createTokenSet(String userAuthId) {
-        String accessJwt = createJwt(userAuthId, ACCESS_TOKEN_VALIDATiON_SECOND);
-        String refreshJwt = createJwt(userAuthId, REFRESH_TOKEN_VALIDATiON_SECOND);
+    public TokenSet createTokenSet(String userAuthId, String loginType) {
+        String accessJwt = createJwt(userAuthId, ACCESS_TOKEN_VALIDATiON_SECOND, loginType);
+        String refreshJwt = createJwt(userAuthId, REFRESH_TOKEN_VALIDATiON_SECOND, loginType);
         return TokenSet.ofBearer(accessJwt, refreshJwt);
     }
 
-    private String createJwt(String authId, long duration) {
+    private String createJwt(String authId, long duration, String loginType) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + duration);
         return Jwts.builder()
-                .setClaims(createClaimByAuthId(authId))
+                .setClaims(createClaimByAuthId(authId, loginType))
                 .setSubject(authId)
                 .setExpiration(expiration)
                 .setIssuedAt(now)
@@ -60,9 +60,10 @@ public class TokenProvider {
                 .compact();
     }
 
-    private Map<String, Object> createClaimByAuthId(String authId) {
+    private Map<String, Object> createClaimByAuthId(String authId, String loginType) {
         Map<String, Object> map = new HashMap<>();
         map.put("authId", authId);
+        map.put("loginType", loginType);
         return map;
     }
 
