@@ -50,21 +50,6 @@ public class SuccessResponse<T> {
         this.result = result;
     }
 
-    public SuccessResponse(SuccessResponseStatus successResponseStatus) {
-        this.status = HttpStatus.OK.value();
-        this.time = now();
-        this.code = successResponseStatus.getCode();
-        this.message = successResponseStatus.getMessage();
-    }
-
-    public SuccessResponse(T result, SuccessResponseStatus successResponseStatus) {
-        this.status = HttpStatus.OK.value();
-        this.time = now();
-        this.code = successResponseStatus.getCode();
-        this.message = successResponseStatus.getMessage();
-        this.result = result;
-    }
-
     public static SuccessResponse ok(String message) {
         return SuccessResponse.builder()
                 .status(HttpStatus.OK.value())
