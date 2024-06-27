@@ -15,4 +15,8 @@ public class MeetThemeReader {
     public List<MeetTheme> readAll() {
         return meetThemeJpaRepository.findAll();
     }
+
+    public MeetTheme readByRef(Long meetThemeId){
+        return meetThemeJpaRepository.getReferenceById(meetThemeId);
+    }
 }
