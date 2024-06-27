@@ -6,11 +6,13 @@ import com.prography.yakgwa.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
 @Entity(name = "PARTICIPANT_TABLE")
 public class Participant {
     @Id
@@ -19,6 +21,7 @@ public class Participant {
     private String nickname;
     @Enumerated(EnumType.STRING)
     private MeetRole meetRole;
+
     @ManyToOne
     @JoinColumn(name = "meet_id")
     private Meet meet;
