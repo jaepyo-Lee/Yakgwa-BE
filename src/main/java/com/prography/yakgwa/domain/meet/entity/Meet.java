@@ -21,7 +21,7 @@ public class Meet extends BaseTimeEntity {
     private Long id;
     private String title;
 
-    private int inviteValidHour;
+    private int validInviteHour;
 
     @Embedded
     private VotePeriod period;

@@ -14,4 +14,8 @@ public class ParticipantReader {
     public List<Participant>readAllByMeetId(Long meetId){
         return repository.findAllByMeetId(meetId);
     }
+
+    public List<Participant>readAllByUserId(Long userId){
+        return repository.findAllByUserId(userId);
+    }
 }

@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.meet.service.req;
+package com.prography.yakgwa.domain.meet.service.res;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.participant.entity.Participant;
