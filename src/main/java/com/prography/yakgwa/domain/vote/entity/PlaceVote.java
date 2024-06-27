@@ -4,14 +4,22 @@ import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "PLACE_VOTE_TABLE")
 public class PlaceVote {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long voteCnt;
 
-    @OneToOne
+    private Long voteCnt;
+    private Boolean confirm;
+    @ManyToOne
     @JoinColumn(name = "place_id")
     private Place place;
 
