@@ -25,7 +25,7 @@ public class MeetWriter {
                                 .build()
                         : null)
                 .meetTheme(meetTheme)
-                .inviteValidHour(24)
+                .validInviteHour(24)
                 .build();
         return meetJpaRepository.save(meet);
     }
