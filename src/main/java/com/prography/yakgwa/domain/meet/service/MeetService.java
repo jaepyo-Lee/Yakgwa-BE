@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.meet.service;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
+import com.prography.yakgwa.domain.meet.impl.MeetManager;
 import com.prography.yakgwa.domain.meet.impl.MeetReader;
 import com.prography.yakgwa.domain.meet.impl.MeetWriter;
 import com.prography.yakgwa.domain.meet.impl.dto.MeetWriteDto;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -34,7 +36,7 @@ public class MeetService {
     private final TimeVoteWriter timeVoteWriter;
     private final MeetReader meetReader;
     private final ParticipantReader participantReader;
-    private final VoteManager voteManager;
+    private final MeetManager meetManager;
 
     @Transactional
     public Meet create(MeetCreateRequestDto requestDto) {
@@ -46,10 +48,6 @@ public class MeetService {
         return meet;
     }
 
-    /**
-     * 1.모임조회
-     * 2. 참여자 조회
-     */
     public MeetInfoWithParticipant findWithParticipant(Long meetId) {
         Meet meet = meetReader.read(meetId);
         List<Participant> participants = participantReader.readAllByMeetId(meetId);
@@ -58,17 +56,9 @@ public class MeetService {
 
     public List<MeetWithVoteAndStatus> findWithStatus(Long userId) {
         List<Participant> participants = participantReader.readAllByUserId(userId);
-        List<MeetWithVoteAndStatus> meetWithVoteAndStatus = new ArrayList<>();
-        for (Participant participant : participants) {
-            Meet meet = participant.getMeet();
-            VoteInfoWithStatus voteInfoWithStatus = voteManager.getVoteInfoWithStatus(userId, meet);
-            meetWithVoteAndStatus.add(MeetWithVoteAndStatus.builder()
-                    .meet(meet)
-                    .meetStatus(voteInfoWithStatus.getMeetStatus())
-                    .placeVote(voteInfoWithStatus.getConfirmPlace())
-                    .timeVote(voteInfoWithStatus.getConfirmTime())
-                    .build());
-        }
-        return meetWithVoteAndStatus;
+        return participants.stream()
+                .map(participant -> meetManager.createMeetWithVoteAndStatus(participant, userId))
+                .toList();
     }
+
 }
