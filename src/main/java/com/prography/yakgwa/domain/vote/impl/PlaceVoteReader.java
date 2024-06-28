@@ -11,10 +11,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PlaceVoteReader {
     private final PlaceVoteJpaRepository placeVoteJpaRepository;
-    public List<PlaceVote> readByUserId(Long userId){
+
+    public List<PlaceVote> readByUserId(Long userId) {
         return placeVoteJpaRepository.findAllByUserId(userId);
     }
-    public List<PlaceVote>readByMeetId(Long meetId){
+
+    public List<PlaceVote> readByMeetId(Long meetId) {
         return placeVoteJpaRepository.findAllByMeetId(meetId);
     }
+
+    public List<PlaceVote> readByUserIdAndMeetId(Long userId, Long meetId) {
+        return placeVoteJpaRepository.findAllByUserIdAndMeetId(userId, meetId);
+    }
+
 }

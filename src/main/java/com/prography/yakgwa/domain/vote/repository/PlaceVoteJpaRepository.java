@@ -11,4 +11,6 @@ public interface PlaceVoteJpaRepository extends JpaRepository<PlaceVote,Long> {
     List<PlaceVote> findAllByUserId(Long userId);
 
     List<PlaceVote> findAllByMeetId(Long meetId);
+
+    List<PlaceVote> findAllByUserIdAndMeetId(Long userId,Long meetId);
 }

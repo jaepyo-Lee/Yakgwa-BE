@@ -18,18 +18,16 @@ public class VoteManager {
     private final TimeVoteReader timeVoteReader;
     private final PlaceVoteReader placeVoteReader;
     private final MeetStatusJudger meetStatusJudge;
+    private final VoteConfirmFinder confirmFinder;
 
     public VoteInfoWithStatus getVoteInfoWithStatus(Long userId, Meet meet) {
         List<PlaceVote> placeVotes = placeVoteReader.readByMeetId(meet.getId());
         List<TimeVote> timeVotes = timeVoteReader.readAllByMeetId(meet.getId());
 
-        Optional<TimeVote> timeVoteConfirm = findConfirmedTimeVote(timeVotes);
-        Optional<PlaceVote> placeVoteConfirm = findConfirmedPlaceVote(placeVotes);
+        Optional<TimeVote> timeVoteConfirm = confirmFinder.findConfirmedTimeVote(timeVotes);
+        Optional<PlaceVote> placeVoteConfirm = confirmFinder.findConfirmedPlaceVote(placeVotes);
 
-        Optional<PlaceVote> userPlaceVote = findUserPlaceVote(placeVotes, userId);
-        Optional<TimeVote> userTimeVote = findUserTimeVote(timeVotes, userId);
-
-        MeetStatus meetStatus = meetStatusJudge.judge(meet, timeVoteConfirm, placeVoteConfirm, userPlaceVote, userTimeVote);
+        MeetStatus meetStatus = meetStatusJudge.judge(meet, userId);
 
         return VoteInfoWithStatus.builder()
                 .confirmPlace(meetStatus == MeetStatus.CONFIRM ? placeVoteConfirm.orElse(null) : null)
@@ -38,27 +36,5 @@ public class VoteManager {
                 .build();
     }
 
-    private Optional<TimeVote> findConfirmedTimeVote(List<TimeVote> timeVotes) {
-        return timeVotes.stream()
-                .filter(timeVote -> Boolean.TRUE.equals(timeVote.getConfirm()))
-                .findFirst();
-    }
 
-    private Optional<PlaceVote> findConfirmedPlaceVote(List<PlaceVote> placeVotes) {
-        return placeVotes.stream()
-                .filter(placeVote -> Boolean.TRUE.equals(placeVote.getConfirm()))
-                .findFirst();
-    }
-
-    private Optional<PlaceVote> findUserPlaceVote(List<PlaceVote> placeVotes, Long userId) {
-        return placeVotes.stream()
-                .filter(placeVote -> placeVote.getUser().getId().equals(userId))
-                .findFirst();
-    }
-
-    private Optional<TimeVote> findUserTimeVote(List<TimeVote> timeVotes, Long userId) {
-        return timeVotes.stream()
-                .filter(timeVote -> timeVote.getUser().getId().equals(userId))
-                .findFirst();
-    }
 }

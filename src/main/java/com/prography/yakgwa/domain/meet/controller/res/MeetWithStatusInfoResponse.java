@@ -44,23 +44,31 @@ public class MeetWithStatusInfoResponse {
     }
 
     public static MeetWithStatusInfoResponse of(List<MeetWithVoteAndStatus> list) {
-        return MeetWithStatusInfoResponse.builder().meetInfosWithStatus(
-                list.stream().map(meetWithVoteAndStatus -> {
-                    PlaceVote placeVote = meetWithVoteAndStatus.getPlaceVote();
-                    TimeVote timeVote = meetWithVoteAndStatus.getTimeVote();
-                    Meet meet = meetWithVoteAndStatus.getMeet();
+        List<MeetInfoWithStatus> meetInfosWithStatus = list.stream()
+                .map(MeetWithStatusInfoResponse::toMeetInfoWithStatus)
+                .toList();
 
-                    return MeetInfoWithStatus.builder()
-                            .meetStatus(meetWithVoteAndStatus.getMeetStatus())
-                            .meetInfo(MeetInfo.builder()
-                                    .meetDateTime(timeVote == null ? null : timeVote.getTime())
-                                    .meetId(meet.getId())
-                                    .meetThemeName(meet.getMeetTheme().getName())
-                                    .placeName(placeVote == null || placeVote.getPlace() == null ? null : placeVote.getPlace().getTitle())
-                                    .meetTitle(meet.getTitle())
-                                    .build())
-                            .build();
-                }).toList()
-        ).build();
+        return MeetWithStatusInfoResponse.builder()
+                .meetInfosWithStatus(meetInfosWithStatus)
+                .build();
+    }
+
+    private static MeetInfoWithStatus toMeetInfoWithStatus(MeetWithVoteAndStatus meetWithVoteAndStatus) {
+        PlaceVote placeVote = meetWithVoteAndStatus.getPlaceVote();
+        TimeVote timeVote = meetWithVoteAndStatus.getTimeVote();
+        Meet meet = meetWithVoteAndStatus.getMeet();
+
+        MeetInfo meetInfo = MeetInfo.builder()
+                .meetDateTime(timeVote == null ? null : timeVote.getTime())
+                .meetId(meet.getId())
+                .meetThemeName(meet.getMeetTheme().getName())
+                .placeName(placeVote == null || placeVote.getPlace() == null ? null : placeVote.getPlace().getTitle())
+                .meetTitle(meet.getTitle())
+                .build();
+
+        return MeetInfoWithStatus.builder()
+                .meetStatus(meetWithVoteAndStatus.getMeetStatus())
+                .meetInfo(meetInfo)
+                .build();
     }
 }
