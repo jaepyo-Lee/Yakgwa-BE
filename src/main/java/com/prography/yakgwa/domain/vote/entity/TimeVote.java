@@ -21,7 +21,7 @@ public class TimeVote {
     private Long id;
     private LocalDateTime time;
     @Builder.Default
-    private Boolean confirm=Boolean.FALSE;
+    private Boolean confirm = Boolean.FALSE;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
