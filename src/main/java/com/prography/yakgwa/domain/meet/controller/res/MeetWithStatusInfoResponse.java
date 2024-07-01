@@ -46,17 +46,14 @@ public class MeetWithStatusInfoResponse {
     public static MeetWithStatusInfoResponse of(List<MeetWithVoteAndStatus> list) {
         return MeetWithStatusInfoResponse.builder().meetInfosWithStatus(
                 list.stream().map(meetWithVoteAndStatus -> {
-                    PlaceVote placeVote = meetWithVoteAndStatus.getPlaceVote();
-                    TimeVote timeVote = meetWithVoteAndStatus.getTimeVote();
                     Meet meet = meetWithVoteAndStatus.getMeet();
-
                     return MeetInfoWithStatus.builder()
                             .meetStatus(meetWithVoteAndStatus.getMeetStatus())
                             .meetInfo(MeetInfo.builder()
-                                    .meetDateTime(timeVote == null ? null : timeVote.getTime())
+                                    .meetDateTime(meetWithVoteAndStatus.getTimeSlot() == null ? null : meetWithVoteAndStatus.getTimeSlot().getTime())
                                     .meetId(meet.getId())
                                     .meetThemeName(meet.getMeetTheme().getName())
-                                    .placeName(placeVote == null || placeVote.getPlace() == null ? null : placeVote.getPlace().getTitle())
+                                    .placeName(meetWithVoteAndStatus.getPlaceSlot() == null ? null : meetWithVoteAndStatus.getPlaceSlot().getPlace().getTitle())
                                     .meetTitle(meet.getTitle())
                                     .build())
                             .build();

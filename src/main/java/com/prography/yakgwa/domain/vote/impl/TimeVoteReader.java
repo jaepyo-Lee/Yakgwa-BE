@@ -12,10 +12,8 @@ import java.util.List;
 public class TimeVoteReader {
     private final TimeVoteJpaRepository timeVoteJpaRepository;
 
-    public List<TimeVote> readAllByUserId(Long userId){
-        return timeVoteJpaRepository.findAllByUserId(userId);
+    public boolean existsByUserId(Long userId) {
+        return timeVoteJpaRepository.existsByUserId(userId);
     }
-    public List<TimeVote> readAllByMeetId(Long meetId){
-        return timeVoteJpaRepository.findAllByMeetId(meetId);
-    }
+
 }
