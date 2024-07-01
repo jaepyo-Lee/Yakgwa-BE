@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.vote.entity;
+package com.prography.yakgwa.domain.vote.entity.place;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.place.entity.Place;
@@ -19,15 +19,9 @@ public class PlaceVote {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long voteCnt;
-    private Boolean confirm;
     @ManyToOne
-    @JoinColumn(name = "place_id")
-    private Place place;
-
-    @ManyToOne
-    @JoinColumn(name = "meet_id")
-    private Meet meet;
+    @JoinColumn(name = "placeslot_id")
+    private PlaceSlot placeSlot;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

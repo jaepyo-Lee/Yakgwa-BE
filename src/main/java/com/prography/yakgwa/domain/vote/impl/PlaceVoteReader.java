@@ -1,6 +1,6 @@
 package com.prography.yakgwa.domain.vote.impl;
 
-import com.prography.yakgwa.domain.vote.entity.PlaceVote;
+import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;

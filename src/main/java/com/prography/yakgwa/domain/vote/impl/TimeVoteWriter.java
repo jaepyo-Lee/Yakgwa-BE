@@ -2,7 +2,7 @@ package com.prography.yakgwa.domain.vote.impl;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.vote.entity.TimeVote;
+import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
