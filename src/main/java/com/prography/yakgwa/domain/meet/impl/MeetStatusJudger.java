@@ -2,9 +2,14 @@ package com.prography.yakgwa.domain.meet.impl;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
-import com.prography.yakgwa.domain.vote.entity.PlaceVote;
-import com.prography.yakgwa.domain.vote.entity.TimeVote;
+import com.prography.yakgwa.domain.user.entity.User;
+import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
+import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
+import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
+import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
+import com.prography.yakgwa.domain.vote.impl.PlaceSlotReader;
 import com.prography.yakgwa.domain.vote.impl.PlaceVoteReader;
+import com.prography.yakgwa.domain.vote.impl.TimeSlotReader;
 import com.prography.yakgwa.domain.vote.impl.TimeVoteReader;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
@@ -16,54 +21,36 @@ import java.util.Optional;
 @ImplService
 @RequiredArgsConstructor
 public class MeetStatusJudger {
-    private final TimeVoteReader timeVoteReader;
+    private final PlaceSlotReader placeSlotReader;
+    private final TimeSlotReader timeSlotReader;
     private final PlaceVoteReader placeVoteReader;
+    private final TimeVoteReader timeVoteReader;
 
-    public MeetStatus judge(Meet meet, Long userId) {
+    public MeetStatus judge(Meet meet, User user) {
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime validInviteTime = meet.getCreatedDate().plusHours(meet.getValidInviteHour());
-        List<PlaceVote> placeVotes = placeVoteReader.readByMeetId(meet.getId());
-        List<TimeVote> timeVotes = timeVoteReader.readAllByMeetId(meet.getId());
 
-        Optional<TimeVote> timeVoteConfirm = findConfirmedTimeVote(timeVotes);
-        Optional<PlaceVote> placeVoteConfirm = findConfirmedPlaceVote(placeVotes);
-
-        Optional<PlaceVote> userPlaceVote = findUserPlaceVote(placeVotes, userId);
-        Optional<TimeVote> userTimeVote = findUserTimeVote(timeVotes, userId);
-
-        if (validInviteTime.isBefore(now) || (timeVoteConfirm.isPresent() && placeVoteConfirm.isPresent())) {
+        if (validInviteTime.isBefore(now)) {
             return MeetStatus.CONFIRM;
-        } else if ((timeVoteConfirm.isPresent() && userPlaceVote.isPresent()) ||
-                (userTimeVote.isPresent() && placeVoteConfirm.isPresent()) ||
-                (userTimeVote.isPresent() && userPlaceVote.isPresent())) {
-            return MeetStatus.VOTE;
-        } else {
+        }
+
+        List<TimeSlot> timeSlots = timeSlotReader.readByMeetId(meet.getId());
+        List<PlaceSlot> placeSlots = placeSlotReader.readByMeetId(meet.getId());
+
+        boolean isTimeConfirm = timeSlots.stream().anyMatch(TimeSlot::isConfirm);
+        boolean isPlaceConfirm = placeSlots.stream().anyMatch(PlaceSlot::isConfirm);
+
+        if (isTimeConfirm && isPlaceConfirm) {
+            return MeetStatus.CONFIRM;
+        }
+
+        boolean isUserVotePlace = placeVoteReader.existsByUserId(user.getId());
+        boolean isUserVoteTime = timeVoteReader.existsByUserId(user.getId());
+
+        if (!isUserVotePlace && !isUserVoteTime) {
             return MeetStatus.BEFORE_VOTE;
         }
 
-    }
-
-    private Optional<TimeVote> findConfirmedTimeVote(List<TimeVote> timeVotes) {
-        return timeVotes.stream()
-                .filter(timeVote -> Boolean.TRUE.equals(timeVote.getConfirm()))
-                .findFirst();
-    }
-
-    private Optional<PlaceVote> findConfirmedPlaceVote(List<PlaceVote> placeVotes) {
-        return placeVotes.stream()
-                .filter(placeVote -> Boolean.TRUE.equals(placeVote.getConfirm()))
-                .findFirst();
-    }
-
-    private Optional<PlaceVote> findUserPlaceVote(List<PlaceVote> placeVotes, Long userId) {
-        return placeVotes.stream()
-                .filter(placeVote -> placeVote.getUser().getId().equals(userId))
-                .findFirst();
-    }
-
-    private Optional<TimeVote> findUserTimeVote(List<TimeVote> timeVotes, Long userId) {
-        return timeVotes.stream()
-                .filter(timeVote -> timeVote.getUser().getId().equals(userId))
-                .findFirst();
+        return MeetStatus.VOTE;
     }
 }
