@@ -24,11 +24,11 @@ public class TimeVoteWriter {
         return timeVoteJpaRepository.save(timeVote);
     }
 
-    public void confirmAndWrite(User user, Meet meet, LocalDateTime meetTime) {
+    public void confirmAndWrite(Meet meet, LocalDateTime meetTime) {
         if (meetTime == null) { //해당 값이 있다면 투표,null이면 투표
             return;
         }
-        TimeSlot timeSlot = TimeSlot.builder().time(meetTime).confirm(Boolean.TRUE).build();
+        TimeSlot timeSlot = TimeSlot.builder().meet(meet).time(meetTime).confirm(Boolean.TRUE).build();
         timeSlotWriter.write(timeSlot);
     }
 }

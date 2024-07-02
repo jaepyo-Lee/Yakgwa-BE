@@ -30,6 +30,6 @@ public class VoteController {
     public SuccessResponse<TimeVoteInfoWithStatusResponse> timeInfoByMeetStatus(@PathVariable("userId") Long userId,
                                                                                 @PathVariable("meetId") Long meetId) {
         TimeInfosByMeetStatus timeInfo = voteService.findTimeInfoWithMeetStatus(userId, meetId);
-        return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getMeetStatus(), timeInfo.getTimeVote()));
+        return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getMeetStatus(), timeInfo.getTimeSlots()));
     }
 }
