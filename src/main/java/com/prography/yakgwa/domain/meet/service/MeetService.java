@@ -74,5 +74,4 @@ public class MeetService {
 
         return list;
     }
-
 }
