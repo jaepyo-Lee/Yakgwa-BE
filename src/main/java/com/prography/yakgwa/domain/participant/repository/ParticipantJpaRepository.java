@@ -12,4 +12,6 @@ public interface ParticipantJpaRepository extends JpaRepository<Participant, Lon
     List<Participant> findAllByMeetId(@Param("meetId") Long meetId);
 
     List<Participant> findAllByUserId(@Param("userId") Long userId);
+
+    boolean existsByUserIdAndMeetId(@Param("userId") Long userId, @Param("meetId") Long meetId);
 }
