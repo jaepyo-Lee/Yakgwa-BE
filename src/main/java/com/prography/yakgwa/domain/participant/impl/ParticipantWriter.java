@@ -16,10 +16,18 @@ public class ParticipantWriter {
     private final ParticipantJpaRepository participantJpaRepository;
 
     public Participant registLeader(Meet meet, User user) {
-        return register(meet,user, LEADER);
+        return register(meet, user, LEADER);
     }
 
-    public Participant register(Meet meet, User user, MeetRole role) {
+    public Participant registParticipant(Meet meet, User user) {
+        boolean existUserInMeet = participantJpaRepository.existsByUserIdAndMeetId(user.getId(), meet.getId());
+        if(existUserInMeet){
+            throw new RuntimeException("이미 참여중인 사용자입니다!");
+        }
+        return register(meet, user, MeetRole.PARTICIPANT);
+    }
+
+    private Participant register(Meet meet, User user, MeetRole role) {
         Participant participant = Participant.builder()
                 .meetRole(role)
                 .meet(meet)
