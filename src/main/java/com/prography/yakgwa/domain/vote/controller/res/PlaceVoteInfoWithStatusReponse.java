@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.controller.res;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.place.entity.Place;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Getter
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlaceVoteInfoWithStatusReponse {
     private MeetStatus meetStatus;
     private List<VotePlaceInfo> placeInfos;
@@ -27,7 +29,7 @@ public class PlaceVoteInfoWithStatusReponse {
     public static PlaceVoteInfoWithStatusReponse of(MeetStatus meetStatus, List<Place> places) {
         return PlaceVoteInfoWithStatusReponse.builder()
                 .meetStatus(meetStatus)
-                .placeInfos(places.stream()
+                .placeInfos(places.isEmpty() ? null : places.stream()
                         .map(place -> VotePlaceInfo.builder()
                                 .placeId(place.getId())
                                 .mapx(place.getMapx())

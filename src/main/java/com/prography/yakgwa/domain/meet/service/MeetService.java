@@ -44,8 +44,8 @@ public class MeetService {
         User user = userReader.read(requestDto.getCreatorId());
         Meet meet = meetWriter.write(MeetWriteDto.of(requestDto));
         participantWriter.registLeader(meet, user);
-        placeVoteWriter.confirmAndWrite(requestDto.getPlaceInfo());
-        timeVoteWriter.confirmAndWrite(user, meet, requestDto.getMeetTime());
+        placeVoteWriter.confirmAndWrite(meet,requestDto.getPlaceInfo());
+        timeVoteWriter.confirmAndWrite(meet, requestDto.getMeetTime());
         return meet;
     }
 

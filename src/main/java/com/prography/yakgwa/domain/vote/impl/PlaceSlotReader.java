@@ -21,4 +21,7 @@ public class PlaceSlotReader {
                 .orElse(null);
     }
 
+    public boolean existConfirm(Long meetId){
+        return repository.existsByMeetId(meetId);
+    }
 }
