@@ -8,14 +8,20 @@ import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 
+import static com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole.LEADER;
+
 @ImplService
 @RequiredArgsConstructor
 public class ParticipantWriter {
     private final ParticipantJpaRepository participantJpaRepository;
 
     public Participant registLeader(Meet meet, User user) {
+        return register(meet,user, LEADER);
+    }
+
+    public Participant register(Meet meet, User user, MeetRole role) {
         Participant participant = Participant.builder()
-                .meetRole(MeetRole.LEADER)
+                .meetRole(role)
                 .meet(meet)
                 .user(user)
                 .build();

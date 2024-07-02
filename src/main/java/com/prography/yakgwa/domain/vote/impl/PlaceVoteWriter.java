@@ -6,7 +6,8 @@ import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.place.impl.PlaceReader;
 import com.prography.yakgwa.domain.place.impl.PlaceWriter;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.vote.entity.PlaceVote;
+import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
+import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
@@ -21,29 +22,28 @@ public class PlaceVoteWriter {
     private final PlaceVoteJpaRepository placeVoteJpaRepository;
     private final PlaceWriter placeWriter;
     private final PlaceReader placeReader;
+    private final PlaceSlotWriter placeSlotWriter;
 
-    public PlaceVote write(User user, Meet meet, Place place, Boolean confirm) {
+
+    public PlaceVote write(User user,PlaceSlot placeSlot) {
         PlaceVote placeVote = PlaceVote.builder()
-                .confirm(confirm)
-                .place(place)
-                .voteCnt(0L)
-                .meet(meet)
+                .placeSlot(placeSlot)
                 .user(user)
                 .build();
 
         return placeVoteJpaRepository.save(placeVote);
     }
 
-    public void confirmAndWrite(User user, Meet meet, PlaceInfoDto placeInfo) {
+    public void confirmAndWrite(PlaceInfoDto placeInfo) {
 
         if (placeInfo == null) {
             return;
         }
 
-        Optional<Place> maybePlace = placeReader.readByMapxAndMapy(placeInfo.getMapx(), placeInfo.getMapy());
+        Place place = placeReader.readByMapxAndMapy(placeInfo.getMapx(), placeInfo.getMapy())
+                .orElseGet(() -> placeWriter.write(placeInfo.toEntity()));
 
-        Place place = maybePlace.orElseGet(() -> placeWriter.write(placeInfo.toEntity()));
-
-        write(user, meet, place, TRUE);
+        PlaceSlot placeSlot = PlaceSlot.builder().confirm(TRUE).place(place).build();
+        placeSlotWriter.write(placeSlot);
     }
 }
