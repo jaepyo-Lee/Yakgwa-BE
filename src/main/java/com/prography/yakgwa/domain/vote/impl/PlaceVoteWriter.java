@@ -12,6 +12,8 @@ import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 import static java.lang.Boolean.TRUE;
 
 @ImplService
@@ -32,6 +34,15 @@ public class PlaceVoteWriter {
         return placeVoteJpaRepository.save(placeVote);
     }
 
+    public List<PlaceVote> writeAll(User user, List<PlaceSlot> placeSlots) {
+        List<PlaceVote> placeVotes = placeSlots.stream().map(placeSlot -> PlaceVote.builder()
+                        .placeSlot(placeSlot)
+                        .user(user)
+                        .build())
+                .toList();
+        return placeVoteJpaRepository.saveAll(placeVotes);
+    }
+
     public void confirmAndWrite(Meet meet, PlaceInfoDto placeInfo) {
         if (placeInfo == null) {
             return;
@@ -42,5 +53,10 @@ public class PlaceVoteWriter {
 
         PlaceSlot placeSlot = PlaceSlot.builder().meet(meet).confirm(TRUE).place(place).build();
         placeSlotWriter.write(placeSlot);
+    }
+
+
+    public void deleteAllVoteOfUser(User user, List<PlaceSlot> placeSlotIdsInMeet){
+        placeVoteJpaRepository.deleteAllByUserIdAndPlaceSlotIdIn(user, placeSlotIdsInMeet);
     }
 }

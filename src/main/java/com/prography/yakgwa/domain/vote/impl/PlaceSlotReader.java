@@ -24,4 +24,8 @@ public class PlaceSlotReader {
     public boolean existConfirm(Long meetId){
         return repository.existsByMeetId(meetId);
     }
+
+    public List<PlaceSlot> findAllByIds(List<Long>ids){
+        return repository.findAllById(ids);
+    }
 }
