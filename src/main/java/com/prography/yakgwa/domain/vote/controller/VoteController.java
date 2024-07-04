@@ -34,11 +34,6 @@ public class VoteController {
         return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getMeetStatus(), timeInfo.getTimeSlots()));
     }
 
-    /**
-     * todo
-     * 장소 정하기 로직 정리
-     * 포스트맨 테스트해보기
-     */
     //장소투표
     @PostMapping("/users/{userId}/meets/{meetId}/places")
     public SuccessResponse votePlaces(@PathVariable("userId") Long userId,
