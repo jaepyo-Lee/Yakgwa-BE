@@ -18,4 +18,8 @@ public class ParticipantReader {
     public List<Participant>readAllByUserId(Long userId){
         return repository.findAllByUserId(userId);
     }
+    public Participant readByUserIdAndMeetId(Long userId, Long meetId){
+        return repository.findByUserIdAndMeetId(userId, meetId)
+                .orElseThrow(()->new RuntimeException("Participant not found"));
+    }
 }

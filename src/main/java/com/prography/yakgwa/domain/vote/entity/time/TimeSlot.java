@@ -22,4 +22,8 @@ public class TimeSlot {
     @ManyToOne
     @JoinColumn(name = "meet_id")
     private Meet meet;
+
+    public void confirm() {
+        confirm = true;
+    }
 }

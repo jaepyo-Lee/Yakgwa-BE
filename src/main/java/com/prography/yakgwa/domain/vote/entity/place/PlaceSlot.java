@@ -26,4 +26,8 @@ public class PlaceSlot extends BaseTimeEntity {
     @ManyToOne
     @JoinColumn(name = "place_id")
     private Place place;
+
+    public void confirm(){
+        confirm = true;
+    }
 }

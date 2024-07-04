@@ -3,6 +3,8 @@ package com.prography.yakgwa.domain.vote.service;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.impl.MeetReader;
+import com.prography.yakgwa.domain.participant.entity.Participant;
+import com.prography.yakgwa.domain.participant.impl.ParticipantReader;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.impl.UserReader;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
@@ -33,6 +35,7 @@ public class VoteService {
     private final UserReader userReader;
     private final TimeVoteWriter timeVoteWriter;
     private final TimeSlotWriter timeSlotWriter;
+    private final ParticipantReader participantReader;
 
 
     public PlaceInfosByMeetStatus findPlaceInfoWithMeetStatus(Long userId, Long meetId) {
@@ -133,5 +136,23 @@ public class VoteService {
         List<TimeSlot> chooseTimeSlot = timeSlotReader.findAllByMeetIdAndTimes(meetId, requestDto.getEnableTimes());
 
         return timeVoteWriter.writeAll(user, chooseTimeSlot);
+    }
+
+    public void confirmPlace(Long userId, Long meetId, Long confirmPlaceSlotId) {
+        Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
+        if(!participant.isLeader()){
+            throw new RuntimeException("Leader만 확정지을수 있습니다.");
+        }
+        PlaceSlot placeSlot = placeSlotReader.read(confirmPlaceSlotId);
+        placeSlot.confirm();
+    }
+
+    public void confirmTime(Long userId, Long meetId, Long confirmTimeSlotId) {
+        Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
+        if(!participant.isLeader()){
+            throw new RuntimeException("Leader만 확정지을수 있습니다.");
+        }
+        TimeSlot timeSlot = timeSlotReader.read(confirmTimeSlotId);
+        timeSlot.confirm();
     }
 }
