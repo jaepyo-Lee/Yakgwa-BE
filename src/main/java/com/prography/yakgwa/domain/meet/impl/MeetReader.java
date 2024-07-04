@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 @ImplService
 public class MeetReader {
     private final MeetJpaRepository meetJpaRepository;
-    public Meet read(Long id){
-        return meetJpaRepository.findById(id).orElseThrow(NotFoundMeetException::new);
+
+    public Meet read(Long id) {
+        return meetJpaRepository.findById(id)
+                .orElseThrow(NotFoundMeetException::new);
     }
 }
