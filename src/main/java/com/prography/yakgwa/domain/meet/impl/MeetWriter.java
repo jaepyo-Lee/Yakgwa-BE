@@ -15,10 +15,10 @@ public class MeetWriter {
     private final MeetThemeReader meetThemeReader;
 
     public Meet write(MeetWriteDto writeDto) {
-        MeetTheme meetTheme = meetThemeReader.readByRef(writeDto.getMeetThemeId());
+        MeetTheme meetTheme = meetThemeReader.read(writeDto.getMeetThemeId());
         Meet meet = Meet.builder()
                 .title(writeDto.getTitle())
-                .period(writeDto .getPeriod() != null ?
+                .period(writeDto.getPeriod() != null ?
                         VotePeriod.builder()
                                 .endDate(writeDto.getPeriod().getEndDate())
                                 .startDate(writeDto.getPeriod().getStartDate())

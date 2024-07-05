@@ -62,9 +62,9 @@ class MeetReaderTest {
     @Test
     void 모임_조회시_존재하지않을경우Test() {
         // given
-        Long readMeetId = 1l;
+        Long notExistMeetId = 1l;
         // when
         // then
-        Assertions.assertThrows(NotFoundMeetException.class, () -> meetReader.read(readMeetId));
+        Assertions.assertThrows(NotFoundMeetException.class, () -> meetReader.read(notExistMeetId));
     }
 }
