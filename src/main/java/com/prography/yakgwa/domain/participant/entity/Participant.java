@@ -29,4 +29,8 @@ public class Participant {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public boolean isLeader() {
+        return meetRole == MeetRole.LEADER;
+    }
 }

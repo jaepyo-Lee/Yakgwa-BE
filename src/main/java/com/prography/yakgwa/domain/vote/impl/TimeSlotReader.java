@@ -34,4 +34,9 @@ public class TimeSlotReader {
     public List<TimeSlot> findAllByMeetIdAndTimes(Long meetId, List<LocalDateTime> times) {
         return repository.findAllByMeetIdAndTimes(meetId, times);
     }
+
+    public TimeSlot read(Long confirmTimeSlotId) {
+        return repository.findById(confirmTimeSlotId)
+                .orElseThrow(() -> new RuntimeException("등록되지 않은 시간 후보입니다."));
+    }
 }

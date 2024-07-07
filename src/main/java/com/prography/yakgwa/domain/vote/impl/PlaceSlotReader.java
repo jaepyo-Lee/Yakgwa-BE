@@ -21,11 +21,16 @@ public class PlaceSlotReader {
                 .orElse(null);
     }
 
-    public boolean existConfirm(Long meetId){
+    public boolean existConfirm(Long meetId) {
         return repository.existsByMeetId(meetId);
     }
 
-    public List<PlaceSlot> findAllByIds(List<Long>ids){
+    public List<PlaceSlot> findAllByIds(List<Long> ids) {
         return repository.findAllById(ids);
+    }
+
+    public PlaceSlot read(Long confirmPlaceSlotId) {
+        return repository.findById(confirmPlaceSlotId)
+                .orElseThrow(() -> new RuntimeException("없는 모임장소 후보지입니다."));
     }
 }
