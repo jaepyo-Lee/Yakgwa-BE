@@ -40,12 +40,11 @@ public class AuthService {
         authUser = getUserByLoginType(requestDto, authType);
         User user = userJpaRepository.findByAuthIdAndAndAuthType(authUser.getAuthId(), requestDto.getLoginType())
                 .orElseGet(() -> userJpaRepository.save(authUser));
-        TokenSet tokenSet = tokenProvider.createTokenSet(user.getAuthId(), String.valueOf(requestDto.getLoginType()));
+        TokenSet tokenSet = tokenProvider.createTokenSet(String.valueOf(user.getId()),user.getName() ,String.valueOf(requestDto.getLoginType()));
         registerRefreshToken(user, tokenSet);
         return LoginResponseDto.builder()
                 .isNew(user.getIsNew())
                 .tokenSet(tokenSet)
-                .userId(user.getId())
                 .build();
     }
 
@@ -83,7 +82,7 @@ public class AuthService {
         User findUserByAuthId = userJpaRepository.findByAuthIdAndAndAuthType(authId, AuthType.valueOf(loginType))
                 .orElseThrow(NotFoundUserException::new);
 
-        TokenSet tokenSet = tokenProvider.createTokenSet(findUserByAuthId.getAuthId(), loginType);
+        TokenSet tokenSet = tokenProvider.createTokenSet(findUserByAuthId.getAuthId(), findUserByAuthId.getName(),loginType);
 
         return ReissueTokenSetResponseDto.builder()
                 .reissueAccessToken(tokenSet.getAccessToken())

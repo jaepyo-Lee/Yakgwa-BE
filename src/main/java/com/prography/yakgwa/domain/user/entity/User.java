@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.user.entity;
 
+import com.prography.yakgwa.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity(name = "USER_TABLE")
 @Table(indexes = @Index(name = "auth_type",columnList = "auth_type"))
-public class User {
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
