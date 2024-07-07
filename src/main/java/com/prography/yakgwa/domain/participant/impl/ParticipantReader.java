@@ -11,15 +11,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ParticipantReader {
     private final ParticipantJpaRepository repository;
-    public List<Participant>readAllByMeetId(Long meetId){
+
+    public List<Participant> readAllByMeetId(Long meetId) {
         return repository.findAllByMeetId(meetId);
     }
 
-    public List<Participant>readAllByUserId(Long userId){
+    public List<Participant> readAllByUserId(Long userId) {
         return repository.findAllByUserId(userId);
     }
-    public Participant readByUserIdAndMeetId(Long userId, Long meetId){
+
+    public Participant readByUserIdAndMeetId(Long userId, Long meetId) {
         return repository.findByUserIdAndMeetId(userId, meetId)
-                .orElseThrow(()->new RuntimeException("Participant not found"));
+                .orElseThrow(() -> new RuntimeException("Participant not found"));
     }
 }
