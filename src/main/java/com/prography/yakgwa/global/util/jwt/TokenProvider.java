@@ -1,6 +1,7 @@
 package com.prography.yakgwa.global.util.jwt;
 
 import com.prography.yakgwa.global.entity.AuthToken;
+import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.exception.auth.TokenValidFailedException;
 import com.prography.yakgwa.global.repository.RedisRepository;
 import io.jsonwebtoken.Claims;
@@ -42,27 +43,27 @@ public class TokenProvider {
      * todo
      * 테스트코드 짜기
      */
-    public TokenSet createTokenSet(String userAuthId, String loginType) {
-        String accessJwt = createJwt(userAuthId, ACCESS_TOKEN_VALIDATiON_SECOND, loginType);
-        String refreshJwt = createJwt(userAuthId, REFRESH_TOKEN_VALIDATiON_SECOND, loginType);
+    public TokenSet createTokenSet(String userId, String loginType) {
+        String accessJwt = createJwt(userId, ACCESS_TOKEN_VALIDATiON_SECOND, loginType);
+        String refreshJwt = createJwt(userId, REFRESH_TOKEN_VALIDATiON_SECOND, loginType);
         return TokenSet.ofBearer(accessJwt, refreshJwt);
     }
 
-    private String createJwt(String authId, long duration, String loginType) {
+    private String createJwt(String userId, long duration, String loginType) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + duration);
         return Jwts.builder()
-                .setClaims(createClaimByAuthId(authId, loginType))
-                .setSubject(authId)
+                .setClaims(createClaimByAuthId(userId, loginType))
+                .setSubject(userId)
                 .setExpiration(expiration)
                 .setIssuedAt(now)
                 .signWith(key)
                 .compact();
     }
 
-    private Map<String, Object> createClaimByAuthId(String authId, String loginType) {
+    private Map<String, Object> createClaimByAuthId(String userId, String loginType) {
         Map<String, Object> map = new HashMap<>();
-        map.put("authId", authId);
+        map.put("userId", userId);
         map.put("loginType", loginType);
         return map;
     }
@@ -84,11 +85,12 @@ public class TokenProvider {
         if (authToken.validate()) {
             Claims tokenClaims = authToken.getTokenClaims();
             Collection<? extends GrantedAuthority> authorities = Arrays.stream(new String[]{tokenClaims
-                            .get("authId")
+                            .get("userId")
                             .toString()})
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
-            User principal = new User((String) tokenClaims.get("authId"), "", authorities);
+            CustomUserDetail principal = new CustomUserDetail(Long.valueOf((String) tokenClaims.get("userId")));
+//            User principal = new User((String) tokenClaims.get("userId"), "", authorities);
             return new UsernamePasswordAuthenticationToken(principal, null, authorities);
         } else {
             throw new TokenValidFailedException();

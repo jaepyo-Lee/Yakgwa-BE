@@ -40,7 +40,7 @@ public class AuthService {
         authUser = getUserByLoginType(requestDto, authType);
         User user = userJpaRepository.findByAuthIdAndAndAuthType(authUser.getAuthId(), requestDto.getLoginType())
                 .orElseGet(() -> userJpaRepository.save(authUser));
-        TokenSet tokenSet = tokenProvider.createTokenSet(user.getAuthId(), String.valueOf(requestDto.getLoginType()));
+        TokenSet tokenSet = tokenProvider.createTokenSet(String.valueOf(user.getId()), String.valueOf(requestDto.getLoginType()));
         registerRefreshToken(user, tokenSet);
         return LoginResponseDto.builder()
                 .isNew(user.getIsNew())
