@@ -39,6 +39,11 @@ public class MeetService {
     private final PlaceSlotReader placeSlotReader;
     private final TimeSlotReader timeSlotReader;
 
+    /**
+    * Todo
+    * 요청 dto에서 투표확정시간과 투표가능시간을 둘다 받는데 이것을 모임 생성할때
+     * 해당 값들을 검증하는게 맞을까? 둘다 null이거나 둘다 값이 들어가있는경우 예외처리해야하는데 현재는 meetWriter.write에서 처리하고 있음
+    */
     @Transactional
     public Meet create(MeetCreateRequestDto requestDto) {
         User user = userReader.read(requestDto.getCreatorId());
