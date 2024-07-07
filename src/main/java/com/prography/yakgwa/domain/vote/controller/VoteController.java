@@ -56,19 +56,19 @@ public class VoteController {
         return SuccessResponse.ok("시간 투표하였습니다");
     }
 
-    @PatchMapping("/users/{userId}/meets/{meetId}/places/confirm")
-    public SuccessResponse<String> confirmPlaceInMeet(@PathVariable Long userId,
+    @PatchMapping("/meets/{meetId}/places/confirm")
+    public SuccessResponse<String> confirmPlaceInMeet(@AuthenticationPrincipal CustomUserDetail user,
                                                       @PathVariable Long meetId,
                                                       @RequestBody ConfirmPlaceVoteInMeetRequest request) {
-        voteService.confirmPlace(userId, meetId, request.getConfirmPlaceSlotId());
+        voteService.confirmPlace(user.getUserId(), meetId, request.getConfirmPlaceSlotId());
         return SuccessResponse.ok("장소가 확정되었습니다");
     }
 
-    @PatchMapping("/users/{userId}/meets/{meetId}/times/confirm")
-    public SuccessResponse<String> confirmTimeInMeet(@PathVariable Long userId,
+    @PatchMapping("/meets/{meetId}/times/confirm")
+    public SuccessResponse<String> confirmTimeInMeet(@AuthenticationPrincipal CustomUserDetail user,
                                                      @PathVariable Long meetId,
                                                      @RequestBody ConfirmTimeVoteInMeetRequest request) {
-        voteService.confirmTime(userId, meetId, request.getConfirmTimeSlotId());
+        voteService.confirmTime(user.getUserId(), meetId, request.getConfirmTimeSlotId());
         return SuccessResponse.ok("시간이 확정되었습니다");
     }
 }
