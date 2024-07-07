@@ -45,7 +45,6 @@ public class AuthService {
         return LoginResponseDto.builder()
                 .isNew(user.getIsNew())
                 .tokenSet(tokenSet)
-                .userId(user.getId())
                 .build();
     }
 

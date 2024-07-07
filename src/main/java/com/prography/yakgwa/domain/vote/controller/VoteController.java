@@ -7,8 +7,10 @@ import com.prography.yakgwa.domain.vote.controller.res.TimeVoteInfoWithStatusRes
 import com.prography.yakgwa.domain.vote.service.VoteService;
 import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
+import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -18,37 +20,37 @@ public class VoteController {
     private final VoteService voteService;
 
     //나의 장소투표 목록
-    @GetMapping("/users/{userId}/meets/{meetId}/places")
-    public SuccessResponse<PlaceVoteInfoWithStatusReponse> placeInfoByMeetStatus(@PathVariable("userId") Long userId,
+    @GetMapping("/meets/{meetId}/places")
+    public SuccessResponse<PlaceVoteInfoWithStatusReponse> placeInfoByMeetStatus(@AuthenticationPrincipal CustomUserDetail user,
                                                                                  @PathVariable("meetId") Long meetId) {
-        PlaceInfosByMeetStatus placeInfo = voteService.findPlaceInfoWithMeetStatus(userId, meetId);
+        PlaceInfosByMeetStatus placeInfo = voteService.findPlaceInfoWithMeetStatus(user.getUserId(), meetId);
         return new SuccessResponse<>(PlaceVoteInfoWithStatusReponse.of(placeInfo.getMeetStatus(),
                 placeInfo.getPlaces()));
     }
 
     //나의 시간투표 목록
-    @GetMapping("/users/{userId}/meets/{meetId}/times")
-    public SuccessResponse<TimeVoteInfoWithStatusResponse> timeInfoByMeetStatus(@PathVariable("userId") Long userId,
+    @GetMapping("/meets/{meetId}/times")
+    public SuccessResponse<TimeVoteInfoWithStatusResponse> timeInfoByMeetStatus(@AuthenticationPrincipal CustomUserDetail user,
                                                                                 @PathVariable("meetId") Long meetId) {
-        TimeInfosByMeetStatus timeInfo = voteService.findTimeInfoWithMeetStatus(userId, meetId);
+        TimeInfosByMeetStatus timeInfo = voteService.findTimeInfoWithMeetStatus(user.getUserId(), meetId);
         return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getMeetStatus(), timeInfo.getTimeSlots()));
     }
 
     //장소투표
-    @PostMapping("/users/{userId}/meets/{meetId}/places")
-    public SuccessResponse votePlaces(@PathVariable("userId") Long userId,
-                                     @PathVariable("meetId") Long meetId,
-                                     @RequestBody VotePlaceRequest votePlaceRequest) {
-        voteService.votePlace(userId, meetId, votePlaceRequest.getCurrentVotePlaceSlotIds());
+    @PostMapping("/meets/{meetId}/places")
+    public SuccessResponse votePlaces(@AuthenticationPrincipal CustomUserDetail user,
+                                      @PathVariable("meetId") Long meetId,
+                                      @RequestBody VotePlaceRequest votePlaceRequest) {
+        voteService.votePlace(user.getUserId(), meetId, votePlaceRequest.getCurrentVotePlaceSlotIds());
         return SuccessResponse.ok("장소 투표하였습니다.");
     }
 
     //장소투표
-    @PostMapping("/users/{userId}/meets/{meetId}/times")
-    public SuccessResponse voteTimes(@PathVariable("userId") Long userId,
+    @PostMapping("/meets/{meetId}/times")
+    public SuccessResponse voteTimes(@AuthenticationPrincipal CustomUserDetail user,
                                      @PathVariable("meetId") Long meetId,
                                      @RequestBody EnableTimeRequest enableTimeRequest) {
-        voteService.voteTime(userId, meetId, enableTimeRequest.toRequestDto());
+        voteService.voteTime(user.getUserId(), meetId, enableTimeRequest.toRequestDto());
         return SuccessResponse.ok("시간 투표하였습니다");
     }
 }
