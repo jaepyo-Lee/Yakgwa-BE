@@ -29,6 +29,7 @@ class MeetWriterTest {
     MeetJpaRepository meetJpaRepository;
     @Autowired
     MeetWriter meetWriter;
+
     @BeforeEach
     void init() {
         meetJpaRepository.deleteAll();
@@ -39,7 +40,7 @@ class MeetWriterTest {
     void 투표일때_모임생성Test() {
         // given
         MeetTheme meetTheme = new MeetTheme(1L, "데이트");
-        meetThemeJpaRepository.save(meetTheme);
+        MeetTheme saveMeetTheme = meetThemeJpaRepository.save(meetTheme);
         LocalDate from = LocalDate.now();
         LocalDate to = LocalDate.now().plusDays(1l);
         String title = "test";
@@ -47,7 +48,7 @@ class MeetWriterTest {
                 .meetTime(null)
                 .period(new VotePeriod(from,to))
                 .title(title)
-                .meetThemeId(meetTheme.getId())
+                .meetThemeId(saveMeetTheme.getId())
                 .build();
         // when
         System.out.println("=====Logic Start=====");
@@ -67,14 +68,14 @@ class MeetWriterTest {
     void 시간확정일때_모임생성Test() {
         // given
         MeetTheme meetTheme = new MeetTheme(1L, "데이트");
-        meetThemeJpaRepository.save(meetTheme);
+        MeetTheme savevMeetTheme = meetThemeJpaRepository.save(meetTheme);
         LocalDateTime time = LocalDateTime.now();
         String title = "test";
         MeetWriteDto writeDto = MeetWriteDto.builder()
                 .meetTime(time)
                 .period(null)
                 .title(title)
-                .meetThemeId(meetTheme.getId())
+                .meetThemeId(savevMeetTheme.getId())
                 .build();
 
         // when
