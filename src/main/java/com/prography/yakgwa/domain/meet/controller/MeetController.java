@@ -8,8 +8,10 @@ import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.service.MeetService;
 import com.prography.yakgwa.domain.meet.service.req.MeetWithVoteAndStatus;
 import com.prography.yakgwa.domain.meet.service.res.MeetInfoWithParticipant;
+import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +24,9 @@ public class MeetController {
     private final MeetService meetService;
 
     @PostMapping("/meets")
-    public SuccessResponse<CreateMeetResponse> create(@RequestBody CreateMeetRequest createMeetRequest) {
-        Meet meet = meetService.create(createMeetRequest.toRequestDto());
+    public SuccessResponse<CreateMeetResponse> create(@AuthenticationPrincipal CustomUserDetail user,
+                                                      @RequestBody CreateMeetRequest createMeetRequest) {
+        Meet meet = meetService.create(createMeetRequest.toRequestDto(user.getUserId()));
         return new SuccessResponse<>(CreateMeetResponse.of(meet.getId()));
     }
 
@@ -33,9 +36,9 @@ public class MeetController {
         return new SuccessResponse<>(MeetInfoWithParticipantResponse.of(meetWithParticipant.getMeet(), meetWithParticipant.getParticipants()));
     }
 
-    @GetMapping("/users/{userId}/meets")
-    public SuccessResponse<MeetWithStatusInfoResponse> findCurrentMeetsForUser(@PathVariable("userId") Long userId) {
-        List<MeetWithVoteAndStatus> meetWithVoteAndStatuses = meetService.findWithStatus(userId);
+    @GetMapping("/meets")
+    public SuccessResponse<MeetWithStatusInfoResponse> findCurrentMeetsForUser(@AuthenticationPrincipal CustomUserDetail user) {
+        List<MeetWithVoteAndStatus> meetWithVoteAndStatuses = meetService.findWithStatus(user.getUserId());
         return new SuccessResponse<>(MeetWithStatusInfoResponse.of(meetWithVoteAndStatuses));
     }
 }
