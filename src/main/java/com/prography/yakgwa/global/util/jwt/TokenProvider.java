@@ -43,28 +43,29 @@ public class TokenProvider {
      * todo
      * 테스트코드 짜기
      */
-    public TokenSet createTokenSet(String userId, String loginType) {
-        String accessJwt = createJwt(userId, ACCESS_TOKEN_VALIDATiON_SECOND, loginType);
-        String refreshJwt = createJwt(userId, REFRESH_TOKEN_VALIDATiON_SECOND, loginType);
+    public TokenSet createTokenSet(String userId, String username, String loginType) {
+        String accessJwt = createJwt(userId, username, ACCESS_TOKEN_VALIDATiON_SECOND, loginType);
+        String refreshJwt = createJwt(userId, username, REFRESH_TOKEN_VALIDATiON_SECOND, loginType);
         return TokenSet.ofBearer(accessJwt, refreshJwt);
     }
 
-    private String createJwt(String userId, long duration, String loginType) {
+    private String createJwt(String userId, String username, long duration, String loginType) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + duration);
         return Jwts.builder()
-                .setClaims(createClaimByAuthId(userId, loginType))
-                .setSubject(userId)
+                .setClaims(createClaimByAuthId(userId, username, loginType))
+                .setSubject("yakgwa")
                 .setExpiration(expiration)
                 .setIssuedAt(now)
                 .signWith(key)
                 .compact();
     }
 
-    private Map<String, Object> createClaimByAuthId(String userId, String loginType) {
+    private Map<String, Object> createClaimByAuthId(String userId, String username, String loginType) {
         Map<String, Object> map = new HashMap<>();
         map.put("userId", userId);
         map.put("loginType", loginType);
+        map.put("username", username);
         return map;
     }
 
@@ -89,7 +90,7 @@ public class TokenProvider {
                             .toString()})
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
-            CustomUserDetail principal = new CustomUserDetail(Long.valueOf((String) tokenClaims.get("userId")));
+            CustomUserDetail principal = new CustomUserDetail(Long.valueOf((String) tokenClaims.get("userId")), tokenClaims.get("username").toString());
 //            User principal = new User((String) tokenClaims.get("userId"), "", authorities);
             return new UsernamePasswordAuthenticationToken(principal, null, authorities);
         } else {

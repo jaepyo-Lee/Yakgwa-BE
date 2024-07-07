@@ -11,9 +11,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@AllArgsConstructor
+@Getter
 public class CustomUserDetail implements UserDetails {
-    private Long userId;
+    private final Long userId;
+    private final String name;
+
+    public CustomUserDetail(Long userId, String name) {
+        this.userId = userId;
+        this.name = name;
+    }
 
     @Override
     public boolean isAccountNonExpired() {
@@ -47,6 +53,6 @@ public class CustomUserDetail implements UserDetails {
 
     @Override
     public String getUsername() {
-        return userId.toString();
+        return name;
     }
 }

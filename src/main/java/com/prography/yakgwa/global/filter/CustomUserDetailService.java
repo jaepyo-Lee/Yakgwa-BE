@@ -15,6 +15,6 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 해당하는 User 의 데이터가 존재한다면 UserDetails 객체로 만들어서 리턴
         User user = userReader.read(Long.valueOf(username));
-        return new CustomUserDetail(user.getId());
+        return new CustomUserDetail(user.getId(),user.getName());
     }
 }

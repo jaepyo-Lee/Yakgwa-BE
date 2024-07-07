@@ -16,8 +16,6 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class CreateMeetRequest {
-    private Long creatorId;
-
     private MeetInfo meetInfo;
 
     @NoArgsConstructor
@@ -48,7 +46,7 @@ public class CreateMeetRequest {
         private LocalDate endVoteDate;
     }
 
-    public MeetCreateRequestDto toRequestDto() {
+    public MeetCreateRequestDto toRequestDto(Long creatorId) {
         return MeetCreateRequestDto.builder()
                 .creatorId(creatorId)
                 .title(meetInfo.meetTitle)
