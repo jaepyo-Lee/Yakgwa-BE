@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${app.api.base}")
-public class ParticipantController {
+public class ParticipantController implements ParticipantApi{
     private final ParticipantService participantService;
 
     @PostMapping("/meets/{meetId}")

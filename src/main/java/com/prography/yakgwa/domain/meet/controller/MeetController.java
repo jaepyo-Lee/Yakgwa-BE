@@ -10,6 +10,7 @@ import com.prography.yakgwa.domain.meet.service.req.MeetWithVoteAndStatus;
 import com.prography.yakgwa.domain.meet.service.res.MeetInfoWithParticipant;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${app.api.base}")
-public class MeetController {
+public class MeetController implements MeetApi{
 
     private final MeetService meetService;
 

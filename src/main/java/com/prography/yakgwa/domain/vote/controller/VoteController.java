@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${app.api.base}")
-public class VoteController {
+public class VoteController implements VoteApi {
     private final VoteService voteService;
 
     //나의 장소투표 목록
