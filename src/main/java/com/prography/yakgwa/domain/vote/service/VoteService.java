@@ -59,9 +59,7 @@ public class VoteService {
             } else { //사용자가 투표 안했을때
                 return PlaceInfosByMeetStatus.builder()
                         .meetStatus(MeetStatus.BEFORE_VOTE)
-                        .places(placeVoteOfUserInMeet.stream()
-                                .map(placeVote -> placeVote.getPlaceSlot().getPlace())
-                                .toList())
+                        .places(null)
                         .build();
             }
         }
