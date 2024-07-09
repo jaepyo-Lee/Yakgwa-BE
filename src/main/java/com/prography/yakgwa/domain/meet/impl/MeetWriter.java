@@ -15,18 +15,28 @@ public class MeetWriter {
     private final MeetThemeReader meetThemeReader;
 
     public Meet write(MeetWriteDto writeDto) {
-        MeetTheme meetTheme = meetThemeReader.readByRef(writeDto.getMeetThemeId());
+        if ((writeDto.getMeetTime() == null && writeDto.getPeriod() == null) ||
+                (writeDto.getMeetTime() != null && writeDto.getPeriod() != null)) {
+            throw new RuntimeException("시간은 투표 또는 확정중 한가지만 가능합니다!");
+        }
+        MeetTheme meetTheme = meetThemeReader.read(writeDto.getMeetThemeId());
+
+        VotePeriod votePeriod = null;
+        if (writeDto.getPeriod() != null) {
+            votePeriod = VotePeriod.builder()
+                    .startDate(writeDto.getPeriod().getStartDate())
+                    .endDate(writeDto.getPeriod().getEndDate())
+                    .build();
+        }
+
         Meet meet = Meet.builder()
                 .title(writeDto.getTitle())
-                .period(writeDto .getPeriod() != null ?
-                        VotePeriod.builder()
-                                .endDate(writeDto.getPeriod().getEndDate())
-                                .startDate(writeDto.getPeriod().getStartDate())
-                                .build()
-                        : null)
+                .period(votePeriod)
                 .meetTheme(meetTheme)
                 .validInviteHour(24)
                 .build();
+
         return meetJpaRepository.save(meet);
     }
+
 }

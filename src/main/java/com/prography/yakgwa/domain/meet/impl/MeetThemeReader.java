@@ -16,7 +16,8 @@ public class MeetThemeReader {
         return meetThemeJpaRepository.findAll();
     }
 
-    public MeetTheme readByRef(Long meetThemeId){
-        return meetThemeJpaRepository.getReferenceById(meetThemeId);
+    public MeetTheme read(Long meetThemeId) {
+        return meetThemeJpaRepository.findById(meetThemeId)
+                .orElseThrow(() -> new RuntimeException("존재하지 않는 모임의 테마입니다. 요청을 확인해주세요"));
     }
 }
