@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${app.api.base}")
-public class PlaceSlotController {
+public class PlaceSlotController implements PlaceSlotApi{
     private final PlaceSlotService placeSlotService;
 
     @PostMapping("/meets/{meetId}/placeslots")
