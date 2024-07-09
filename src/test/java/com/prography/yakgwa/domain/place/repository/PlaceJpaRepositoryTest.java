@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.place.repository;
 
 import com.prography.yakgwa.domain.place.entity.Place;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ class PlaceJpaRepositoryTest {
     @Autowired
     PlaceJpaRepository placeJpaRepository;
 
-    @BeforeEach
+    @AfterEach
     void init() {
         placeJpaRepository.deleteAll();
     }

@@ -6,6 +6,7 @@ import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +28,7 @@ class MeetReaderTest {
     @Autowired
     MeetReader meetReader;
 
-    @BeforeEach
+    @AfterEach
     void inti() {
         meetJpaRepository.deleteAll();
         meetThemeJpaRepository.deleteAll();

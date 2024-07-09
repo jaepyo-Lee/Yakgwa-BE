@@ -10,6 +10,7 @@ import com.prography.yakgwa.domain.participant.repository.ParticipantJpaReposito
 import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ class ParticipantWriterTest {
     @Autowired
     ParticipantWriter participantWriter;
 
-    @BeforeEach
+    @AfterEach
     void init() {
         participantJpaRepository.deleteAll();
         userJpaRepository.deleteAll();
