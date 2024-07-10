@@ -26,6 +26,7 @@ public class TimeVoteInfoWithStatusResponse {
 
     @Getter
     @Builder
+    @Schema(name = "TimeVoteInfoWithStatusResponse-VoteTimeInfo")
     private static class VoteTimeInfo {
         private Long timeId;
         private LocalDateTime voteTime;
