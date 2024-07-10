@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.auth.service;
 
 import com.prography.yakgwa.domain.auth.service.request.LoginRequestDto;
+import com.prography.yakgwa.domain.auth.service.response.KakaoUserResponseDto;
 import com.prography.yakgwa.domain.auth.service.response.LoginResponseDto;
 import com.prography.yakgwa.domain.auth.service.response.ReissueTokenSetResponseDto;
 import com.prography.yakgwa.domain.user.entity.AuthType;
@@ -35,9 +36,9 @@ public class AuthService {
 
     @Transactional
     public LoginResponseDto login(LoginRequestDto requestDto) {
-        AuthType authType = requestDto.getLoginType();
         User authUser;
-        authUser = getUserByLoginType(requestDto, authType);
+        authUser = getUserByLoginType(requestDto);
+
         User user = userJpaRepository.findByAuthIdAndAndAuthType(authUser.getAuthId(), requestDto.getLoginType())
                 .orElseGet(() -> userJpaRepository.save(authUser));
         TokenSet tokenSet = tokenProvider.createTokenSet(String.valueOf(user.getId()),user.getName() ,String.valueOf(requestDto.getLoginType()));
@@ -60,15 +61,18 @@ public class AuthService {
         return duration;
     }
 
-    private User getUserByLoginType(LoginRequestDto requestDto, AuthType authType) {
-        User authUser;
-        if (authType.equals(KAKAO)) {
-            authUser = kakaoClient.getUserData(requestDto.getToken(), authType.getServerUri());
-        } else {
-            authUser = null;
-            // user = appleAuthClient.getUserData(requestDto.getAuthToken());
+    private User getUserByLoginType(LoginRequestDto requestDto) {
+        if (requestDto.getLoginType().equals(KAKAO)) {
+            KakaoUserResponseDto userData = kakaoClient.getUserData(requestDto.getToken(), requestDto.getLoginType().getServerUri());
+            return User.builder()
+                    .authId(String.valueOf(userData.getId()))
+                    .authType(KAKAO)
+                    .name(userData.getProperties().getNickname())
+                    .isNew(true)
+                    .fcmToken(requestDto.getFcmToken())
+                    .build();
         }
-        return authUser;
+        throw new RuntimeException("지원하지 않는 로그인 타입입니다");
     }
 
     public ReissueTokenSetResponseDto reissue(String refreshToken) {

@@ -15,4 +15,7 @@ import lombok.NoArgsConstructor;
 public class LoginRequest {
     @Schema(description = "사용자가 로그인을 진행하는 플랫폼명")
     private AuthType loginType;
+
+    @Schema(description = "fcm토큰")
+    private String fcmToken;
 }
