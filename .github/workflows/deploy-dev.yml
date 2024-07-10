@@ -70,8 +70,10 @@ jobs:
             sudo docker rm -f yakgwa-dev
             sudo docker pull redis
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
+            docker run -d -p 6379:6379 --network yakgwa-network --name redis redis
             docker run -d -p 8081:8081 --network yakgwa-network --name yakgwa-dev ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
             docker image prune -f
+
 
   current-time:
     needs: build
