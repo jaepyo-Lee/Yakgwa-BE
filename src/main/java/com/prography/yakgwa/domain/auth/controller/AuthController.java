@@ -27,6 +27,7 @@ public class AuthController implements AuthApi {
         return new SuccessResponse(authService.login(LoginRequestDto.builder()
                 .loginType(loginRequest.getLoginType())
                 .token(token)
+                        .fcmToken(loginRequest.getFcmToken())
                 .build()));
     }
 
