@@ -25,7 +25,7 @@ application-prod.yml
 application-test.yml
 /src/main/generated/
 /src/main/resources/data.sql
-/src/main/resources/firebase/firebase-account-key.json
+/src/main/resources/firebase/firebase-key.json
 
 ### IntelliJ IDEA ###
 .idea
