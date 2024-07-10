@@ -1,8 +1,10 @@
 package com.prography.yakgwa.domain.meet.controller.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
 import com.prography.yakgwa.domain.meet.service.req.MeetCreateRequestDto;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,6 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @Getter
 public class CreateMeetRequest {
+    @Schema(description = "모임정보")
     private MeetInfo meetInfo;
 
     @NoArgsConstructor
@@ -23,16 +26,24 @@ public class CreateMeetRequest {
     @Builder
     @Getter
     private static class MeetInfo {
+        @Schema(description = "모임명", example = "다음 세션 모임")
         private String meetTitle;
+        @Schema(description = "모임테마id", example = "1")
         private Long meetThemeId;
 
         //null이라면 장소투표로
+        @Schema(description = "모임장소정보<br>" +
+                "모임생성과정에서 확정되지 않고 투표로 넘길때는 null값 보내주세요")
         private PlaceInfoDto placeInfo;
 
         // 해당값이 있다면 투표, null이라면 확정
+        @Schema(description = "투표 시간 범위값<br>" +
+                "만약 시간을 확정지어졌다면 해당값은 null 넣어주세요.")
         private VoteDate voteDate;
 
         // 해당값이 있다면 확정, null이면 투표
+        @Schema(description = "시간확정값<br>" +
+                "시간을 투표로 넘긴다면 해당값은 null 넣어주세요.")
         private LocalDateTime meetTime;
     }
 
@@ -42,7 +53,12 @@ public class CreateMeetRequest {
     @Builder
     @Getter
     private static class VoteDate {
+        @Schema(description = "모임 투표 시작시간범위", example = "2024-07-10")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate startVoteDate;
+
+        @Schema(description = "모임 투표 마감시간범위", example = "2024-07-10")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate endVoteDate;
     }
 
