@@ -13,6 +13,7 @@ public class NewPlaceSlotResponse {
 
     @Getter
     @Builder
+    @Schema(name = "NewPlaceSlotResponse-PlaceSlotInMeet")
     private static class PlaceSlotInMeet {
         @Schema(description = "장소명")
         private String title;

@@ -7,8 +7,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
-@Tag(name = "Theme", description = "모임 테마관련 API입니다.")
+@Tag(name = "Meet", description = "모임관련 API입니다.")
 public interface MeetThemeApi {
-    @Operation(summary = "모임생성시 선택가능한 모임테마 조회 API", description = "")
+    @Operation(summary = "모임생성시 선택가능한 모임테마 조회 API")
     SuccessResponse<List<MeetThemeResponse>> readTheme();
 }

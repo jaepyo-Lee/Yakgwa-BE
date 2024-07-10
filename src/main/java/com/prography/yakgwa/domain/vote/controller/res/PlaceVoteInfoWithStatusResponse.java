@@ -26,6 +26,7 @@ public class PlaceVoteInfoWithStatusResponse {
 
     @Getter
     @Builder
+    @Schema(name = "PlaceVoteInfoWithStatusResponse-VotePlaceInfo")
     private static class VotePlaceInfo {
         private Long placeId;
         private String title;
