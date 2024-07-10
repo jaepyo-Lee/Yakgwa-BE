@@ -10,5 +10,6 @@ import java.util.List;
         "투표 취소한 값은 안보내주셔도 됩니다!")
 @Getter
 public class VotePlaceRequest {
+    @Schema(description = "투표한 장소값 리스트")
     private List<Long> currentVotePlaceSlotIds;
 }
