@@ -4,7 +4,6 @@ import com.prography.yakgwa.domain.place.entity.Place;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
-@Schema(description = "네이버 api에서 가져온 장소정보")
 @Getter
 public class PlaceInfoDto {
     @Schema(description = "장소명", example = "스타벅스 강남역점")

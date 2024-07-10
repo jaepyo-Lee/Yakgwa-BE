@@ -25,6 +25,7 @@ public class CreateMeetRequest {
     @AllArgsConstructor
     @Builder
     @Getter
+    @Schema(name = "CreateMeetRequest-meetInfo")
     private static class MeetInfo {
         @Schema(description = "모임명", example = "다음 세션 모임")
         private String meetTitle;
@@ -52,6 +53,7 @@ public class CreateMeetRequest {
     @AllArgsConstructor
     @Builder
     @Getter
+    @Schema(name = "CreateMeetRequest-voteDate")
     private static class VoteDate {
         @Schema(description = "모임 투표 시작시간범위", example = "2024-07-10")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
