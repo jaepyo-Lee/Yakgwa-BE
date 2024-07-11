@@ -2,8 +2,14 @@ package com.prography.yakgwa.domain.place.entity.dto;
 
 import com.prography.yakgwa.domain.place.entity.Place;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class PlaceInfoDto {
     @Schema(description = "장소명", example = "스타벅스 강남역점")

@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,13 +31,18 @@ public class CreateMeetRequest {
     private static class MeetInfo {
         @Schema(description = "모임명", example = "다음 세션 모임")
         private String meetTitle;
+
         @Schema(description = "모임테마id", example = "1")
         private Long meetThemeId;
 
+        @Schema(description = "모임 장소 확정 여부",example = "true")
+        private boolean confirmPlace;
+
         //null이라면 장소투표로
         @Schema(description = "모임장소정보<br>" +
-                "모임생성과정에서 확정되지 않고 투표로 넘길때는 null값 보내주세요")
-        private PlaceInfoDto placeInfo;
+                "장소 확정시에는 1개만 넣어주세요!")
+        @Builder.Default
+        private List<PlaceInfoDto> placeInfo=new ArrayList<>();
 
         // 해당값이 있다면 투표, null이라면 확정
         @Schema(description = "투표 시간 범위값<br>" +
@@ -68,6 +75,7 @@ public class CreateMeetRequest {
         return MeetCreateRequestDto.builder()
                 .creatorId(creatorId)
                 .title(meetInfo.meetTitle)
+                .confirmPlace(meetInfo.confirmPlace)
                 .placeInfo(meetInfo.placeInfo)
                 .voteDateDto(meetInfo.voteDate != null ? VoteDateDto.builder()
                         .endVoteDate(meetInfo.voteDate.endVoteDate)

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -15,8 +16,10 @@ public class MeetCreateRequestDto {
     private String title;
     private Long meetThemeId;
 
+    private boolean confirmPlace;
+
     //null이라면 장소투표로
-    private PlaceInfoDto placeInfo;
+    private List<PlaceInfoDto> placeInfo;
 
     //해당 값이 있다면 투표,null이면 투표
     private VoteDateDto voteDateDto;
