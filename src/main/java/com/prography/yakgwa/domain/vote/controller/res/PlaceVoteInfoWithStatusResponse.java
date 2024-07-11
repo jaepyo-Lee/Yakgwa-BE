@@ -4,20 +4,29 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.place.entity.Place;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.util.List;
 
+@Schema(description = "사용자가 투표한 장소목록<br>" +
+        "모임의 상태에 따라 placeInfos의 경우 안나올수 있음<br>" +
+        "meetStatus : CONFIRM , placeInfo : 확정된 장소의 정보<br>" +
+        "meetStatus : VOTE , placeInfo : 사용자의 투표정보<br>" +
+        "meetStatus : BEFORE_VOTE , placeInfo : 아무값 안나감")
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PlaceVoteInfoWithStatusReponse {
+public class PlaceVoteInfoWithStatusResponse {
+    @Schema(description = "투표 상태")
     private MeetStatus meetStatus;
+    @Schema(description = "상황에 따른 장소 정보")
     private List<VotePlaceInfo> placeInfos;
 
     @Getter
     @Builder
+    @Schema(name = "PlaceVoteInfoWithStatusResponse-VotePlaceInfo")
     private static class VotePlaceInfo {
         private Long placeId;
         private String title;
@@ -26,8 +35,8 @@ public class PlaceVoteInfoWithStatusReponse {
         private String mapy;
     }
 
-    public static PlaceVoteInfoWithStatusReponse of(MeetStatus meetStatus, List<Place> places) {
-        return PlaceVoteInfoWithStatusReponse.builder()
+    public static PlaceVoteInfoWithStatusResponse of(MeetStatus meetStatus, List<Place> places) {
+        return PlaceVoteInfoWithStatusResponse.builder()
                 .meetStatus(meetStatus)
                 .placeInfos(places.isEmpty() ? null : places.stream()
                         .map(place -> VotePlaceInfo.builder()

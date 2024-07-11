@@ -3,6 +3,8 @@ package com.prography.yakgwa.domain.meet.controller.res;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +24,7 @@ public class MeetInfoWithParticipantResponse {
     @AllArgsConstructor
     @Builder
     @Getter
+    @Schema(name = "MeetInfoWithParticipantResponse-meetInfo")
     private static class MeetInfo {
         private String ThemeName;
         private String meetTitle;
@@ -31,6 +34,7 @@ public class MeetInfoWithParticipantResponse {
     @AllArgsConstructor
     @Builder
     @Getter
+    @Schema(name = "MeetInfoWithParticipantResponse-participantInfo")
     private static class ParticipantInfo {
         private MeetRole meetRole;
         private String imageUrl;

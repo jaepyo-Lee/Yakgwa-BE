@@ -4,6 +4,7 @@ import com.prography.yakgwa.domain.meet.controller.res.MeetThemeResponse;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.service.MeetThemeService;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("${app.api.base}")
 @RestController
-public class MeetThemeController {
+public class MeetThemeController implements MeetThemeApi {
     private final MeetThemeService meetThemeService;
 
     @GetMapping("/theme")
