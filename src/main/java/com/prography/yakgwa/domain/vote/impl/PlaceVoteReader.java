@@ -12,11 +12,11 @@ import java.util.List;
 public class PlaceVoteReader {
     private final PlaceVoteJpaRepository placeVoteJpaRepository;
 
-    public boolean existsByUserId(Long userId) {
-        return placeVoteJpaRepository.existsByUserId(userId);
+    public boolean existsByUserIdAndMeetId(Long userId,Long meetId) {
+        return placeVoteJpaRepository.existsByUserIdAndMeetId(userId,meetId);
     }
 
-    public List<PlaceVote>findAllPlaceVoteOfUserInMeet(Long userId,List<Long>placeVoteIds){
-        return placeVoteJpaRepository.findAllByPlaceSlotOfUser(userId, placeVoteIds);
+    public List<PlaceVote>findAllPlaceVoteOfUserInMeet(Long userId,Long meetId){
+        return placeVoteJpaRepository.findAllByUserIdAndMeetId(userId, meetId);
     }
 }

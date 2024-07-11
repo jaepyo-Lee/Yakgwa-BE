@@ -12,8 +12,8 @@ import java.util.List;
 public class PlaceSlotReader {
     private final PlaceSlotJpaRepository repository;
 
-    public List<PlaceSlot> readByMeetId(Long meetId) {
-        return repository.findByMeetId(meetId);
+    public List<PlaceSlot> readAllByMeetId(Long meetId) {
+        return repository.findAllByMeetId(meetId);
     }
 
     public PlaceSlot readConfirmOrNullByMeetId(Long meetId) {

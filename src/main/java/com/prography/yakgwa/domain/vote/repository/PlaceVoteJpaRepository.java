@@ -15,12 +15,13 @@ import java.util.List;
 public interface PlaceVoteJpaRepository extends JpaRepository<PlaceVote, Long> {
     List<PlaceVote> findAllByUserId(Long userId);
 
-    boolean existsByUserId(@Param("userId") Long userId);
+    @Query("select count(*)>0 from PLACE_VOTE_TABLE pv where pv.user.id=:userId and pv.placeSlot.meet.id=:meetId")
+    boolean existsByUserIdAndMeetId(@Param("userId") Long userId, @Param("meetId") Long meetId);
 
-    @Query("SELECT PV FROM PLACE_VOTE_TABLE PV WHERE PV.user.id = :userId AND PV.placeSlot.id IN :placeSlotIds")
-    List<PlaceVote> findAllByPlaceSlotOfUser(@Param("userId") Long userId, @Param("placeSlotIds") List<Long> placeSlotIds);
+    @Query("SELECT PV FROM PLACE_VOTE_TABLE PV WHERE PV.user.id = :userId AND PV.placeSlot.meet.id=:meetId")
+    List<PlaceVote> findAllByUserIdAndMeetId(@Param("userId") Long userId, @Param("meetId") Long meetId);
 
     @Modifying
-    @Query("DELETE FROM PLACE_VOTE_TABLE PV WHERE PV.user = :user AND PV.placeSlot IN :placeSlots")
-    void deleteAllByUserIdAndPlaceSlotIdIn(@Param("user") User user, @Param("placeSlots") List<PlaceSlot> placeSlotIds);
+    @Query("DELETE FROM PLACE_VOTE_TABLE PV WHERE PV.user = :user AND PV.placeSlot.meet.id=:meetId")
+    void deleteAllByUserIdAndMeetId(@Param("user") User user, @Param("meetId") Long meetId);
 }
