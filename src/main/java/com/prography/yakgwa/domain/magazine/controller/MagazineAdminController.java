@@ -6,7 +6,10 @@ import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -14,7 +17,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${app.api.admin}")
-public class MagazineController {
+public class MagazineAdminController {
     private final MagazineService magazineService;
     @PostMapping("/magazines")
     public SuccessResponse create(@RequestPart CreateMagazineRequest createMagazineRequest,
