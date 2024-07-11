@@ -49,7 +49,7 @@ public class MeetService {
         User user = userReader.read(requestDto.getCreatorId());
         Meet meet = meetWriter.write(MeetWriteDto.of(requestDto));
         participantWriter.registLeader(meet, user);
-        placeVoteWriter.confirmAndWrite(meet,requestDto.getPlaceInfo());
+        placeVoteWriter.confirmAndWrite(meet,requestDto.isConfirmPlace(),requestDto.getPlaceInfo());
         timeVoteWriter.confirmAndWrite(meet, requestDto.getMeetTime());
         return meet;
     }

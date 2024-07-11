@@ -18,7 +18,7 @@ public class PlaceSlot extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private boolean confirm;
+    private Boolean confirm;
     @ManyToOne
     @JoinColumn(name = "meet_id")
     private Meet meet;

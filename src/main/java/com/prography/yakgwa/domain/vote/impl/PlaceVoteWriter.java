@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static java.lang.Boolean.TRUE;
-
 @ImplService
 @RequiredArgsConstructor
 public class PlaceVoteWriter {
@@ -43,20 +41,20 @@ public class PlaceVoteWriter {
         return placeVoteJpaRepository.saveAll(placeVotes);
     }
 
-    public void confirmAndWrite(Meet meet, PlaceInfoDto placeInfo) {
-        if (placeInfo == null) {
-            return;
+    public void confirmAndWrite(Meet meet, boolean isConfirmPlace, List<PlaceInfoDto> placeInfo) {
+        if (isConfirmPlace && placeInfo.size() != 1) {
+            throw new RuntimeException("확정된 장소는 1개이어야 합니다");
         }
+        List<Place> placeList = placeInfo.stream()
+                .map(placeInfoDto -> placeReader.readByMapxAndMapy(placeInfoDto.getMapx(), placeInfoDto.getMapy())
+                        .orElseGet(() -> placeWriter.write(placeInfoDto.toEntity())))
+                .toList();
 
-        Place place = placeReader.readByMapxAndMapy(placeInfo.getMapx(), placeInfo.getMapy())
-                .orElseGet(() -> placeWriter.write(placeInfo.toEntity()));
-
-        PlaceSlot placeSlot = PlaceSlot.builder().meet(meet).confirm(TRUE).place(place).build();
-        placeSlotWriter.write(placeSlot);
+        placeList.forEach(place ->
+                placeSlotWriter.write(PlaceSlot.builder().meet(meet).confirm(isConfirmPlace).place(place).build()));
     }
 
-
-    public void deleteAllVoteOfUser(User user, List<PlaceSlot> placeSlotIdsInMeet){
-        placeVoteJpaRepository.deleteAllByUserIdAndPlaceSlotIdIn(user, placeSlotIdsInMeet);
+    public void deleteAllVoteOfUser(User user, Long meetId) {
+        placeVoteJpaRepository.deleteAllByUserIdAndMeetId(user, meetId);
     }
 }

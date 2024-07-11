@@ -47,8 +47,7 @@ public class VoteService {
                     .places(List.of(placeSlot.getPlace()))
                     .build();
         } else {
-            List<PlaceSlot> placeSlots = placeSlotReader.readByMeetId(meetId);
-            List<PlaceVote> placeVoteOfUserInMeet = placeVoteReader.findAllPlaceVoteOfUserInMeet(userId, placeSlots.stream().map(PlaceSlot::getId).toList());
+            List<PlaceVote> placeVoteOfUserInMeet = placeVoteReader.findAllPlaceVoteOfUserInMeet(userId, meetId);
             if (!placeVoteOfUserInMeet.isEmpty()) { //사용자가 투표했을때
                 return PlaceInfosByMeetStatus.builder()
                         .meetStatus(MeetStatus.VOTE)
@@ -101,9 +100,8 @@ public class VoteService {
         if (placeSlotReader.existConfirm(meetId)) {
             throw new RuntimeException("이미 장소가 확정된 투표이기에 투표가 불가합니다.");
         }
-        List<PlaceSlot> allPlaceSlotsInMeet = placeSlotReader.readByMeetId(meetId);
         User user = userReader.read(userId);
-        placeVoteWriter.deleteAllVoteOfUser(user, allPlaceSlotsInMeet);
+        placeVoteWriter.deleteAllVoteOfUser(user, meetId);
 
         List<PlaceSlot> choosePlaceSlot = placeSlotReader.findAllByIds(placeSlotIds);
         return placeVoteWriter.writeAll(user, choosePlaceSlot);
