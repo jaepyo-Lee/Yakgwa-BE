@@ -26,7 +26,7 @@ public class PlaceSlotService {
     private final MeetReader meetReader;
 
     public PlaceSlot appendSlotInMeet(Long meetId, PlaceInfoDto placeInfo) {
-        List<PlaceSlot> placeSlots = placeSlotReader.readByMeetId(meetId);
+        List<PlaceSlot> placeSlots = placeSlotReader.readAllByMeetId(meetId);
         boolean isExistSamePlaceSlot = placeSlots.stream()
                 .noneMatch(placeSlot -> placeSlot.getPlace().getMapx().equals(placeInfo.getMapx()) &&
                         placeSlot.getPlace().getMapy().equals(placeInfo.getMapy()) &&

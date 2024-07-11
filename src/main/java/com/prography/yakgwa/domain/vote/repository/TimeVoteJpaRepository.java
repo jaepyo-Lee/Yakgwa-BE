@@ -9,13 +9,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
 public interface TimeVoteJpaRepository extends JpaRepository<TimeVote, Long> {
-    boolean existsByUserId(Long userId);
+
+    @Query("select count(*)>0 from TIME_VOTE_TABLE tv where tv.user.id=:userId and tv.timeSlot.meet.id=:meetId")
+    boolean existsByUserIdInMeet(@Param("userId") Long userId, @Param("meetId") Long meetId);
 
     @Query("select count(*)>0 from TIMESLOT_TABLE as ts where ts.confirm=true and ts.meet.id=:meetId")
     boolean existsByMeetId(@Param("meetId") Long meetId);

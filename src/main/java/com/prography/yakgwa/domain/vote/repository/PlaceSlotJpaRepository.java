@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface PlaceSlotJpaRepository extends JpaRepository<PlaceSlot, Long> {
-    List<PlaceSlot> findByMeetId(@Param("meetId") Long meetId);
+    List<PlaceSlot> findAllByMeetId(@Param("meetId") Long meetId);
 
     @Query("SELECT PS FROM PLACESLOT_TABLE PS WHERE PS.meet.id = :meetId AND PS.confirm = true")
     Optional<PlaceSlot> findConfirmByMeetId(@Param("meetId") Long meetId);
