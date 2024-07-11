@@ -14,4 +14,8 @@ public class PlaceReader {
     public Optional<Place> readByMapxAndMapy(String mapx, String mapy){
         return placeJpaRepository.findByMapxAndMapy(mapx, mapy);
     }
+    public Place read(Long placeId){
+        return placeJpaRepository.findById(placeId)
+                .orElseThrow(()->new RuntimeException("장소를 찾을수 없습니다."));
+    }
 }

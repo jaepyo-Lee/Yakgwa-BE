@@ -39,10 +39,6 @@ public class TokenProvider {
         this.redisRepository = redisRepository;
     }
 
-    /**
-     * todo
-     * 테스트코드 짜기
-     */
     public TokenSet createTokenSet(String userId, String username, String loginType) {
         String accessJwt = createJwt(userId, username, ACCESS_TOKEN_VALIDATiON_SECOND, loginType);
         String refreshJwt = createJwt(userId, username, REFRESH_TOKEN_VALIDATiON_SECOND, loginType);
