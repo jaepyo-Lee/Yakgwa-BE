@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -34,6 +35,7 @@ class MeetReaderTest {
         meetThemeJpaRepository.deleteAll();
     }
 
+    @Transactional
     @Test
     void 모임조회Test() {
         // given
@@ -57,7 +59,6 @@ class MeetReaderTest {
                 () -> assertEquals(saveMeet.getPeriod().getStartDate(), compareMeet.getPeriod().getStartDate()),
                 () -> assertEquals(saveMeet.getPeriod().getEndDate(), compareMeet.getPeriod().getEndDate()),
                 () -> assertEquals(saveMeet.getMeetTheme().getName(), compareMeet.getMeetTheme().getName()));
-
     }
 
     @Test
