@@ -17,6 +17,11 @@ public class TimeSlotReader {
         return repository.findByMeetId(meetId);
     }
 
+    /**
+     * Work) 테스트코드 작성
+     * Write-Date) 2024-07-12
+     * Finish-Date) 2024-07-12
+     */
     public TimeSlot readConfirmOrNullByMeetId(Long meetId) {
         return repository.findConfirmByMeetId(meetId)
                 .orElse(null);
@@ -25,11 +30,6 @@ public class TimeSlotReader {
     public boolean existConfirm(Long meetId) {
         return repository.existsByMeetId(meetId);
     }
-
-    public List<TimeSlot> findAllByIds(List<Long> timeSlotIds) {
-        return repository.findAllByIdIsIn(timeSlotIds);
-    }
-
 
     public List<TimeSlot> findAllByMeetIdAndTimes(Long meetId, List<LocalDateTime> times) {
         return repository.findAllByMeetIdAndTimes(meetId, times);

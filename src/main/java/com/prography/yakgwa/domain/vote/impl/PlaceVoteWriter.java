@@ -22,16 +22,11 @@ public class PlaceVoteWriter {
     private final PlaceReader placeReader;
     private final PlaceSlotWriter placeSlotWriter;
 
-
-    public PlaceVote write(User user, PlaceSlot placeSlot) {
-        PlaceVote placeVote = PlaceVote.builder()
-                .placeSlot(placeSlot)
-                .user(user)
-                .build();
-
-        return placeVoteJpaRepository.save(placeVote);
-    }
-
+    /**
+     * Work) 테스트코드
+     * Write-Date) 2024-07-12
+     * Finish-Date) 2024-07-12
+     */
     public List<PlaceVote> writeAll(User user, List<PlaceSlot> placeSlots) {
         List<PlaceVote> placeVotes = placeSlots.stream().map(placeSlot -> PlaceVote.builder()
                         .placeSlot(placeSlot)
@@ -54,6 +49,12 @@ public class PlaceVoteWriter {
                 placeSlotWriter.write(PlaceSlot.builder().meet(meet).confirm(isConfirmPlace).place(place).build()));
     }
 
+    /**
+     * Work) 테스트코드
+     * Write-Date) 2024-07-12
+     * Finish-Date) 2024-07-12
+     * Memo) 다른로직 없어 레포지토리 테스트로 대체
+     */
     public void deleteAllVoteOfUser(User user, Long meetId) {
         placeVoteJpaRepository.deleteAllByUserIdAndMeetId(user, meetId);
     }

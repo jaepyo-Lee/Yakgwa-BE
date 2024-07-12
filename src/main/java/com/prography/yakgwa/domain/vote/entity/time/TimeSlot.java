@@ -19,7 +19,7 @@ public class TimeSlot {
     private LocalDateTime time;
     private boolean confirm;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meet_id")
     private Meet meet;
 

@@ -14,10 +14,21 @@ import java.util.List;
 public class TimeSlotWriter {
     private final TimeSlotJpaRepository timeSlotJpaRepository;
 
+    /**
+     * Work) 테스트코드
+     * Write-Date) 2024-07-12
+     * Finish-Date) 2024-07-12
+     * Memo) 다른로직 없어 생략
+     */
     public TimeSlot write(final TimeSlot timeSlot) {
         return timeSlotJpaRepository.save(timeSlot);
     }
 
+    /**
+     * Work) 테스트코드
+     * Write-Date) 2024-07-12
+     * Finish-Date) 2024-07-12
+     */
     public List<TimeSlot> writeAll(Meet meet, List<LocalDateTime> times) {
         List<TimeSlot> newTimeSlots = times.stream()
                 .map(time -> TimeSlot.builder()
