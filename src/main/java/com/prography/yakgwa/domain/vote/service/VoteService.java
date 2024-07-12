@@ -15,6 +15,9 @@ import com.prography.yakgwa.domain.vote.impl.*;
 import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
 import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
+import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.ParticipantConfirmException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,7 +99,7 @@ public class VoteService {
      */
     public List<PlaceVote> votePlace(Long userId, Long meetId, List<Long> placeSlotIds) {
         if (placeSlotReader.existConfirm(meetId)) {
-            throw new RuntimeException("이미 장소가 확정된 투표이기에 투표가 불가합니다.");
+            throw new AlreadyPlaceConfirmVoteException();
         }
         User user = userReader.read(userId);
         placeVoteWriter.deleteAllVoteOfUser(user, meetId);
@@ -113,7 +116,7 @@ public class VoteService {
      */
     public List<TimeVote> voteTime(Long userId, Long meetId, EnableTimeRequestDto requestDto) {
         if (timeSlotReader.existConfirm(meetId)) {
-            throw new RuntimeException("이미 시간이 확정된 투표이기에 투표가 불가합니다.");
+            throw new AlreadyTimeConfirmVoteException();
         }
         Meet meet = meetReader.read(meetId);
         List<TimeSlot> allTimeSlotsInMeet = timeSlotReader.readByMeetId(meetId);
@@ -135,7 +138,7 @@ public class VoteService {
     public void confirmPlace(Long userId, Long meetId, Long confirmPlaceSlotId) {
         Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
         if (!participant.isLeader()) {
-            throw new RuntimeException("Leader만 확정지을수 있습니다.");
+            throw new ParticipantConfirmException();
         }
         PlaceSlot placeSlot = placeSlotReader.read(confirmPlaceSlotId);
         placeSlot.confirm();
@@ -144,7 +147,7 @@ public class VoteService {
     public void confirmTime(Long userId, Long meetId, Long confirmTimeSlotId) {
         Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
         if (!participant.isLeader()) {
-            throw new RuntimeException("Leader만 확정지을수 있습니다.");
+            throw new ParticipantConfirmException();
         }
         TimeSlot timeSlot = timeSlotReader.read(confirmTimeSlotId);
         timeSlot.confirm();

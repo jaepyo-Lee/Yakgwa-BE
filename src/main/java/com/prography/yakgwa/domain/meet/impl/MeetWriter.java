@@ -9,6 +9,7 @@ import com.prography.yakgwa.domain.vote.impl.PlaceVoteWriter;
 import com.prography.yakgwa.domain.vote.impl.TimeVoteWriter;
 import com.prography.yakgwa.domain.vote.impl.dto.ConfirmPlaceDto;
 import com.prography.yakgwa.domain.vote.impl.dto.ConfirmTimeDto;
+import com.prography.yakgwa.global.format.exception.meet.MeetTimeParamDuplicationException;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +24,7 @@ public class MeetWriter {
     public Meet write(MeetWriteDto writeDto, ConfirmPlaceDto confirmPlaceDto, ConfirmTimeDto confirmTimeDto) {
         if ((writeDto.getMeetTime() == null && writeDto.getPeriod() == null) ||
                 (writeDto.getMeetTime() != null && writeDto.getPeriod() != null)) {
-            throw new RuntimeException("시간은 투표 또는 확정중 한가지만 가능합니다!");
+            throw new MeetTimeParamDuplicationException();
         }
         MeetTheme meetTheme = meetThemeReader.read(writeDto.getMeetThemeId());
 

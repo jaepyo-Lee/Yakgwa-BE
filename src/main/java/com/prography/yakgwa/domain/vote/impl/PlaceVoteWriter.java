@@ -10,6 +10,7 @@ import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.impl.dto.ConfirmPlaceDto;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
+import com.prography.yakgwa.global.format.exception.meet.ConfirmPlaceCountException;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +43,7 @@ public class PlaceVoteWriter {
         boolean isConfirmPlace = confirmPlaceDto.isConfirmPlace();
 
         if (isConfirmPlace && placeInfo.size() != 1) {
-            throw new RuntimeException("확정된 장소는 1개이어야 합니다");
+            throw new ConfirmPlaceCountException();
         }
 
         List<Place> placeList = placeInfo.stream()

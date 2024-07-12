@@ -9,6 +9,7 @@ import com.prography.yakgwa.domain.place.impl.PlaceWriter;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.impl.PlaceSlotReader;
 import com.prography.yakgwa.domain.vote.impl.PlaceSlotWriter;
+import com.prography.yakgwa.global.format.exception.slot.AlreadyAppendPlaceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +33,7 @@ public class PlaceSlotService {
                         placeSlot.getPlace().getMapy().equals(placeInfo.getMapy()) &&
                         placeSlot.getPlace().getTitle().equals(placeInfo.getTitle()));
         if (!isExistSamePlaceSlot) {
-            throw new RuntimeException("이미 추가되어있는 후보지입니다.");
+            throw new AlreadyAppendPlaceException();
         }
         Place place = placeReader.readByMapxAndMapy(placeInfo.getMapx(), placeInfo.getMapy())
                 .orElseGet(() -> placeWriter.write(placeInfo.toEntity()));
