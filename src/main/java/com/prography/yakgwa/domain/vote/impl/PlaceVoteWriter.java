@@ -8,6 +8,7 @@ import com.prography.yakgwa.domain.place.impl.PlaceWriter;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
+import com.prography.yakgwa.domain.vote.impl.dto.ConfirmPlaceDto;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
@@ -36,10 +37,14 @@ public class PlaceVoteWriter {
         return placeVoteJpaRepository.saveAll(placeVotes);
     }
 
-    public void confirmAndWrite(Meet meet, boolean isConfirmPlace, List<PlaceInfoDto> placeInfo) {
+    public void decideConfirmAndWrite(Meet meet, ConfirmPlaceDto confirmPlaceDto) {
+        List<PlaceInfoDto> placeInfo = confirmPlaceDto.getPlaceInfo();
+        boolean isConfirmPlace = confirmPlaceDto.isConfirmPlace();
+
         if (isConfirmPlace && placeInfo.size() != 1) {
             throw new RuntimeException("확정된 장소는 1개이어야 합니다");
         }
+
         List<Place> placeList = placeInfo.stream()
                 .map(placeInfoDto -> placeReader.readByMapxAndMapy(placeInfoDto.getMapx(), placeInfoDto.getMapy())
                         .orElseGet(() -> placeWriter.write(placeInfoDto.toEntity())))

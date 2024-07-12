@@ -5,6 +5,7 @@ import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
+import com.prography.yakgwa.domain.vote.impl.dto.ConfirmTimeDto;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,12 @@ public class TimeVoteWriter {
     private final TimeVoteJpaRepository timeVoteJpaRepository;
     private final TimeSlotWriter timeSlotWriter;
 
-    public void confirmAndWrite(Meet meet, LocalDateTime meetTime) {
-        if (meetTime == null) { //해당 값이 있다면 확정,null이면 투표
+    public void confirmAndWrite(Meet meet, ConfirmTimeDto confirmTimeDto) {
+        if (confirmTimeDto.getMeetTime() == null) { //해당 값이 있다면 확정,null이면 투표
             return;
         }
         TimeSlot timeSlot = TimeSlot.builder()
-                .meet(meet).time(meetTime).confirm(Boolean.TRUE)
+                .meet(meet).time(confirmTimeDto.getMeetTime()).confirm(Boolean.TRUE)
                 .build();
         timeSlotWriter.write(timeSlot);
     }

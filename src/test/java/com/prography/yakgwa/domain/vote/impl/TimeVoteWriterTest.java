@@ -10,6 +10,7 @@ import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
+import com.prography.yakgwa.domain.vote.impl.dto.ConfirmTimeDto;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -65,10 +66,12 @@ class TimeVoteWriterTest {
 
         String formattedDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         LocalDateTime confirmTime = LocalDateTime.parse(formattedDate + "T00:00:00");
+
+        ConfirmTimeDto confirmTimeDto = ConfirmTimeDto.builder().meetTime(confirmTime).build();
         // when
         System.out.println("=====Logic Start=====");
 
-        timeVoteWriter.confirmAndWrite(saveMeet, confirmTime);
+        timeVoteWriter.confirmAndWrite(saveMeet, confirmTimeDto);
 
         System.out.println("=====Logic End=====");
         // then
@@ -90,10 +93,11 @@ class TimeVoteWriterTest {
 
         Meet saveMeet = createAndSaveMeet(1, saveTheme);
 
+        ConfirmTimeDto confirmTimeDto = ConfirmTimeDto.builder().meetTime(null).build();
         // when
         System.out.println("=====Logic Start=====");
 
-        timeVoteWriter.confirmAndWrite(saveMeet, null);
+        timeVoteWriter.confirmAndWrite(saveMeet, confirmTimeDto);
 
         System.out.println("=====Logic End=====");
         // then
