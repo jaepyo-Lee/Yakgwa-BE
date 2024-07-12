@@ -22,11 +22,11 @@ public class Participant {
     @Enumerated(EnumType.STRING)
     private MeetRole meetRole;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meet_id")
     private Meet meet;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

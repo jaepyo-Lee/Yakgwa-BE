@@ -26,7 +26,7 @@ public class Meet extends BaseTimeEntity {
     @Embedded
     private VotePeriod period;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meet_theme_id")
     private MeetTheme meetTheme;
 }

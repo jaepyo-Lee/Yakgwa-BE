@@ -67,16 +67,14 @@ public class VoteService {
     public TimeInfosByMeetStatus findTimeInfoWithMeetStatus(Long userId, Long meetId) {
         Meet meet = meetReader.read(meetId); //일단 모임 존재여부 확인용
 
-        if (timeVoteReader.existsConfirm(meetId)) { // 시간확정되었을때
+        if (timeSlotReader.existConfirm(meetId)) { // 시간확정되었을때
             TimeSlot timeSlot = timeSlotReader.readConfirmOrNullByMeetId(meetId);
             return TimeInfosByMeetStatus.builder()
                     .meetStatus(MeetStatus.CONFIRM)
                     .timeSlots(List.of(timeSlot))
                     .build();
         } else {
-            List<TimeSlot> timeSlots = timeSlotReader.readByMeetId(meetId);
-            List<TimeVote> timeVoteOfUserInMeet = timeVoteReader.findAllTimeVoteOfUserInMeet(userId, timeSlots.stream().map(TimeSlot::getId).toList());
-
+            List<TimeVote> timeVoteOfUserInMeet = timeVoteReader.findAllTimeVoteOfUserInMeet(userId, meet.getId());
             if (!timeVoteOfUserInMeet.isEmpty()) { //사용자가 투표했을때
                 return TimeInfosByMeetStatus.builder()
                         .meetStatus(MeetStatus.VOTE)
@@ -95,7 +93,7 @@ public class VoteService {
      * 1. 확정여부 확인
      * 2. 기존투표 삭제
      * 3. 새로운 투표생성
-    */
+     */
     public List<PlaceVote> votePlace(Long userId, Long meetId, List<Long> placeSlotIds) {
         if (placeSlotReader.existConfirm(meetId)) {
             throw new RuntimeException("이미 장소가 확정된 투표이기에 투표가 불가합니다.");
@@ -120,7 +118,7 @@ public class VoteService {
         Meet meet = meetReader.read(meetId);
         List<TimeSlot> allTimeSlotsInMeet = timeSlotReader.readByMeetId(meetId);
         User user = userReader.read(userId);
-        timeVoteWriter.deleteAllVoteOfUser(user, allTimeSlotsInMeet);
+        timeVoteWriter.deleteAllVoteOfUser(user, meetId);
 
         List<LocalDateTime> notExistTime = requestDto.getEnableTimes().stream()
                 .filter(time -> allTimeSlotsInMeet.stream()
@@ -136,7 +134,7 @@ public class VoteService {
 
     public void confirmPlace(Long userId, Long meetId, Long confirmPlaceSlotId) {
         Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
-        if(!participant.isLeader()){
+        if (!participant.isLeader()) {
             throw new RuntimeException("Leader만 확정지을수 있습니다.");
         }
         PlaceSlot placeSlot = placeSlotReader.read(confirmPlaceSlotId);
@@ -145,7 +143,7 @@ public class VoteService {
 
     public void confirmTime(Long userId, Long meetId, Long confirmTimeSlotId) {
         Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
-        if(!participant.isLeader()){
+        if (!participant.isLeader()) {
             throw new RuntimeException("Leader만 확정지을수 있습니다.");
         }
         TimeSlot timeSlot = timeSlotReader.read(confirmTimeSlotId);

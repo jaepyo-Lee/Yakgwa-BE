@@ -13,6 +13,7 @@ import java.util.List;
 
 @Repository
 public interface PlaceVoteJpaRepository extends JpaRepository<PlaceVote, Long> {
+
     List<PlaceVote> findAllByUserId(Long userId);
 
     @Query("select count(*)>0 from PLACE_VOTE_TABLE pv where pv.user.id=:userId and pv.placeSlot.meet.id=:meetId")

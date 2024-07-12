@@ -2,6 +2,7 @@ package com.prography.yakgwa.domain.meet.impl;
 
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ class MeetThemeReaderTest {
     @Autowired
     MeetThemeReader meetThemeReader;
 
-    @BeforeEach
+    @AfterEach
     void init() {
         meetThemeJpaRepository.deleteAll();
     }

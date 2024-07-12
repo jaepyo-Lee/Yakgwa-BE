@@ -3,6 +3,7 @@ package com.prography.yakgwa.domain.place.impl;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
 import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,7 @@ class PlaceReaderTest {
     @Autowired
     PlaceReader placeReader;
 
-    @BeforeEach
+    @AfterEach
     void init() {
         placeJpaRepository.deleteAll();
     }

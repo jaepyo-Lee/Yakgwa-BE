@@ -10,6 +10,7 @@ import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,7 @@ class ParticipantJpaRepositoryTest {
     @Autowired
     MeetThemeJpaRepository meetThemeJpaRepository;
 
-    @BeforeEach
+    @AfterEach
     void init() {
         participantJpaRepository.deleteAll();
         meetJpaRepository.deleteAll();
