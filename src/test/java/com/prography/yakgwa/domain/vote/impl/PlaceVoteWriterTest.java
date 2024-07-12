@@ -8,9 +8,14 @@ import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
+import com.prography.yakgwa.domain.user.entity.AuthType;
+import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
+import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
+import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +25,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.util.List;
 
+import static java.time.LocalDate.now;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,24 +45,20 @@ class PlaceVoteWriterTest {
     PlaceVoteWriter voteWriter;
     @Autowired
     private PlaceVoteWriter placeVoteWriter;
+    @Autowired
+    private UserJpaRepository userJpaRepository;
+    @Autowired
+    private PlaceVoteJpaRepository placeVoteJpaRepository;
 
     @AfterEach
     void init() {
+        placeVoteJpaRepository.deleteAll();
         placeSlotJpaRepository.deleteAll();
         meetJpaRepository.deleteAll();
         meetThemeJpaRepository.deleteAll();
         placeJpaRepository.deleteAll();
+        userJpaRepository.deleteAll();
     }
-
-    /*public void confirmAndWrite(Meet meet, boolean isConfirmPlace, List<PlaceInfoDto > placeInfo) {
-        java.util.List<Place> placeList = placeInfo.stream()
-                .map(placeInfoDto -> placeReader.readByMapxAndMapy(placeInfoDto.getMapx(), placeInfoDto.getMapy())
-                        .orElseGet(() -> placeWriter.write(placeInfoDto.toEntity())))
-                .toList();
-
-        placeList.forEach(place ->
-                placeSlotWriter.write(PlaceSlot.builder().meet(meet).confirm(isConfirmPlace).place(place).build()));
-    }*/
 
     @Test
     void 장소가존재하지않을때저장하고_확정되지않은장소후보_등록() {
@@ -242,5 +244,56 @@ class PlaceVoteWriterTest {
         assertThrows(RuntimeException.class, () -> placeVoteWriter.confirmAndWrite(saveMeet, true, List.of(placeInfoDto1, placeInfoDto2)));
 
         System.out.println("=====Logic End=====");
+    }
+
+    @Test
+    void 장소투표_전체저장() {
+        // given
+        User saveUser = createAndSaveUser(1L);
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = createAndSaveMeet(1, theme);
+        Place place1 = createAndSavePlace(1);
+        Place place2 = createAndSavePlace(2);
+        Place place3 = createAndSavePlace(3);
+
+        PlaceSlot placeSlot1 = createAndSave(place1, saveMeet, false);
+        PlaceSlot placeSlot2 = createAndSave(place2, saveMeet, false);
+        PlaceSlot placeSlot3 = createAndSave(place3, saveMeet, false);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        placeVoteWriter.writeAll(saveUser, List.of(placeSlot1, placeSlot2, placeSlot3));
+
+        System.out.println("=====Logic End=====");
+        // then
+        List<PlaceSlot> all = placeSlotJpaRepository.findAll();
+        assertThat(all.size()).isEqualTo(3);
+
+    }
+
+    private PlaceSlot createAndSave(Place place, Meet saveMeet, boolean confirm) {
+        return placeSlotJpaRepository.save(PlaceSlot.builder().place(place).confirm(confirm).meet(saveMeet).build());
+    }
+
+    private Place createAndSavePlace(int idx) {
+        Place place = Place.builder()
+                .mapy("" + idx).mapx("" + idx).link("link" + idx).title("title" + idx).roadAddress("roadAddress" + idx).address("address" + idx).description("description" + idx).category("category" + idx).telephone("telephone" + idx)
+                .build();
+        return placeJpaRepository.save(place);
+    }
+
+    private User createAndSaveUser(Long id) {
+        User user = User.builder()
+                .name("name" + id).imageUrl("imageUrl" + id).fcmToken("fcmtoken" + id).authId("authId" + id).authType(AuthType.KAKAO).isNew(true)
+                .build();
+        return userJpaRepository.save(user);
+    }
+
+    private Meet createAndSaveMeet(int idx, MeetTheme saveTheme) {
+        Meet meet = Meet.builder()
+                .title("title" + idx).validInviteHour(24).meetTheme(saveTheme).period(new VotePeriod(now(), now().plusDays(1L)))
+                .build();
+        return meetJpaRepository.save(meet);
     }
 }

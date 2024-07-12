@@ -7,6 +7,7 @@ import com.prography.yakgwa.domain.meet.impl.dto.MeetWriteDto;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ class MeetWriterTest {
     @Autowired
     MeetWriter meetWriter;
 
-    @BeforeEach
+    @AfterEach
     void init() {
         meetJpaRepository.deleteAll();
         meetThemeJpaRepository.deleteAll();
