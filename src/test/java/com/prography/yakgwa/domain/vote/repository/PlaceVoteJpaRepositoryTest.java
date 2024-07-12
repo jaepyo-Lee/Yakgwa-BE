@@ -21,10 +21,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -65,8 +63,8 @@ class PlaceVoteJpaRepositoryTest {
 
         MeetTheme theme = MeetTheme.builder().name("theme1").build();
         MeetTheme saveMeetTheme = meetThemeJpaRepository.save(theme);
-        Meet saveMeet1 = createAndSaveAndSaveMeet(1L, saveMeetTheme);
-        Meet saveMeet2 = createAndSaveAndSaveMeet(2L, saveMeetTheme);
+        Meet saveMeet1 = createAndSaveMeet(1L, saveMeetTheme);
+        Meet saveMeet2 = createAndSaveMeet(2L, saveMeetTheme);
 
         Place savePlace = createAndSaveAndSavePlace(1L);
 
@@ -93,8 +91,8 @@ class PlaceVoteJpaRepositoryTest {
 
         MeetTheme theme = MeetTheme.builder().name("theme1").build();
         MeetTheme saveMeetTheme = meetThemeJpaRepository.save(theme);
-        Meet saveMeet1 = createAndSaveAndSaveMeet(1L, saveMeetTheme);
-        Meet saveMeet2 = createAndSaveAndSaveMeet(2L, saveMeetTheme);
+        Meet saveMeet1 = createAndSaveMeet(1L, saveMeetTheme);
+        Meet saveMeet2 = createAndSaveMeet(2L, saveMeetTheme);
 
         Place savePlace1 = createAndSaveAndSavePlace(1L);
         Place savePlace2 = createAndSaveAndSavePlace(2L);
@@ -127,8 +125,8 @@ class PlaceVoteJpaRepositoryTest {
         MeetTheme theme = MeetTheme.builder().name("theme1").build();
         MeetTheme saveMeetTheme = meetThemeJpaRepository.save(theme);
 
-        Meet saveMeet1 = createAndSaveAndSaveMeet(1L, saveMeetTheme);
-        Meet saveMeet2 = createAndSaveAndSaveMeet(2L, saveMeetTheme);
+        Meet saveMeet1 = createAndSaveMeet(1L, saveMeetTheme);
+        Meet saveMeet2 = createAndSaveMeet(2L, saveMeetTheme);
 
         Place savePlace2 = createAndSaveAndSavePlace(1L);
 
@@ -157,8 +155,8 @@ class PlaceVoteJpaRepositoryTest {
 
         MeetTheme theme = MeetTheme.builder().name("theme1").build();
         MeetTheme saveMeetTheme = meetThemeJpaRepository.save(theme);
-        Meet saveMeet1 = createAndSaveAndSaveMeet(1L, saveMeetTheme);
-        Meet saveMeet2 = createAndSaveAndSaveMeet(2L, saveMeetTheme);
+        Meet saveMeet1 = createAndSaveMeet(1L, saveMeetTheme);
+        Meet saveMeet2 = createAndSaveMeet(2L, saveMeetTheme);
 
         Place savePlace1 = createAndSaveAndSavePlace(1L);
         Place savePlace2 = createAndSaveAndSavePlace(2L);
@@ -190,8 +188,8 @@ class PlaceVoteJpaRepositoryTest {
 
         MeetTheme theme = MeetTheme.builder().name("theme1").build();
         MeetTheme saveMeetTheme = meetThemeJpaRepository.save(theme);
-        Meet saveMeet1 = createAndSaveAndSaveMeet(1L, saveMeetTheme);
-        Meet saveMeet2 = createAndSaveAndSaveMeet(2L, saveMeetTheme);
+        Meet saveMeet1 = createAndSaveMeet(1L, saveMeetTheme);
+        Meet saveMeet2 = createAndSaveMeet(2L, saveMeetTheme);
 
         Place savePlace1 = createAndSaveAndSavePlace(1L);
         Place savePlace2 = createAndSaveAndSavePlace(2L);
@@ -226,8 +224,8 @@ class PlaceVoteJpaRepositoryTest {
 
         MeetTheme theme = MeetTheme.builder().name("theme1").build();
         MeetTheme saveMeetTheme = meetThemeJpaRepository.save(theme);
-        Meet saveMeet1 = createAndSaveAndSaveMeet(1L, saveMeetTheme);
-        Meet saveMeet2 = createAndSaveAndSaveMeet(2L, saveMeetTheme);
+        Meet saveMeet1 = createAndSaveMeet(1L, saveMeetTheme);
+        Meet saveMeet2 = createAndSaveMeet(2L, saveMeetTheme);
 
         Place savePlace1 = createAndSaveAndSavePlace(1L);
         Place savePlace2 = createAndSaveAndSavePlace(2L);
@@ -283,7 +281,7 @@ class PlaceVoteJpaRepositoryTest {
                 .build());
     }
 
-    private Meet createAndSaveAndSaveMeet(Long id, MeetTheme saveMeetTheme) {
+    private Meet createAndSaveMeet(Long id, MeetTheme saveMeetTheme) {
         Meet meet = Meet.builder()
                 .title("title" + id).validInviteHour(24).period(new VotePeriod(LocalDate.now(), LocalDate.now().plusDays(1L))).meetTheme(saveMeetTheme)
                 .build();
