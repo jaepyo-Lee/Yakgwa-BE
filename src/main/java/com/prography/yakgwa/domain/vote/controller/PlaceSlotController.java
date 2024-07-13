@@ -6,6 +6,7 @@ import com.prography.yakgwa.domain.vote.controller.res.NewPlaceSlotResponse;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.service.PlaceSlotService;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class PlaceSlotController implements PlaceSlotApi{
 
     @PostMapping("/meets/{meetId}/placeslots")
     public SuccessResponse<NewPlaceSlotResponse> appendPlaceSlotOfMeet(@PathVariable("meetId") Long meetId,
-                                                                       @RequestBody PlaceSlotAppendRequest placeSlotAppendRequest) {
+                                                                       @RequestBody @Valid PlaceSlotAppendRequest placeSlotAppendRequest) {
         PlaceSlot placeSlot = placeSlotService.appendSlotInMeet(meetId, placeSlotAppendRequest.getPlaceInfo());
         Place place = placeSlot.getPlace();
         return new SuccessResponse<>(NewPlaceSlotResponse.of(place));

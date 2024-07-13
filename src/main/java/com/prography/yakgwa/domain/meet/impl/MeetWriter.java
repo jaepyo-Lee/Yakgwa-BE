@@ -37,6 +37,7 @@ public class MeetWriter {
         }
 
         Meet meet = Meet.builder()
+                .description(writeDto.getDescription())
                 .title(writeDto.getTitle())
                 .period(votePeriod)
                 .meetTheme(meetTheme)
