@@ -1,7 +1,6 @@
 package com.prography.yakgwa.domain.vote.service;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.impl.MeetReader;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
 import com.prography.yakgwa.domain.participant.entity.Participant;
@@ -57,7 +56,7 @@ public class VoteService {
         Meet meet = meetReader.read(meetId);
         Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
 
-        boolean isConfirm = meetStatusJudger.findMostVotedPlaceSlots(meet);
+        boolean isConfirm = meetStatusJudger.verifyConfirmAndConfirmPlacePossible(meet);
 
         if (isConfirm) { //장소확정되었을때
             PlaceSlot placeSlot = placeSlotReader.readConfirmOrNullByMeetId(meetId);
@@ -110,31 +109,60 @@ public class VoteService {
     }
 
     /**
-     * Todo
      * Work) 테스트코드
      * Write-Date) 2024-07-13
      * Finish-Date)
      */
     public TimeInfosByMeetStatus findTimeInfoWithMeetStatus(Long userId, Long meetId) {
         Meet meet = meetReader.read(meetId); //일단 모임 존재여부 확인용
-        boolean isConfirm = meetStatusJudger.findMostVotedTimeSlots(meet);
+        Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
+        boolean isConfirm = meetStatusJudger.verifyConfirmAndConfirmTimePossible(meet);
+
         if (isConfirm) { // 시간확정되었을때
             TimeSlot timeSlot = timeSlotReader.readConfirmOrNullByMeetId(meetId);
             return TimeInfosByMeetStatus.builder()
-                    .meetStatus(MeetStatus.CONFIRM)
+                    .voteStatus(VoteStatus.CONFIRM)
                     .timeSlots(List.of(timeSlot))
                     .build();
         } else {
+            if (meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
+                if (participant.getMeetRole().equals(MeetRole.LEADER)) {
+                    List<TimeVote> allInMeet = timeVoteReader.readAllInMeet(meet.getId());
+                    // 맵으로 후보지 세기
+                    Map<TimeSlot, Long> timeSlotVoteCounts = allInMeet.stream()
+                            .collect(Collectors.groupingBy(TimeVote::getTimeSlot, Collectors.counting()));
+
+                    // 투표 최대값
+                    long maxVoteCount = timeSlotVoteCounts.values().stream()
+                            .max(Long::compare)
+                            .orElse(0L);
+
+                    // 최대값을 가진것으로 확인
+                    List<TimeSlot> collect = timeSlotVoteCounts.entrySet().stream()
+                            .filter(entry -> entry.getValue() == maxVoteCount)
+                            .map(Map.Entry::getKey)
+                            .collect(Collectors.toList());
+
+                    return TimeInfosByMeetStatus.builder()
+                            .voteStatus(VoteStatus.BEFORE_CONFIRM)
+                            .timeSlots(collect)
+                            .build();
+                }
+            }
             List<TimeVote> timeVoteOfUserInMeet = timeVoteReader.findAllTimeVoteOfUserInMeet(userId, meet.getId());
             if (!timeVoteOfUserInMeet.isEmpty()) { //사용자가 투표했을때
                 return TimeInfosByMeetStatus.builder()
-                        .meetStatus(MeetStatus.VOTE)
-                        .timeSlots(timeVoteOfUserInMeet.stream().map(TimeVote::getTimeSlot).toList())
+                        .voteStatus(VoteStatus.VOTE)
+                        .timeSlots(timeVoteOfUserInMeet.stream()
+                                .map(TimeVote::getTimeSlot)
+                                .toList())
                         .build();
             } else { //사용자가 투표 안했을때
                 return TimeInfosByMeetStatus.builder()
-                        .meetStatus(MeetStatus.BEFORE_VOTE)
-                        .timeSlots(timeVoteOfUserInMeet.stream().map(TimeVote::getTimeSlot).toList())
+                        .voteStatus(VoteStatus.BEFORE_VOTE)
+                        .timeSlots(timeVoteOfUserInMeet.stream()
+                                .map(TimeVote::getTimeSlot)
+                                .toList())
                         .build();
             }
         }

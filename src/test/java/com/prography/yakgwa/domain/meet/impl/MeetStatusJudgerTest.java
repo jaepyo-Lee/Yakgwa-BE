@@ -58,10 +58,10 @@ class MeetStatusJudgerTest {
 
     @AfterEach
     void init(){
-        placeSlotJpaRepository.deleteAll();
         timeVoteJpaRepository.deleteAll();
         timeSlotJpaRepository.deleteAll();
         placeVoteJpaRepository.deleteAll();
+        placeSlotJpaRepository.deleteAll();
         placeJpaRepository.deleteAll();
         meetJpaRepository.deleteAll();
         meetThemeJpaRepository.deleteAll();
@@ -70,10 +70,10 @@ class MeetStatusJudgerTest {
 
     @BeforeEach
     void initial(){
-        placeSlotJpaRepository.deleteAll();
         timeVoteJpaRepository.deleteAll();
         timeSlotJpaRepository.deleteAll();
         placeVoteJpaRepository.deleteAll();
+        placeSlotJpaRepository.deleteAll();
         placeJpaRepository.deleteAll();
         meetJpaRepository.deleteAll();
         meetThemeJpaRepository.deleteAll();

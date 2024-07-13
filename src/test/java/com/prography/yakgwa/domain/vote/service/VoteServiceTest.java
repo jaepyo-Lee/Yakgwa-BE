@@ -23,6 +23,7 @@ import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
+import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -197,6 +198,7 @@ class VoteServiceTest {
 
         Place place = createAndSavePlace(1L);
         PlaceSlot savePlaceSlot = createAndSavePlaceSlot(place, saveMeet, true);
+        createAndSavePlaceSlot(place, saveMeet, false);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -210,6 +212,109 @@ class VoteServiceTest {
                 ()-> assertThat(placeInfoWithMeetStatus.getPlaces().size()).isEqualTo(1));
 
     }
+
+    //=============모임시간=============
+
+    @Test
+    void 약과원_투표안했는데모임시간확정되었을때_조회() {
+        // given
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = createAndSaveMeet(1L, theme, 24);
+        User saveUser = createAndSaveUser(1L);
+        Participant saveParticipant = createAndSaveParticipant(saveMeet, saveUser, MeetRole.PARTICIPANT);
+        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime time2 = LocalDateTime.now().plusDays(1L);
+        TimeSlot saveTimeSlot = createAndSaveTimeSlot(saveMeet, time, true);
+        TimeSlot saveTimeSlot2 = createAndSaveTimeSlot(saveMeet, time2, false);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        TimeInfosByMeetStatus timeInfoWithMeetStatus = voteService.findTimeInfoWithMeetStatus(saveUser.getId(), saveMeet.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertAll(()->assertThat(timeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.CONFIRM),
+                ()-> assertThat(timeInfoWithMeetStatus.getTimeSlots().size()).isEqualTo(1));
+    }
+
+    @Test
+    void 약과원_투표했는데모임시간확정되었을때_조회() {
+        // given
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = createAndSaveMeet(1L, theme, 24);
+        User saveUser = createAndSaveUser(1L);
+        Participant saveParticipant = createAndSaveParticipant(saveMeet, saveUser, MeetRole.PARTICIPANT);
+        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime time2 = LocalDateTime.now().plusDays(1L);
+        TimeSlot saveTimeSlot = createAndSaveTimeSlot(saveMeet, time, true);
+        TimeSlot saveTimeSlot2 = createAndSaveTimeSlot(saveMeet, time2, false);
+        createAndSaveTimeVote(saveTimeSlot, saveUser);
+        createAndSaveTimeVote(saveTimeSlot2, saveUser);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        TimeInfosByMeetStatus timeInfoWithMeetStatus = voteService.findTimeInfoWithMeetStatus(saveUser.getId(), saveMeet.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertAll(()->assertThat(timeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.CONFIRM),
+                ()-> assertThat(timeInfoWithMeetStatus.getTimeSlots().size()).isEqualTo(1));
+    }
+
+    @Test
+    void 약과원_모임시간이지나지않았을때_확정안되었을때_투표안했을떄_조회() {
+        // given
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = createAndSaveMeet(1L, theme, 24);
+        User saveUser = createAndSaveUser(1L);
+        Participant saveParticipant = createAndSaveParticipant(saveMeet, saveUser, MeetRole.PARTICIPANT);
+        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime time2 = LocalDateTime.now().plusDays(1L);
+        TimeSlot saveTimeSlot = createAndSaveTimeSlot(saveMeet, time, false);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        TimeInfosByMeetStatus timeInfoWithMeetStatus = voteService.findTimeInfoWithMeetStatus(saveUser.getId(), saveMeet.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertAll(()->assertThat(timeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.BEFORE_VOTE),
+                ()-> assertThat(timeInfoWithMeetStatus.getTimeSlots().size()).isEqualTo(0));
+    }
+
+    @Test
+    void 약과원_모임시간이지나지않았을때_확정안되었을때_투표했을떄_조회() {
+        // given
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = createAndSaveMeet(1L, theme, 24);
+        User saveUser = createAndSaveUser(1L);
+        Participant saveParticipant = createAndSaveParticipant(saveMeet, saveUser, MeetRole.PARTICIPANT);
+        LocalDateTime time = LocalDateTime.now();
+        LocalDateTime time2 = LocalDateTime.now().plusDays(1L);
+        TimeSlot saveTimeSlot = createAndSaveTimeSlot(saveMeet, time, false);
+        TimeSlot saveTimeSlot2 = createAndSaveTimeSlot(saveMeet, time.plusDays(1L), false);
+        createAndSaveTimeVote(saveTimeSlot, saveUser);
+        createAndSaveTimeVote(saveTimeSlot2, saveUser);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        TimeInfosByMeetStatus timeInfoWithMeetStatus = voteService.findTimeInfoWithMeetStatus(saveUser.getId(), saveMeet.getId());
+
+        System.out.println("=====Logic End=====");
+
+        // then
+        assertAll(()->assertThat(timeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.VOTE),
+                ()-> assertThat(timeInfoWithMeetStatus.getTimeSlots().size()).isEqualTo(2));
+    }
+
+
+
+
+
 
     private Participant createAndSaveParticipant(Meet saveMeet, User saveUser, MeetRole meetRole) {
         Participant participant = Participant.builder().meet(saveMeet).user(saveUser).meetRole(meetRole).build();

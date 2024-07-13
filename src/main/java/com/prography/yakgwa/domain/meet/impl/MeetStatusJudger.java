@@ -49,21 +49,24 @@ public class MeetStatusJudger {
 
     private MeetStatus handleExpiredVoteTime(Meet meet) {
 
-        boolean mostVotedPlaceSlots = findMostVotedPlaceSlots(meet);
+        boolean isConfirmPlace = verifyConfirmAndConfirmPlacePossible(meet);
 
-        boolean mostVotedTimeSlots = findMostVotedTimeSlots(meet);
+        boolean isConfirmTime = verifyConfirmAndConfirmTimePossible(meet);
 
-        if (!mostVotedTimeSlots || !mostVotedPlaceSlots) {
+        if (!isConfirmTime || !isConfirmPlace) {
             return MeetStatus.BEFORE_CONFIRM;
         }
         return MeetStatus.CONFIRM;
     }
 
     /**
-     * 최다 득표가 있어서 확정짓는 또는 확정을 못짓는
-     * 네이밍 쉣
+     * Todo
+     * Work) 테스트 코드
+     * Write-Date) 2024-07-13
+     * Finish-Date)
      */
-    public boolean findMostVotedPlaceSlots(Meet meet) {
+    // 최다 득표가 있어서 확정짓는 또는 확정을 못짓는
+    public boolean verifyConfirmAndConfirmPlacePossible(Meet meet) {
         List<PlaceVote> allInMeet = placeVoteReader.findAllInMeet(meet.getId());
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime validInviteTime = meet.getCreatedDate().plusHours(meet.getValidInviteHour());
@@ -79,17 +82,21 @@ public class MeetStatusJudger {
                 .filter(entry -> entry.getValue() == maxVoteCount)
                 .map(Map.Entry::getKey)
                 .toList();
-        if (validInviteTime.isBefore(now)&&placeSlots.size() <= 1) {
+        if (validInviteTime.isBefore(now) && placeSlots.size() <= 1) {
             placeSlots.forEach(PlaceSlot::confirm);
         }
         return isPlaceConfirm(meet);
     }
 
+
     /**
-     * 최다 득표가 있어서 확정짓는 또는 확정을 못짓는
-     * 네이밍 쉣
+     * Todo
+     * Work) 테스트 코드
+     * Write-Date) 2024-07-13
+     * Finish-Date)
      */
-    public boolean findMostVotedTimeSlots(Meet meet) {
+    // 최다 득표가 있어서 확정짓는 또는 확정을 못짓는
+    public boolean verifyConfirmAndConfirmTimePossible(Meet meet) {
         List<TimeVote> timeVotes = timeVoteReader.readAllInMeet(meet.getId());
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime validInviteTime = meet.getCreatedDate().plusHours(meet.getValidInviteHour());
@@ -104,11 +111,10 @@ public class MeetStatusJudger {
                 .filter(entry -> entry.getValue() == maxVoteCount)
                 .map(Map.Entry::getKey)
                 .toList();
-        if (validInviteTime.isBefore(now)&&timeSlots.size() <= 1) {
+        if (validInviteTime.isBefore(now) && timeSlots.size() <= 1) {
             timeSlots.forEach(TimeSlot::confirm);
-            return true;
         }
-        return false;
+        return isTimeConfirm(meet);
     }
 
     private MeetStatus handleBeforeVote(Meet meet, User user) {
