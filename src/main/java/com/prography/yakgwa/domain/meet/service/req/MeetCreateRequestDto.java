@@ -54,6 +54,7 @@ public class MeetCreateRequestDto {
                 .period(votePeriod)
                 .meetTime(meetTime)
                 .meetThemeId(meetThemeId)
+                .title(title)
                 .build();
     }
 
