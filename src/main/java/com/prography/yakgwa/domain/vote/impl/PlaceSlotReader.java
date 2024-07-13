@@ -2,6 +2,7 @@ package com.prography.yakgwa.domain.vote.impl;
 
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
+import com.prography.yakgwa.global.format.exception.slot.NotFoundPlaceSlotException;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 
@@ -31,6 +32,6 @@ public class PlaceSlotReader {
 
     public PlaceSlot read(Long confirmPlaceSlotId) {
         return repository.findById(confirmPlaceSlotId)
-                .orElseThrow(() -> new RuntimeException("없는 모임장소 후보지입니다."));
+                .orElseThrow(NotFoundPlaceSlotException::new);
     }
 }

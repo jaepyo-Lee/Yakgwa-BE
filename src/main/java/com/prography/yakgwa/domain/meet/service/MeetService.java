@@ -31,8 +31,6 @@ public class MeetService {
     private final MeetWriter meetWriter;
     private final UserReader userReader;
     private final ParticipantWriter participantWriter;
-    private final PlaceVoteWriter placeVoteWriter;
-    private final TimeVoteWriter timeVoteWriter;
     private final MeetReader meetReader;
     private final ParticipantReader participantReader;
     private final MeetStatusJudger meetStatusJudger;
@@ -47,10 +45,8 @@ public class MeetService {
     @Transactional
     public Meet create(MeetCreateRequestDto requestDto) {
         User user = userReader.read(requestDto.getCreatorId());
-        Meet meet = meetWriter.write(MeetWriteDto.of(requestDto));
+        Meet meet = meetWriter.write(requestDto.toMeetWriteDto(),requestDto.toConfirmPlaceDto(),requestDto.toConfirmTimeDto());
         participantWriter.registLeader(meet, user);
-        placeVoteWriter.confirmAndWrite(meet,requestDto.isConfirmPlace(),requestDto.getPlaceInfo());
-        timeVoteWriter.confirmAndWrite(meet, requestDto.getMeetTime());
         return meet;
     }
 

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class MeetWriteDto {
     private String title;
     private Long meetThemeId;
-
+    private String description;
     //해당 값이 있다면 투표,null이면 확정
     private VotePeriod period;
     //해당값이 있다면 확정,null이면 투표

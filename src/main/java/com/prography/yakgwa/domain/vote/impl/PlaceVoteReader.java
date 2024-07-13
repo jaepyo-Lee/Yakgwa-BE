@@ -19,4 +19,8 @@ public class PlaceVoteReader {
     public List<PlaceVote>findAllPlaceVoteOfUserInMeet(Long userId,Long meetId){
         return placeVoteJpaRepository.findAllByUserIdAndMeetId(userId, meetId);
     }
+
+    public List<PlaceVote>findAllInMeet(Long meetId){
+        return placeVoteJpaRepository.findAllInMeet(meetId);
+    }
 }

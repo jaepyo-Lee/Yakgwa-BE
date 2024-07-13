@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.place.entity.Place;
 
+import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +21,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlaceVoteInfoWithStatusResponse {
     @Schema(description = "투표 상태")
-    private MeetStatus meetStatus;
+    private VoteStatus meetStatus;
     @Schema(description = "상황에 따른 장소 정보")
     private List<VotePlaceInfo> placeInfos;
 
@@ -35,9 +36,9 @@ public class PlaceVoteInfoWithStatusResponse {
         private String mapy;
     }
 
-    public static PlaceVoteInfoWithStatusResponse of(MeetStatus meetStatus, List<Place> places) {
+    public static PlaceVoteInfoWithStatusResponse of(VoteStatus voteStatus, List<Place> places) {
         return PlaceVoteInfoWithStatusResponse.builder()
-                .meetStatus(meetStatus)
+                .meetStatus(voteStatus)
                 .placeInfos(places.isEmpty() ? null : places.stream()
                         .map(place -> VotePlaceInfo.builder()
                                 .placeId(place.getId())

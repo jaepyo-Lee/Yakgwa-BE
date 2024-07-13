@@ -20,7 +20,7 @@ public class Meet extends BaseTimeEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
     private String title;
-
+    private String description;
     private int validInviteHour;
 
     @Embedded

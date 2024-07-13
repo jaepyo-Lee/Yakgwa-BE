@@ -12,10 +12,9 @@ import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
-import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
+import com.prography.yakgwa.domain.vote.impl.dto.ConfirmPlaceDto;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +25,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static java.time.LocalDate.now;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -80,11 +78,11 @@ class PlaceVoteWriterTest {
         PlaceInfoDto placeInfoDto2 = PlaceInfoDto.builder()
                 .mapx("1232").mapy("3212").link("link2").address("address2").roadAddress("roadAddress2").category("category2").description("description2").title("title2").telephone("telephone2")
                 .build();
-
+        ConfirmPlaceDto confirmPlaceDto = ConfirmPlaceDto.builder().confirmPlace(false).placeInfo(List.of(placeInfoDto1, placeInfoDto2)).build();
         // when
         System.out.println("=====Logic Start=====");
 
-        placeVoteWriter.confirmAndWrite(saveMeet, false, List.of(placeInfoDto1, placeInfoDto2));
+        placeVoteWriter.decideConfirmAndWrite(saveMeet, confirmPlaceDto);
 
         System.out.println("=====Logic End=====");
         // then
@@ -96,7 +94,6 @@ class PlaceVoteWriterTest {
                         .filter(placeSlot -> placeSlot.getConfirm().equals(Boolean.FALSE))
                         .toList()
                         .size()));
-
     }
 
     @Test
@@ -117,11 +114,12 @@ class PlaceVoteWriterTest {
                 .build();
 
         placeJpaRepository.save(placeInfoDto.toEntity());
+        ConfirmPlaceDto confirmPlaceDto = ConfirmPlaceDto.builder().confirmPlace(false).placeInfo(List.of(placeInfoDto)).build();
 
         // when
         System.out.println("=====Logic Start=====");
 
-        placeVoteWriter.confirmAndWrite(saveMeet, false, List.of(placeInfoDto));
+        placeVoteWriter.decideConfirmAndWrite(saveMeet, confirmPlaceDto);
 
         System.out.println("=====Logic End=====");
         // then
@@ -152,11 +150,12 @@ class PlaceVoteWriterTest {
         PlaceInfoDto placeInfoDto1 = PlaceInfoDto.builder()
                 .mapx("321").mapy("123").link("link1").address("address1").roadAddress("roadAddress1").category("category1").description("description1").title("title1").telephone("telephone1")
                 .build();
+        ConfirmPlaceDto confirmPlaceDto = ConfirmPlaceDto.builder().confirmPlace(true).placeInfo(List.of(placeInfoDto1)).build();
 
         // when
         System.out.println("=====Logic Start=====");
 
-        placeVoteWriter.confirmAndWrite(saveMeet, true, List.of(placeInfoDto1));
+        placeVoteWriter.decideConfirmAndWrite(saveMeet, confirmPlaceDto);
 
         System.out.println("=====Logic End=====");
         // then
@@ -193,11 +192,12 @@ class PlaceVoteWriterTest {
                 .build();
 
         placeJpaRepository.save(placeInfoDto1.toEntity());
+        ConfirmPlaceDto confirmPlaceDto = ConfirmPlaceDto.builder().confirmPlace(true).placeInfo(List.of(placeInfoDto1)).build();
 
         // when
         System.out.println("=====Logic Start=====");
 
-        placeVoteWriter.confirmAndWrite(saveMeet, true, List.of(placeInfoDto1));
+        placeVoteWriter.decideConfirmAndWrite(saveMeet, confirmPlaceDto);
 
         System.out.println("=====Logic End=====");
         // then
@@ -236,12 +236,13 @@ class PlaceVoteWriterTest {
         PlaceInfoDto placeInfoDto2 = PlaceInfoDto.builder()
                 .mapx("321").mapy("123").link("link1").address("address1").roadAddress("roadAddress1").category("category1").description("description1").title("title1").telephone("telephone1")
                 .build();
+        ConfirmPlaceDto confirmPlaceDto = ConfirmPlaceDto.builder().confirmPlace(true).placeInfo(List.of(placeInfoDto1, placeInfoDto2)).build();
 
         // when
         // then
         System.out.println("=====Logic Start=====");
 
-        assertThrows(RuntimeException.class, () -> placeVoteWriter.confirmAndWrite(saveMeet, true, List.of(placeInfoDto1, placeInfoDto2)));
+        assertThrows(RuntimeException.class, () -> placeVoteWriter.decideConfirmAndWrite(saveMeet, confirmPlaceDto));
 
         System.out.println("=====Logic End=====");
     }

@@ -5,6 +5,7 @@ import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
 import com.prography.yakgwa.domain.user.entity.User;
+import com.prography.yakgwa.global.format.exception.participant.AlreadyParticipantInMeetException;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +23,7 @@ public class ParticipantWriter {
     public Participant registParticipant(Meet meet, User user) {
         boolean existUserInMeet = participantJpaRepository.existsByUserIdAndMeetId(user.getId(), meet.getId());
         if(existUserInMeet){
-            throw new RuntimeException("이미 참여중인 사용자입니다!");
+            throw new AlreadyParticipantInMeetException();
         }
         return register(meet, user, MeetRole.PARTICIPANT);
     }
