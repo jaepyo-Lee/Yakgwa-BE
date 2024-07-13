@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.vote.controller.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.util.List;
@@ -11,5 +12,6 @@ import java.util.List;
 @Getter
 public class VotePlaceRequest {
     @Schema(description = "투표한 장소값 리스트")
+    @NotNull(message = "투표하기위한 장소를 보내주세요.")
     private List<Long> currentVotePlaceSlotIds;
 }

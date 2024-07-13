@@ -19,7 +19,7 @@ import java.util.List;
 @Builder
 public class MeetCreateRequestDto {
     private Long creatorId;
-
+    private String description;
     private String title;
     private Long meetThemeId;
 
@@ -56,6 +56,7 @@ public class MeetCreateRequestDto {
                     .build();
         }
         return MeetWriteDto.builder()
+                .description(description)
                 .period(votePeriod)
                 .meetTime(meetTime)
                 .meetThemeId(meetThemeId)

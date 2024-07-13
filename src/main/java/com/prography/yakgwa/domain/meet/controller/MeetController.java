@@ -11,6 +11,7 @@ import com.prography.yakgwa.domain.meet.service.res.MeetInfoWithParticipant;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class MeetController implements MeetApi{
 
     @PostMapping("/meets")
     public SuccessResponse<CreateMeetResponse> create(@AuthenticationPrincipal CustomUserDetail user,
-                                                      @RequestBody CreateMeetRequest createMeetRequest) {
+                                                      @RequestBody @Valid CreateMeetRequest createMeetRequest) {
         Meet meet = meetService.create(createMeetRequest.toRequestDto(user.getUserId()));
         return new SuccessResponse<>(CreateMeetResponse.of(meet.getId()));
     }

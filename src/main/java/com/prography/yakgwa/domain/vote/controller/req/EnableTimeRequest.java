@@ -2,6 +2,7 @@ package com.prography.yakgwa.domain.vote.controller.req;
 
 import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -14,6 +15,7 @@ import java.util.List;
 public class EnableTimeRequest {
     @Schema(description = "가능한 시간<br>" +
             "범위가 아닌 각 시간을 리스트로 보내주세요!")
+    @NotNull(message = "참여가능한 시간을 보내주세요.")
     private List<EnableTImeVote> enableTImes;
 
     @Getter
