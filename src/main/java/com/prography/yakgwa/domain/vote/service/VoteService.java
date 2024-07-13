@@ -1,12 +1,15 @@
 package com.prography.yakgwa.domain.vote.service;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.impl.MeetReader;
+import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
 import com.prography.yakgwa.domain.participant.entity.Participant;
+import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.participant.impl.ParticipantReader;
+import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.impl.UserReader;
+import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
@@ -24,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Transactional
 @Service
@@ -39,54 +44,125 @@ public class VoteService {
     private final TimeVoteWriter timeVoteWriter;
     private final TimeSlotWriter timeSlotWriter;
     private final ParticipantReader participantReader;
+    private final MeetStatusJudger meetStatusJudger;
 
-
+    /**
+     * Work) 테스트코드
+     * Write-Date) 2024-07-13
+     * Finish-Date)
+     * 원래 BEFORE_VOTE이면 PLACE가 NULL인데 빈리스트 반환으로 변경
+     */
     public PlaceInfosByMeetStatus findPlaceInfoWithMeetStatus(Long userId, Long meetId) {
-        Meet meet = meetReader.read(meetId); //일단 모임 존재여부 확인용
-        if (placeSlotReader.existConfirm(meetId)) { //장소확정되었을때
+        Meet meet = meetReader.read(meetId);
+        Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
+
+        boolean isConfirm = meetStatusJudger.verifyConfirmAndConfirmPlacePossible(meet);
+
+        if (isConfirm) { //장소확정되었을때
             PlaceSlot placeSlot = placeSlotReader.readConfirmOrNullByMeetId(meetId);
             return PlaceInfosByMeetStatus.builder()
-                    .meetStatus(MeetStatus.CONFIRM)
+                    .voteStatus(VoteStatus.CONFIRM)
                     .places(List.of(placeSlot.getPlace()))
                     .build();
         } else {
+            if (meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
+                if (participant.getMeetRole().equals(MeetRole.LEADER)) {
+                    List<PlaceVote> allInMeet = placeVoteReader.findAllInMeet(meet.getId());
+                    // 맵으로 후보지 세기
+                    Map<PlaceSlot, Long> placeSlotVoteCounts = allInMeet.stream()
+                            .collect(Collectors.groupingBy(PlaceVote::getPlaceSlot, Collectors.counting()));
+
+                    // 투표 최대값
+                    long maxVoteCount = placeSlotVoteCounts.values().stream()
+                            .max(Long::compare)
+                            .orElse(0L);
+
+                    // 최대값을 가진것으로 확인
+                    List<Place> maxVotePlaces = placeSlotVoteCounts.entrySet().stream()
+                            .filter(entry -> entry.getValue() == maxVoteCount)
+                            .map(placeSlotLongEntry -> placeSlotLongEntry.getKey().getPlace())
+                            .collect(Collectors.toList());
+
+                    return PlaceInfosByMeetStatus.builder()
+                            .voteStatus(VoteStatus.BEFORE_CONFIRM)
+                            .places(maxVotePlaces)
+                            .build();
+                }
+            }
             List<PlaceVote> placeVoteOfUserInMeet = placeVoteReader.findAllPlaceVoteOfUserInMeet(userId, meetId);
             if (!placeVoteOfUserInMeet.isEmpty()) { //사용자가 투표했을때
                 return PlaceInfosByMeetStatus.builder()
-                        .meetStatus(MeetStatus.VOTE)
+                        .voteStatus(VoteStatus.VOTE)
                         .places(placeVoteOfUserInMeet.stream()
                                 .map(placeVote -> placeVote.getPlaceSlot().getPlace())
                                 .toList())
                         .build();
             } else { //사용자가 투표 안했을때
                 return PlaceInfosByMeetStatus.builder()
-                        .meetStatus(MeetStatus.BEFORE_VOTE)
-                        .places(null)
+                        .voteStatus(VoteStatus.BEFORE_VOTE)
+                        .places(placeVoteOfUserInMeet.stream()
+                                .map(placeVote -> placeVote.getPlaceSlot().getPlace())
+                                .toList())
                         .build();
             }
         }
     }
 
+    /**
+     * Work) 테스트코드
+     * Write-Date) 2024-07-13
+     * Finish-Date)
+     */
     public TimeInfosByMeetStatus findTimeInfoWithMeetStatus(Long userId, Long meetId) {
         Meet meet = meetReader.read(meetId); //일단 모임 존재여부 확인용
+        Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
+        boolean isConfirm = meetStatusJudger.verifyConfirmAndConfirmTimePossible(meet);
 
-        if (timeSlotReader.existConfirm(meetId)) { // 시간확정되었을때
+        if (isConfirm) { // 시간확정되었을때
             TimeSlot timeSlot = timeSlotReader.readConfirmOrNullByMeetId(meetId);
             return TimeInfosByMeetStatus.builder()
-                    .meetStatus(MeetStatus.CONFIRM)
+                    .voteStatus(VoteStatus.CONFIRM)
                     .timeSlots(List.of(timeSlot))
                     .build();
         } else {
+            if (meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
+                if (participant.getMeetRole().equals(MeetRole.LEADER)) {
+                    List<TimeVote> allInMeet = timeVoteReader.readAllInMeet(meet.getId());
+                    // 맵으로 후보지 세기
+                    Map<TimeSlot, Long> timeSlotVoteCounts = allInMeet.stream()
+                            .collect(Collectors.groupingBy(TimeVote::getTimeSlot, Collectors.counting()));
+
+                    // 투표 최대값
+                    long maxVoteCount = timeSlotVoteCounts.values().stream()
+                            .max(Long::compare)
+                            .orElse(0L);
+
+                    // 최대값을 가진것으로 확인
+                    List<TimeSlot> collect = timeSlotVoteCounts.entrySet().stream()
+                            .filter(entry -> entry.getValue() == maxVoteCount)
+                            .map(Map.Entry::getKey)
+                            .collect(Collectors.toList());
+
+                    return TimeInfosByMeetStatus.builder()
+                            .voteStatus(VoteStatus.BEFORE_CONFIRM)
+                            .timeSlots(collect)
+                            .build();
+                }
+            }
             List<TimeVote> timeVoteOfUserInMeet = timeVoteReader.findAllTimeVoteOfUserInMeet(userId, meet.getId());
             if (!timeVoteOfUserInMeet.isEmpty()) { //사용자가 투표했을때
                 return TimeInfosByMeetStatus.builder()
-                        .meetStatus(MeetStatus.VOTE)
-                        .timeSlots(timeVoteOfUserInMeet.stream().map(TimeVote::getTimeSlot).toList())
+                        .voteStatus(VoteStatus.VOTE)
+                        .timeSlots(timeVoteOfUserInMeet.stream()
+                                .map(TimeVote::getTimeSlot)
+                                .toList())
                         .build();
             } else { //사용자가 투표 안했을때
                 return TimeInfosByMeetStatus.builder()
-                        .meetStatus(MeetStatus.BEFORE_VOTE)
-                        .timeSlots(timeVoteOfUserInMeet.stream().map(TimeVote::getTimeSlot).toList())
+                        .voteStatus(VoteStatus.BEFORE_VOTE)
+                        .timeSlots(timeVoteOfUserInMeet.stream()
+                                .map(TimeVote::getTimeSlot)
+                                .toList())
                         .build();
             }
         }

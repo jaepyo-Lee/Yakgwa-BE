@@ -19,5 +19,6 @@ public interface ParticipantJpaRepository extends JpaRepository<Participant, Lon
 
     boolean existsByUserIdAndMeetId(@Param("userId") Long userId, @Param("meetId") Long meetId);
 
+
     Optional<Participant> findByUserIdAndMeetId(Long userId, Long meetId);
 }

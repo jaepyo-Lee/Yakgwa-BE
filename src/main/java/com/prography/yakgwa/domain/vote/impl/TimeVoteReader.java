@@ -31,4 +31,8 @@ public class TimeVoteReader {
     public List<TimeVote> findAllTimeVoteOfUserInMeet(Long userId, Long meetId){
         return timeVoteJpaRepository.findAllByTimeSlotOfUser(userId,meetId);
     }
+
+    public List<TimeVote> readAllInMeet(Long meetId){
+        return timeVoteJpaRepository.findAllByMeetId(meetId);
+    }
 }

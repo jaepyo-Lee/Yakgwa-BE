@@ -26,7 +26,7 @@ public class VoteController implements VoteApi {
     public SuccessResponse<PlaceVoteInfoWithStatusResponse> placeInfoByMeetStatus(@AuthenticationPrincipal CustomUserDetail user,
                                                                                   @PathVariable("meetId") Long meetId) {
         PlaceInfosByMeetStatus placeInfo = voteService.findPlaceInfoWithMeetStatus(user.getUserId(), meetId);
-        return new SuccessResponse<>(PlaceVoteInfoWithStatusResponse.of(placeInfo.getMeetStatus(),
+        return new SuccessResponse<>(PlaceVoteInfoWithStatusResponse.of(placeInfo.getVoteStatus(),
                 placeInfo.getPlaces()));
     }
 
@@ -35,7 +35,7 @@ public class VoteController implements VoteApi {
     public SuccessResponse<TimeVoteInfoWithStatusResponse> timeInfoByMeetStatus(@AuthenticationPrincipal CustomUserDetail user,
                                                                                 @PathVariable("meetId") Long meetId) {
         TimeInfosByMeetStatus timeInfo = voteService.findTimeInfoWithMeetStatus(user.getUserId(), meetId);
-        return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getMeetStatus(), timeInfo.getTimeSlots()));
+        return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getVoteStatus(), timeInfo.getTimeSlots()));
     }
 
     //장소투표

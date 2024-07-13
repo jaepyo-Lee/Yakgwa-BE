@@ -18,6 +18,10 @@ public class TimeSlotReader {
         return repository.findByMeetId(meetId);
     }
 
+    public List<TimeSlot> readAllByMeetId(Long meetId) {
+        return repository.findAllByMeetId(meetId);
+    }
+
     /**
      * Work) 테스트코드 작성
      * Write-Date) 2024-07-12
