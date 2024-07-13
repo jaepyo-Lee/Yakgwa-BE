@@ -18,5 +18,5 @@ public interface PlaceSlotJpaRepository extends JpaRepository<PlaceSlot, Long> {
     Optional<PlaceSlot> findConfirmByMeetId(@Param("meetId") Long meetId);
 
     @Query("select count(*)>0 from PLACESLOT_TABLE as ps where ps.confirm=true and ps.meet.id=:meetId")
-    boolean existsByMeetId(@Param("meetId")Long meetId);
+    boolean existsByMeetId(@Param("meetId") Long meetId);
 }

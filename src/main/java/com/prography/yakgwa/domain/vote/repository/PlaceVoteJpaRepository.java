@@ -14,6 +14,9 @@ import java.util.List;
 @Repository
 public interface PlaceVoteJpaRepository extends JpaRepository<PlaceVote, Long> {
 
+    @Query("select pv from PLACE_VOTE_TABLE pv where pv.placeSlot.meet.id=:meetId")
+    List<PlaceVote> findAllInMeet(@Param("meetId") Long meetId);
+
     List<PlaceVote> findAllByUserId(Long userId);
 
     @Query("select count(*)>0 from PLACE_VOTE_TABLE pv where pv.user.id=:userId and pv.placeSlot.meet.id=:meetId")

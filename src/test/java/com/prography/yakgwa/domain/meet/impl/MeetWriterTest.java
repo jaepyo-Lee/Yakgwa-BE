@@ -24,6 +24,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static com.prography.yakgwa.domain.meet.entity.MeetStatus.CONFIRM;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -130,7 +131,7 @@ class MeetWriterTest {
         System.out.println("=====Logic End=====");
         // then
         List<TimeSlot> timeSlots = timeSlotJpaRepository.findByMeetId(meet.getId());
-        List<TimeSlot> confirmTimeSlot = timeSlots.stream().filter(TimeSlot::isConfirm).toList();
+        List<TimeSlot> confirmTimeSlot = timeSlots.stream().filter(TimeSlot::getConfirm).toList();
         List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meet.getId());
 
         assertAll(() -> assertThat(meet.getTitle()).isEqualTo(title),
