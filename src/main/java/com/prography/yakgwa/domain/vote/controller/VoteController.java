@@ -11,6 +11,7 @@ import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class VoteController implements VoteApi {
     public SuccessResponse<PlaceVoteInfoWithStatusResponse> placeInfoByMeetStatus(@AuthenticationPrincipal CustomUserDetail user,
                                                                                   @PathVariable("meetId") Long meetId) {
         PlaceInfosByMeetStatus placeInfo = voteService.findPlaceInfoWithMeetStatus(user.getUserId(), meetId);
-        return new SuccessResponse<>(PlaceVoteInfoWithStatusResponse.of(placeInfo.getMeetStatus(),
+        return new SuccessResponse<>(PlaceVoteInfoWithStatusResponse.of(placeInfo.getVoteStatus(),
                 placeInfo.getPlaces()));
     }
 
@@ -35,14 +36,14 @@ public class VoteController implements VoteApi {
     public SuccessResponse<TimeVoteInfoWithStatusResponse> timeInfoByMeetStatus(@AuthenticationPrincipal CustomUserDetail user,
                                                                                 @PathVariable("meetId") Long meetId) {
         TimeInfosByMeetStatus timeInfo = voteService.findTimeInfoWithMeetStatus(user.getUserId(), meetId);
-        return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getMeetStatus(), timeInfo.getTimeSlots()));
+        return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getVoteStatus(), timeInfo.getTimeSlots()));
     }
 
     //장소투표
     @PostMapping("/meets/{meetId}/places")
     public SuccessResponse votePlaces(@AuthenticationPrincipal CustomUserDetail user,
                                       @PathVariable("meetId") Long meetId,
-                                      @RequestBody VotePlaceRequest votePlaceRequest) {
+                                      @RequestBody @Valid VotePlaceRequest votePlaceRequest) {
         voteService.votePlace(user.getUserId(), meetId, votePlaceRequest.getCurrentVotePlaceSlotIds());
         return SuccessResponse.ok("장소 투표하였습니다.");
     }
@@ -51,7 +52,7 @@ public class VoteController implements VoteApi {
     @PostMapping("/meets/{meetId}/times")
     public SuccessResponse voteTimes(@AuthenticationPrincipal CustomUserDetail user,
                                      @PathVariable("meetId") Long meetId,
-                                     @RequestBody EnableTimeRequest enableTimeRequest) {
+                                     @RequestBody @Valid EnableTimeRequest enableTimeRequest) {
         voteService.voteTime(user.getUserId(), meetId, enableTimeRequest.toRequestDto());
         return SuccessResponse.ok("시간 투표하였습니다");
     }
@@ -59,7 +60,7 @@ public class VoteController implements VoteApi {
     @PatchMapping("/meets/{meetId}/places/confirm")
     public SuccessResponse<String> confirmPlaceInMeet(@AuthenticationPrincipal CustomUserDetail user,
                                                       @PathVariable("meetId") Long meetId,
-                                                      @RequestBody ConfirmPlaceVoteInMeetRequest request) {
+                                                      @RequestBody @Valid ConfirmPlaceVoteInMeetRequest request) {
         voteService.confirmPlace(user.getUserId(), meetId, request.getConfirmPlaceSlotId());
         return SuccessResponse.ok("장소가 확정되었습니다");
     }
@@ -67,7 +68,7 @@ public class VoteController implements VoteApi {
     @PatchMapping("/meets/{meetId}/times/confirm")
     public SuccessResponse<String> confirmTimeInMeet(@AuthenticationPrincipal CustomUserDetail user,
                                                      @PathVariable("meetId") Long meetId,
-                                                     @RequestBody ConfirmTimeVoteInMeetRequest request) {
+                                                     @RequestBody @Valid ConfirmTimeVoteInMeetRequest request) {
         voteService.confirmTime(user.getUserId(), meetId, request.getConfirmTimeSlotId());
         return SuccessResponse.ok("시간이 확정되었습니다");
     }

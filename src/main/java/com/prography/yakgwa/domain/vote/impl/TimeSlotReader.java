@@ -2,6 +2,7 @@ package com.prography.yakgwa.domain.vote.impl;
 
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
+import com.prography.yakgwa.global.format.exception.slot.NotFoundTimeSlotException;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 
@@ -15,6 +16,10 @@ public class TimeSlotReader {
 
     public List<TimeSlot> readByMeetId(Long meetId) {
         return repository.findByMeetId(meetId);
+    }
+
+    public List<TimeSlot> readAllByMeetId(Long meetId) {
+        return repository.findAllByMeetId(meetId);
     }
 
     /**
@@ -37,6 +42,6 @@ public class TimeSlotReader {
 
     public TimeSlot read(Long confirmTimeSlotId) {
         return repository.findById(confirmTimeSlotId)
-                .orElseThrow(() -> new RuntimeException("등록되지 않은 시간 후보입니다."));
+                .orElseThrow(NotFoundTimeSlotException::new);
     }
 }

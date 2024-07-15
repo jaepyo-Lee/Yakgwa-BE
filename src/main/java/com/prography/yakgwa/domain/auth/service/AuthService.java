@@ -8,6 +8,7 @@ import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.client.auth.KakaoClient;
+import com.prography.yakgwa.global.format.exception.auth.NotSupportLoginTypeException;
 import com.prography.yakgwa.global.format.exception.auth.jwt.InvalidRefreshTokenException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import com.prography.yakgwa.global.repository.RedisRepository;
@@ -44,6 +45,7 @@ public class AuthService {
         TokenSet tokenSet = tokenProvider.createTokenSet(String.valueOf(user.getId()),user.getName() ,String.valueOf(requestDto.getLoginType()));
         registerRefreshToken(user, tokenSet);
         return LoginResponseDto.builder()
+                .role(user.getRole())
                 .isNew(user.getIsNew())
                 .tokenSet(tokenSet)
                 .build();
@@ -72,9 +74,8 @@ public class AuthService {
                     .fcmToken(requestDto.getFcmToken())
                     .build();
         }
-        throw new RuntimeException("지원하지 않는 로그인 타입입니다");
+        throw new NotSupportLoginTypeException();
     }
-
     public ReissueTokenSetResponseDto reissue(String refreshToken) {
         String parseToken = HeaderUtil.parseBearer(refreshToken);
 
