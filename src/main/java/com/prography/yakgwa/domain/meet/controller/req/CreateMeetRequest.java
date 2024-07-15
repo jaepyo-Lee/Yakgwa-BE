@@ -63,8 +63,8 @@ public class CreateMeetRequest {
 
         // 해당값이 있다면 확정, null이면 투표
         @Schema(description = "시간확정값<br>" +
-                "시간을 투표로 넘긴다면 해당값은 null 넣어주세요.",example = "2024-07-13T21:00:00")
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-ddTHH:mm:ss", timezone = "Asia/Seoul")
+                "시간을 투표로 넘긴다면 해당값은 null 넣어주세요.", pattern = "yyyy-MM-dd HH:mm:ss")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Seoul")
         private LocalDateTime meetTime;
     }
 

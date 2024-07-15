@@ -45,6 +45,7 @@ public class AuthService {
         TokenSet tokenSet = tokenProvider.createTokenSet(String.valueOf(user.getId()),user.getName() ,String.valueOf(requestDto.getLoginType()));
         registerRefreshToken(user, tokenSet);
         return LoginResponseDto.builder()
+                .role(user.getRole())
                 .isNew(user.getIsNew())
                 .tokenSet(tokenSet)
                 .build();
