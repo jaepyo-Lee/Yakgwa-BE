@@ -1,6 +1,8 @@
 package com.prography.yakgwa.domain.magazine.service;
 
 import com.prography.yakgwa.domain.magazine.entity.Magazine;
+import com.prography.yakgwa.domain.magazine.impl.MagazineWriter;
+import com.prography.yakgwa.domain.magazine.impl.dto.MagazineWriteDto;
 import com.prography.yakgwa.domain.magazine.repository.MagazineJpaRepository;
 import com.prography.yakgwa.domain.magazine.service.req.CreateMagazineRequestDto;
 import com.prography.yakgwa.domain.magazine.service.res.MagazineInfoResponseDto;
@@ -20,29 +22,17 @@ public class MagazineService {
     private final MagazineJpaRepository magazineJpaRepository;
     private final PlaceReader placeReader;
     private final UserReader userReader;
+    private final MagazineWriter magazineWriter;
 
     /**
-     * Todo
-     * 이미지 업로드 로직 추가해야함
+     * Work) 테스트코드 및 이미지업로드 로직
+     * Write-Date) 2024-07-15
+     * Finish-Date) 2024-07-15
      */
-    public Magazine create(CreateMagazineRequestDto requestDto, List<MultipartFile> multipartFiles) {
+    public Magazine create(CreateMagazineRequestDto requestDto, MultipartFile thumbnail, MultipartFile content) {
         User user = userReader.read(requestDto.getUserId());
         Place place = placeReader.read(requestDto.getPlaceId());
-        Magazine magazine = Magazine.builder()
-                .place(place).user(user).contents(requestDto.getContents())
-                .build();
-        //이미지 추가 로직 넣어야함
-        return magazineJpaRepository.save(magazine);
+        return magazineWriter.write(place, user, MagazineWriteDto.of(requestDto.getTitle(), thumbnail, content));
     }
 
-    /**
-     * Todo
-     * 이미지 조회추가
-     */
-    public MagazineInfoResponseDto find(Long meetId) {
-        Magazine magazine = magazineJpaRepository.findById(meetId).orElseThrow(() -> new RuntimeException("해당 매거진을 찾을수 없습니다."));
-        return MagazineInfoResponseDto.builder()
-                .magazine(magazine).imageUrl(null)
-                .build();
-    }
 }

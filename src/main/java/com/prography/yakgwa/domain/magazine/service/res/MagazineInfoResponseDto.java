@@ -9,6 +9,6 @@ import java.util.List;
 @Getter
 @Builder
 public class MagazineInfoResponseDto {
-    private Magazine magazine;
+    private List<Magazine> magazine;
     private List<String> imageUrl;
 }

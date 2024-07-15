@@ -7,6 +7,6 @@ import lombok.Getter;
 @Builder
 public class CreateMagazineRequestDto {
     private Long userId;
-    private String contents;
     private Long placeId;
+    private String title;
 }
