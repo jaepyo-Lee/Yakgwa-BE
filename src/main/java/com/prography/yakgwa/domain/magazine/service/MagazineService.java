@@ -6,6 +6,7 @@ import com.prography.yakgwa.domain.magazine.impl.MagazineWriter;
 import com.prography.yakgwa.domain.magazine.impl.dto.MagazineWriteDto;
 import com.prography.yakgwa.domain.magazine.repository.ImageJpaRepository;
 import com.prography.yakgwa.domain.magazine.repository.MagazineJpaRepository;
+import com.prography.yakgwa.domain.magazine.repository.MagazineRepositoryImpl;
 import com.prography.yakgwa.domain.magazine.service.req.CreateMagazineRequestDto;
 import com.prography.yakgwa.domain.magazine.service.res.MagazineInfoEntity;
 import com.prography.yakgwa.domain.magazine.service.res.MagazineInfoResponseDto;
@@ -29,9 +30,9 @@ public class MagazineService {
     private final PlaceReader placeReader;
     private final UserReader userReader;
     private final MagazineWriter magazineWriter;
-    private static final int PAGE_SIZE = 15;
+    private static final int PAGE_SIZE = 3;
     private final ImageJpaRepository imageJpaRepository;
-
+    private final MagazineRepositoryImpl magazineRepositoryImpl;
     /**
      * Work) 테스트코드 및 이미지업로드 로직
      * Write-Date) 2024-07-15
@@ -51,7 +52,7 @@ public class MagazineService {
      */
     public MagazineInfoResponseDto findPaging(int page) {
         PageRequest pageRequest = PageRequest.of(page , PAGE_SIZE);
-        Page<Magazine> magazinePage = magazineJpaRepository.findAllByOrderByCreatedDateDesc(pageRequest);
+        Page<Magazine> magazinePage = magazineRepositoryImpl.searchPage(pageRequest);
         List<Magazine> magazines = magazinePage.getContent();
         List<MagazineInfoEntity> magazineInfoEntities = new ArrayList<>();
         for (Magazine magazine : magazines) {

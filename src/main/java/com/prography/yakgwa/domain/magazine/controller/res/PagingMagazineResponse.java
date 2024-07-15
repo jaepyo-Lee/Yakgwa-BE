@@ -21,7 +21,7 @@ public class PagingMagazineResponse {
     private int size;
     @Schema(description = "전체페이지수")
     private int totalPages;
-    @Schema(description = "전체원소수")
+    @Schema(description = "현재까지 조회된 원소의 수")
     private long totalElements;
     @Schema(description = "현재 페이지 원소")
     private List<MagazineInfo> magazineInfo;
