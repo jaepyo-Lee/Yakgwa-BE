@@ -4,10 +4,12 @@ import com.prography.yakgwa.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import static jakarta.persistence.EnumType.STRING;
 
+@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
