@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -19,15 +20,19 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController implements AuthApi {
     private final AuthService authService;
 
+    @Value("${user.base.image}")
+    private String BASE_IMAGE;
+
     @PostMapping("/login")
     public SuccessResponse<LoginResponseDto> login(@RequestHeader("Authorization") String accessToken,
                                                    @Parameter @RequestBody LoginRequest loginRequest) {
         String token = HeaderUtil.parseBearer(accessToken);
 
         return new SuccessResponse(authService.login(LoginRequestDto.builder()
+                .baseImage(BASE_IMAGE)
                 .loginType(loginRequest.getLoginType())
                 .token(token)
-                        .fcmToken(loginRequest.getFcmToken())
+                .fcmToken(loginRequest.getFcmToken())
                 .build()));
     }
 
