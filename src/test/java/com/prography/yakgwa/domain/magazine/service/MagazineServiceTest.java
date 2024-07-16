@@ -13,11 +13,15 @@ import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.Role;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
+import com.prography.yakgwa.global.format.exception.magazine.NotFoundMagazineException;
 import com.prography.yakgwa.global.format.exception.user.NotMatchAdminRoleException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
@@ -34,6 +38,7 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
 @SpringBootTest
 class MagazineServiceTest {
@@ -103,6 +108,43 @@ class MagazineServiceTest {
         // then
 
         assertThrows(NotMatchAdminRoleException.class, () -> magazineService.create(requestDto, thumbnail, contents));
+    }
+
+    @Test
+    void 매거진의공개여부수정관리자가아닐경우_예외() {
+        // given
+        User saveUser = createAndSaveUser(1, ROLE_USER);
+        Place savePlace = createAndSavePlace(1);
+        Magazine saveMagazine = createAndSaveMagazine(1, saveUser, savePlace);
+        // when
+        System.out.println("=====Logic Start=====");
+        System.out.println("=====Logic End=====");
+        // then
+        assertThrows(NotMatchAdminRoleException.class, () -> magazineService.modifyOpenState(saveUser.getId(), savePlace.getId()));
+    }
+
+    @Test
+    void 매거진의상태수정_정상수행() {
+        // given
+        User saveUser = createAndSaveUser(1, ROLE_ADMIN);
+        Place savePlace = createAndSavePlace(1);
+        Magazine saveMagazine = createAndSaveMagazine(1, saveUser, savePlace);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        Magazine magazine = magazineService.modifyOpenState(saveUser.getId(), saveMagazine.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertAll(()-> assertThat(!saveMagazine.isOpen()).isEqualTo(magazine.isOpen()));
+    }
+
+    private Magazine createAndSaveMagazine(int id, User saveUser, Place savePlace) {
+        Magazine magazine = Magazine.builder()
+                .user(saveUser).place(savePlace).title("title" + id)
+                .build();
+        return magazineJpaRepository.save(magazine);
     }
 
     private User createAndSaveUser(int id, Role role) {
