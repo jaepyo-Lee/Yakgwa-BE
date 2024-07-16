@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.service.req;
 
+import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
@@ -14,4 +15,5 @@ import java.util.List;
 public class TimeInfosByMeetStatus {
     private VoteStatus voteStatus;
     private List<TimeSlot> timeSlots;
+    private Meet meet;
 }

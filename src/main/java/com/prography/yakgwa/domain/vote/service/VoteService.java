@@ -63,6 +63,7 @@ public class VoteService {
             return PlaceInfosByMeetStatus.builder()
                     .voteStatus(VoteStatus.CONFIRM)
                     .places(List.of(placeSlot.getPlace()))
+                    .meet(meet)
                     .build();
         } else {
             if (meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
@@ -86,6 +87,7 @@ public class VoteService {
                     return PlaceInfosByMeetStatus.builder()
                             .voteStatus(VoteStatus.BEFORE_CONFIRM)
                             .places(maxVotePlaces)
+                            .meet(meet)
                             .build();
                 }
             }
@@ -96,6 +98,7 @@ public class VoteService {
                         .places(placeVoteOfUserInMeet.stream()
                                 .map(placeVote -> placeVote.getPlaceSlot().getPlace())
                                 .toList())
+                        .meet(meet)
                         .build();
             } else { //사용자가 투표 안했을때
                 return PlaceInfosByMeetStatus.builder()
@@ -103,6 +106,7 @@ public class VoteService {
                         .places(placeVoteOfUserInMeet.stream()
                                 .map(placeVote -> placeVote.getPlaceSlot().getPlace())
                                 .toList())
+                        .meet(meet)
                         .build();
             }
         }
@@ -123,6 +127,7 @@ public class VoteService {
             return TimeInfosByMeetStatus.builder()
                     .voteStatus(VoteStatus.CONFIRM)
                     .timeSlots(List.of(timeSlot))
+                    .meet(meet)
                     .build();
         } else {
             if (meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
@@ -146,6 +151,7 @@ public class VoteService {
                     return TimeInfosByMeetStatus.builder()
                             .voteStatus(VoteStatus.BEFORE_CONFIRM)
                             .timeSlots(collect)
+                            .meet(meet)
                             .build();
                 }
             }
@@ -156,6 +162,7 @@ public class VoteService {
                         .timeSlots(timeVoteOfUserInMeet.stream()
                                 .map(TimeVote::getTimeSlot)
                                 .toList())
+                        .meet(meet)
                         .build();
             } else { //사용자가 투표 안했을때
                 return TimeInfosByMeetStatus.builder()
@@ -163,6 +170,7 @@ public class VoteService {
                         .timeSlots(timeVoteOfUserInMeet.stream()
                                 .map(TimeVote::getTimeSlot)
                                 .toList())
+                        .meet(meet)
                         .build();
             }
         }
