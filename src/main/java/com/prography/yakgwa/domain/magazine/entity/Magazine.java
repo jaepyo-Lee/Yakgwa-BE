@@ -33,4 +33,9 @@ public class Magazine extends BaseTimeEntity {
 
     @Builder.Default
     private boolean open=true;
+
+    public boolean changeOpenState(){
+        open = !open;
+        return open;
+    }
 }
