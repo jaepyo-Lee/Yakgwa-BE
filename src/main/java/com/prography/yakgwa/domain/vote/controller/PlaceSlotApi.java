@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.vote.controller;
 
 import com.prography.yakgwa.domain.vote.controller.req.PlaceSlotAppendRequest;
+import com.prography.yakgwa.domain.vote.controller.res.AllPlaceSlotOfMeetResponse;
 import com.prography.yakgwa.domain.vote.controller.res.NewPlaceSlotResponse;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,4 +16,6 @@ public interface PlaceSlotApi {
     SuccessResponse<NewPlaceSlotResponse> appendPlaceSlotOfMeet(@PathVariable("meetId") Long meetId,
                                                                 @RequestBody PlaceSlotAppendRequest placeSlotAppendRequest);
 
+    @Operation(summary = "투표를 위한 모임의 장소후보 정보조회 API", description = "")
+    SuccessResponse<AllPlaceSlotOfMeetResponse> findPlaceSlotOfMeet(@PathVariable("meetId") Long meetId);
 }

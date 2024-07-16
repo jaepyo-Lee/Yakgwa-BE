@@ -3,6 +3,7 @@ package com.prography.yakgwa.domain.vote.controller.res;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -11,15 +12,22 @@ import java.util.List;
 @Builder
 @Getter
 public class PlaceSlotOfMeet {
+    @Schema(description = "장소 후보지 id")
     private Long placeSlotId;
+    @Schema(description = "장소명")
     private String placeName;
+    @Schema(description = "장소 주소")
     private String placeAddress;
+    @Schema(description = "투표자정보")
     private List<UserInfo> userInfos;
 
     @Builder
     @Getter
+    @Schema(name = "PlaceSlotOfMeet-UserInfo")
     private static class UserInfo {
+        @Schema(description = "사용자이름")
         private String username;
+        @Schema(description = "사용자 이미지")
         private String imageUrl;
     }
 
