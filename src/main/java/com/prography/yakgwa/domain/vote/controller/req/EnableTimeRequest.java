@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.controller.req;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
@@ -21,6 +22,8 @@ public class EnableTimeRequest {
     @Getter
     @Schema(name = "EnableTimeRequest-EnableTImeVote")
     private static class EnableTImeVote {
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+        @Schema(example = "2024-07-16 20:00")
         private LocalDateTime enableTime;
     }
 

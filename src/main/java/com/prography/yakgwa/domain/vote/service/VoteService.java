@@ -20,6 +20,7 @@ import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
 import com.prography.yakgwa.global.format.exception.vote.ParticipantConfirmException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -204,6 +205,15 @@ public class VoteService {
         }
         Meet meet = meetReader.read(meetId);
         List<TimeSlot> allTimeSlotsInMeet = timeSlotReader.readByMeetId(meetId);
+        if (allTimeSlotsInMeet.stream().anyMatch(TimeSlot::getConfirm) ||
+                meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) {
+            throw new AlreadyTimeConfirmVoteException();
+        }
+        for (LocalDateTime enableTime : requestDto.getEnableTimes()) {
+            if (meet.getPeriod().getEndDate().isBefore(enableTime.toLocalDate()) || meet.getPeriod().getStartDate().isAfter(enableTime.toLocalDate())) {
+                throw new NotValidVoteTimeException();
+            }
+        }
         User user = userReader.read(userId);
         timeVoteWriter.deleteAllVoteOfUser(user, meetId);
 

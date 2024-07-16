@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.controller.res;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
@@ -34,6 +35,9 @@ public class TimeVoteInfoWithStatusResponse {
     @Schema(name = "TimeVoteInfoWithStatusResponse-VoteTimeInfo")
     private static class VoteTimeInfo {
         private Long timeId;
+
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
+        @Schema(example = "2024-07-16 20:00")
         private LocalDateTime voteTime;
     }
 
