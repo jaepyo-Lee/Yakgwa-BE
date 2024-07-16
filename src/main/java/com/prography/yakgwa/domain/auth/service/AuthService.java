@@ -67,6 +67,7 @@ public class AuthService {
         if (requestDto.getLoginType().equals(KAKAO)) {
             KakaoUserResponseDto userData = kakaoClient.getUserData(requestDto.getToken(), requestDto.getLoginType().getServerUri());
             return User.builder()
+                    .imageUrl(requestDto.getBaseImage())
                     .authId(String.valueOf(userData.getId()))
                     .authType(KAKAO)
                     .name(userData.getProperties().getNickname())
