@@ -36,7 +36,7 @@ public class VoteController implements VoteApi {
     public SuccessResponse<TimeVoteInfoWithStatusResponse> timeInfoByMeetStatus(@AuthenticationPrincipal CustomUserDetail user,
                                                                                 @PathVariable("meetId") Long meetId) {
         TimeInfosByMeetStatus timeInfo = voteService.findTimeInfoWithMeetStatus(user.getUserId(), meetId);
-        return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getVoteStatus(), timeInfo.getTimeSlots()));
+        return new SuccessResponse<>(TimeVoteInfoWithStatusResponse.of(timeInfo.getVoteStatus(), timeInfo.getTimeSlots(), timeInfo.getMeet()));
     }
 
     //장소투표
@@ -48,7 +48,7 @@ public class VoteController implements VoteApi {
         return SuccessResponse.ok("장소 투표하였습니다.");
     }
 
-    //장소투표
+    //시간투표
     @PostMapping("/meets/{meetId}/times")
     public SuccessResponse voteTimes(@AuthenticationPrincipal CustomUserDetail user,
                                      @PathVariable("meetId") Long meetId,

@@ -18,17 +18,21 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
+@AutoConfigureMockMvc
 @ActiveProfiles("test")
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class ImageWriterTest {
     @Autowired
     ImageJpaRepository imageRepository;
@@ -56,12 +60,12 @@ class ImageWriterTest {
     }
 
     @Test
-    void 이미지S3에올리고파일정보엔티티_저장() {
+    void 이미지S3에올리고파일정보엔티티_저장() throws IOException {
         // given
         User saveUser = createAndSaveUser(1L);
         Place savePlace = createAndSavePlace(1L);
 
-        Mockito.when(awsS3Util.upload(any(MultipartFile.class),Mockito.anyString())).thenReturn("test");
+        Mockito.when(awsS3Util.upload(Mockito.any(MultipartFile.class), Mockito.anyString())).thenReturn("test");
 
         Magazine saveMagazine = createAndSaveMagazine(savePlace, saveUser);
 

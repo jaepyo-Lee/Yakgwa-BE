@@ -28,4 +28,7 @@ public interface PlaceVoteJpaRepository extends JpaRepository<PlaceVote, Long> {
     @Modifying
     @Query("DELETE FROM PLACE_VOTE_TABLE PV WHERE PV.user = :user AND PV.placeSlot.meet.id=:meetId")
     void deleteAllByUserIdAndMeetId(@Param("user") User user, @Param("meetId") Long meetId);
+
+    @Query("select pv from PLACE_VOTE_TABLE pv join fetch pv.user where pv.placeSlot.id=:placeSlotId ")
+    List<PlaceVote>findAllByPlaceSlotId(@Param("placeSlotId")Long placeSlotId);
 }

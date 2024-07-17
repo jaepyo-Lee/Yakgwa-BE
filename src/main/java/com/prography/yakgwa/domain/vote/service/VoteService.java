@@ -20,6 +20,7 @@ import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
 import com.prography.yakgwa.global.format.exception.vote.ParticipantConfirmException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,6 +64,7 @@ public class VoteService {
             return PlaceInfosByMeetStatus.builder()
                     .voteStatus(VoteStatus.CONFIRM)
                     .places(List.of(placeSlot.getPlace()))
+                    .meet(meet)
                     .build();
         } else {
             if (meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
@@ -86,6 +88,7 @@ public class VoteService {
                     return PlaceInfosByMeetStatus.builder()
                             .voteStatus(VoteStatus.BEFORE_CONFIRM)
                             .places(maxVotePlaces)
+                            .meet(meet)
                             .build();
                 }
             }
@@ -96,6 +99,7 @@ public class VoteService {
                         .places(placeVoteOfUserInMeet.stream()
                                 .map(placeVote -> placeVote.getPlaceSlot().getPlace())
                                 .toList())
+                        .meet(meet)
                         .build();
             } else { //사용자가 투표 안했을때
                 return PlaceInfosByMeetStatus.builder()
@@ -103,6 +107,7 @@ public class VoteService {
                         .places(placeVoteOfUserInMeet.stream()
                                 .map(placeVote -> placeVote.getPlaceSlot().getPlace())
                                 .toList())
+                        .meet(meet)
                         .build();
             }
         }
@@ -123,6 +128,7 @@ public class VoteService {
             return TimeInfosByMeetStatus.builder()
                     .voteStatus(VoteStatus.CONFIRM)
                     .timeSlots(List.of(timeSlot))
+                    .meet(meet)
                     .build();
         } else {
             if (meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
@@ -146,6 +152,7 @@ public class VoteService {
                     return TimeInfosByMeetStatus.builder()
                             .voteStatus(VoteStatus.BEFORE_CONFIRM)
                             .timeSlots(collect)
+                            .meet(meet)
                             .build();
                 }
             }
@@ -156,6 +163,7 @@ public class VoteService {
                         .timeSlots(timeVoteOfUserInMeet.stream()
                                 .map(TimeVote::getTimeSlot)
                                 .toList())
+                        .meet(meet)
                         .build();
             } else { //사용자가 투표 안했을때
                 return TimeInfosByMeetStatus.builder()
@@ -163,6 +171,7 @@ public class VoteService {
                         .timeSlots(timeVoteOfUserInMeet.stream()
                                 .map(TimeVote::getTimeSlot)
                                 .toList())
+                        .meet(meet)
                         .build();
             }
         }
@@ -196,6 +205,15 @@ public class VoteService {
         }
         Meet meet = meetReader.read(meetId);
         List<TimeSlot> allTimeSlotsInMeet = timeSlotReader.readByMeetId(meetId);
+        if (allTimeSlotsInMeet.stream().anyMatch(TimeSlot::getConfirm) ||
+                meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) {
+            throw new AlreadyTimeConfirmVoteException();
+        }
+        for (LocalDateTime enableTime : requestDto.getEnableTimes()) {
+            if (meet.getPeriod().getEndDate().isBefore(enableTime.toLocalDate()) || meet.getPeriod().getStartDate().isAfter(enableTime.toLocalDate())) {
+                throw new NotValidVoteTimeException();
+            }
+        }
         User user = userReader.read(userId);
         timeVoteWriter.deleteAllVoteOfUser(user, meetId);
 
