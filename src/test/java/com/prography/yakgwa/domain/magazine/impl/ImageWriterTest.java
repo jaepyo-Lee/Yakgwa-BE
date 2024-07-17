@@ -25,6 +25,8 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 
@@ -58,7 +60,7 @@ class ImageWriterTest {
     }
 
     @Test
-    void 이미지S3에올리고파일정보엔티티_저장() {
+    void 이미지S3에올리고파일정보엔티티_저장() throws IOException {
         // given
         User saveUser = createAndSaveUser(1L);
         Place savePlace = createAndSavePlace(1L);

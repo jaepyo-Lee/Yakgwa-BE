@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class MagazineService {
      * Write-Date) 2024-07-16
      * Finish-Date)
      */
-    public Magazine create(CreateMagazineRequestDto requestDto, MultipartFile thumbnail, MultipartFile content) {
+    public Magazine create(CreateMagazineRequestDto requestDto, MultipartFile thumbnail, MultipartFile content) throws IOException {
         User user = userReader.read(requestDto.getUserId());
         Place place = placeReader.read(requestDto.getPlaceId());
         return magazineWriter.write(place, user, MagazineWriteDto.of(requestDto.getTitle(), thumbnail, content));

@@ -28,6 +28,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 import static com.prography.yakgwa.domain.user.entity.Role.ROLE_ADMIN;
@@ -64,7 +65,7 @@ class MagazineServiceTest {
     }
 
     @Test
-    void 매거진_생성() {
+    void 매거진_생성() throws IOException {
         // given
         MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail.jpg", "image/jpeg", new byte[]{});
         MockMultipartFile contents = new MockMultipartFile("contents", "contents.jpg", "image/jpeg", new byte[]{});
@@ -92,7 +93,7 @@ class MagazineServiceTest {
     }
 
     @Test
-    void 관리자가아닌사용자의매거진생성_예외() {
+    void 관리자가아닌사용자의매거진생성_예외() throws IOException {
         // given
         MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail.jpg", "image/jpeg", new byte[]{});
         MockMultipartFile contents = new MockMultipartFile("contents", "contents.jpg", "image/jpeg", new byte[]{});

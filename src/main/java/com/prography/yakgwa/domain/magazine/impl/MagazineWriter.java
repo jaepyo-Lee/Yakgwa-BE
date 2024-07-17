@@ -10,13 +10,15 @@ import com.prography.yakgwa.global.format.exception.user.NotMatchAdminRoleExcept
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 
+import java.io.IOException;
+
 @ImplService
 @RequiredArgsConstructor
 public class MagazineWriter {
     private final MagazineJpaRepository magazineJpaRepository;
     private final ImageWriter imageWriter;
 
-    public Magazine write(Place place, User user, MagazineWriteDto magazineWriteDto) {
+    public Magazine write(Place place, User user, MagazineWriteDto magazineWriteDto) throws IOException {
         if (user.getRole() != Role.ROLE_ADMIN) {
             throw new NotMatchAdminRoleException();
         }

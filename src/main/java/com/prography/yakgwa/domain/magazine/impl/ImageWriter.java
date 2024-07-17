@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public class ImageWriter {
     private final ImageJpaRepository imageRepository;
 
     @Async
-    public void write(Magazine magazine, MultipartFile thumbnail, MultipartFile contents) {
+    public void write(Magazine magazine, MultipartFile thumbnail, MultipartFile contents) throws IOException {
         String thumbnailUrl = awsS3Util.upload(thumbnail, magazine.getTitle());
         String contentsUrl = awsS3Util.upload(contents, magazine.getTitle());
         Image thumbImage = Image.builder().url(thumbnailUrl).magazine(magazine).type(THUMBNAIL).build();
