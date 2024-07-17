@@ -15,6 +15,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${app.api.admin}")
@@ -25,7 +27,7 @@ public class MagazineAdminController implements MagazineAdminApi {
     public SuccessResponse<CreateMagazineResponse> create(@RequestPart(name = "createMagazineRequest") @Valid CreateMagazineRequest createMagazineRequest,
                                                           @RequestPart(name = "thumbnail") MultipartFile thumbnail,
                                                           @RequestPart(name = "content") MultipartFile content,
-                                                          @AuthenticationPrincipal CustomUserDetail user) {
+                                                          @AuthenticationPrincipal CustomUserDetail user) throws IOException {
         Magazine magazine = magazineService.create(createMagazineRequest.toRequestDto(user.getUserId()), thumbnail, content);
         return new SuccessResponse(new CreateMagazineResponse(magazine.getId()));
     }

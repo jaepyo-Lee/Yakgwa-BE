@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -55,7 +56,7 @@ class MagazineWriterTest {
     }
 
     @Test
-    void 관리자가아닌사용자가매거진작성을요청할때_예외() {
+    void 관리자가아닌사용자가매거진작성을요청할때_예외() throws IOException {
         // given
         User saveUser = createAndSaveUser(1, Role.ROLE_USER);
         MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail.jpg", "image/jpeg", new byte[]{});
@@ -73,7 +74,7 @@ class MagazineWriterTest {
     }
 
     @Test
-    void 관리자가매거진작성을_저장() {
+    void 관리자가매거진작성을_저장() throws IOException {
         // given
         User saveUser = createAndSaveUser(1, Role.ROLE_ADMIN);
         MockMultipartFile thumbnail = new MockMultipartFile("thumbnail", "thumbnail.jpg", "image/jpeg", new byte[]{});

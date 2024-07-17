@@ -13,13 +13,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+
 @Tag(name = "Magazine_Admin", description = "[관리자] 매거진과 관련된 API입니다.")
 public interface MagazineAdminApi {
     @Operation(summary = "매거진생성 API", description = "매거진 생성 API 관리자 권한의 사용자만 허용됌")
     SuccessResponse<CreateMagazineResponse> create(@RequestPart CreateMagazineRequest createMagazineRequest,
                                                    @RequestPart MultipartFile thumbnail,
                                                    @RequestPart MultipartFile content,
-                                                   @AuthenticationPrincipal CustomUserDetail user);
+                                                   @AuthenticationPrincipal CustomUserDetail user) throws IOException;
 
     @Operation(summary = "매거진 공개여부 수정 API", description = "매거진 공개여부 수정 API")
     SuccessResponse<ModifyMagazineOpenStateResponse> modifyOpen(@RequestBody ModifyMagazineOpenStateRequest modifyMagazineOpen,
