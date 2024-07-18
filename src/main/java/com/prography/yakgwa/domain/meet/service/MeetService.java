@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.meet.service;
 
+import com.prography.yakgwa.domain.common.alarm.AlarmProcessor;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.impl.MeetReader;
@@ -28,6 +29,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Service
 public class MeetService {
+    private final AlarmProcessor alarmProcessor;
     private final MeetWriter meetWriter;
     private final UserReader userReader;
     private final ParticipantWriter participantWriter;
@@ -47,6 +49,7 @@ public class MeetService {
         User user = userReader.read(requestDto.getCreatorId());
         Meet meet = meetWriter.write(requestDto.toMeetWriteDto(),requestDto.toConfirmPlaceDto(),requestDto.toConfirmTimeDto());
         participantWriter.registLeader(meet, user);
+
         return meet;
     }
 

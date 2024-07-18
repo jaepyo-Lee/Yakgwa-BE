@@ -17,6 +17,10 @@ public class ParticipantReader {
         return repository.findAllByMeetId(meetId);
     }
 
+    public List<Participant> readAllWithUserByMeetId(Long meetId) {
+        return repository.findAllWithUserByMeetId(meetId);
+    }
+
     public List<Participant> readAllByUserId(Long userId) {
         return repository.findAllByUserId(userId);
     }

@@ -25,6 +25,7 @@ public class User extends BaseTimeEntity {
     private String imageUrl;
     private String fcmToken;
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     private Role role= Role.ROLE_USER;
 
     public void changeImage(String imageUrl) {
