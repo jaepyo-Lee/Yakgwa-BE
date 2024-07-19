@@ -59,17 +59,17 @@ public class VoteController implements VoteApi {
 
     @PatchMapping("/meets/{meetId}/places/confirm")
     public SuccessResponse<String> confirmPlaceInMeet(@AuthenticationPrincipal CustomUserDetail user,
-                                                      @PathVariable("meetId") Long meetId,
-                                                      @RequestBody @Valid ConfirmPlaceVoteInMeetRequest request) {
-        voteService.confirmPlace(user.getUserId(), meetId, request.getConfirmPlaceSlotId());
-        return SuccessResponse.ok("장소가 확정되었습니다");
-    }
+                                                          @PathVariable("meetId") Long meetId,
+                                                          @RequestBody @Valid ConfirmPlaceVoteInMeetRequest request) {
+            voteService.confirmPlace(user.getUserId(), meetId, request.getConfirmPlaceSlotId());
+            return SuccessResponse.ok("장소가 확정되었습니다");
+        }
 
-    @PatchMapping("/meets/{meetId}/times/confirm")
-    public SuccessResponse<String> confirmTimeInMeet(@AuthenticationPrincipal CustomUserDetail user,
-                                                     @PathVariable("meetId") Long meetId,
-                                                     @RequestBody @Valid ConfirmTimeVoteInMeetRequest request) {
-        voteService.confirmTime(user.getUserId(), meetId, request.getConfirmTimeSlotId());
-        return SuccessResponse.ok("시간이 확정되었습니다");
+        @PatchMapping("/meets/{meetId}/times/confirm")
+        public SuccessResponse<String> confirmTimeInMeet(@AuthenticationPrincipal CustomUserDetail user,
+                                                         @PathVariable("meetId") Long meetId,
+                                                         @RequestBody @Valid ConfirmTimeVoteInMeetRequest request) {
+            voteService.confirmTime(user.getUserId(), meetId, request.getConfirmTimeSlotId());
+            return SuccessResponse.ok("시간이 확정되었습니다");
     }
 }

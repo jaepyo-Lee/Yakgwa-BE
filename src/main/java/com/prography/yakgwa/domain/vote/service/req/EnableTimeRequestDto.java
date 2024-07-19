@@ -5,9 +5,10 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Builder
 public class EnableTimeRequestDto {
-    private List<LocalDateTime> enableTimes;
+    private Set<LocalDateTime> enableTimes;
 }
