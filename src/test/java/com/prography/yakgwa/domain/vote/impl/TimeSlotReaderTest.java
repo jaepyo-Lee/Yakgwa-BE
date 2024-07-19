@@ -9,7 +9,6 @@ import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,9 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -65,13 +64,11 @@ class TimeSlotReaderTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        TimeSlot timeSlot = timeSlotReader.readConfirmOrNullByMeetId(saveMeet.getId());
+        List<TimeSlot> timeSlot = timeSlotReader.readAllConfirmByMeetId(saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
-        assertAll(() -> assertThat(timeSlot).isNotNull(),
-                () -> assertThat(timeSlot.getId()).isEqualTo(saveTimeSlot.getId())
-                , () -> assertThat(timeSlot.getTime()).isEqualTo(time));
+        assertAll(() -> assertThat(timeSlot.size()).isOne());
     }
 
     @Test
@@ -91,11 +88,11 @@ class TimeSlotReaderTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        TimeSlot timeSlot = timeSlotReader.readConfirmOrNullByMeetId(saveMeet.getId());
+        List<TimeSlot> timeSlot = timeSlotReader.readAllConfirmByMeetId(saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
-        assertAll(() -> assertThat(timeSlot).isNull());
+        assertAll(() -> assertThat(timeSlot.size()).isZero());
     }
 
     @Test

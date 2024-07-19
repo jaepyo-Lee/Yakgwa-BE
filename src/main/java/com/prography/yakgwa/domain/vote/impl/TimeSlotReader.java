@@ -14,10 +14,6 @@ import java.util.List;
 public class TimeSlotReader {
     private final TimeSlotJpaRepository repository;
 
-    public List<TimeSlot> readByMeetId(Long meetId) {
-        return repository.findByMeetId(meetId);
-    }
-
     public List<TimeSlot> readAllByMeetId(Long meetId) {
         return repository.findAllByMeetId(meetId);
     }
@@ -27,9 +23,8 @@ public class TimeSlotReader {
      * Write-Date) 2024-07-12
      * Finish-Date) 2024-07-12
      */
-    public TimeSlot readConfirmOrNullByMeetId(Long meetId) {
-        return repository.findConfirmByMeetId(meetId)
-                .orElse(null);
+    public List<TimeSlot> readAllConfirmByMeetId(Long meetId) {
+        return repository.findAllConfirmByMeetId(meetId);
     }
 
     public boolean existConfirm(Long meetId) {

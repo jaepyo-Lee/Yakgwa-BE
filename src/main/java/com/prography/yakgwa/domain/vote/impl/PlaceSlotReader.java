@@ -7,6 +7,7 @@ import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @ImplService
 @RequiredArgsConstructor
@@ -17,16 +18,15 @@ public class PlaceSlotReader {
         return repository.findAllByMeetId(meetId);
     }
 
-    public PlaceSlot readConfirmOrNullByMeetId(Long meetId) {
-        return repository.findConfirmByMeetId(meetId)
-                .orElse(null);
+    public List<PlaceSlot> readAllConfirmByMeetId(Long meetId) {
+        return repository.findConfirmByMeetId(meetId);
     }
 
     public boolean existConfirm(Long meetId) {
         return repository.existsByMeetId(meetId);
     }
 
-    public List<PlaceSlot> findAllByIds(List<Long> ids) {
+    public List<PlaceSlot> findAllByIds(Set<Long> ids) {
         return repository.findAllById(ids);
     }
 

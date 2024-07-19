@@ -18,19 +18,23 @@ import com.prography.yakgwa.domain.vote.impl.*;
 import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
 import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
+import com.prography.yakgwa.global.format.exception.param.DataIntegrateException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
 import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
 import com.prography.yakgwa.global.format.exception.vote.ParticipantConfirmException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Transactional
 @Service
 @RequiredArgsConstructor
@@ -60,10 +64,14 @@ public class VoteService {
         boolean isConfirm = meetStatusJudger.verifyConfirmAndConfirmPlacePossible(meet);
 
         if (isConfirm) { //장소확정되었을때
-            PlaceSlot placeSlot = placeSlotReader.readConfirmOrNullByMeetId(meetId);
+            List<PlaceSlot> placeSlots = placeSlotReader.readAllConfirmByMeetId(meetId);
+            if (placeSlots.size() > 1) {
+                log.info("{}번 모임의 장소투표 데이터확인",meetId);
+                throw new DataIntegrateException();
+            }
             return PlaceInfosByMeetStatus.builder()
                     .voteStatus(VoteStatus.CONFIRM)
-                    .places(List.of(placeSlot.getPlace()))
+                    .places(placeSlots.stream().map(PlaceSlot::getPlace).toList())
                     .meet(meet)
                     .build();
         } else {
@@ -104,9 +112,7 @@ public class VoteService {
             } else { //사용자가 투표 안했을때
                 return PlaceInfosByMeetStatus.builder()
                         .voteStatus(VoteStatus.BEFORE_VOTE)
-                        .places(placeVoteOfUserInMeet.stream()
-                                .map(placeVote -> placeVote.getPlaceSlot().getPlace())
-                                .toList())
+                        .places(List.of())//투표안했으니 빈리스트
                         .meet(meet)
                         .build();
             }
@@ -124,10 +130,14 @@ public class VoteService {
         boolean isConfirm = meetStatusJudger.verifyConfirmAndConfirmTimePossible(meet);
 
         if (isConfirm) { // 시간확정되었을때
-            TimeSlot timeSlot = timeSlotReader.readConfirmOrNullByMeetId(meetId);
+            List<TimeSlot> timeSlot = timeSlotReader.readAllConfirmByMeetId(meetId);
+            if(timeSlot.size()>1){
+                log.info("{}번 모임의 시간투표 데이터확인",meetId);
+                throw new DataIntegrateException();
+            }
             return TimeInfosByMeetStatus.builder()
                     .voteStatus(VoteStatus.CONFIRM)
-                    .timeSlots(List.of(timeSlot))
+                    .timeSlots(timeSlot)
                     .meet(meet)
                     .build();
         } else {
@@ -168,9 +178,7 @@ public class VoteService {
             } else { //사용자가 투표 안했을때
                 return TimeInfosByMeetStatus.builder()
                         .voteStatus(VoteStatus.BEFORE_VOTE)
-                        .timeSlots(timeVoteOfUserInMeet.stream()
-                                .map(TimeVote::getTimeSlot)
-                                .toList())
+                        .timeSlots(List.of())
                         .meet(meet)
                         .build();
             }
@@ -182,7 +190,7 @@ public class VoteService {
      * 2. 기존투표 삭제
      * 3. 새로운 투표생성
      */
-    public List<PlaceVote> votePlace(Long userId, Long meetId, List<Long> placeSlotIds) {
+    public List<PlaceVote> votePlace(Long userId, Long meetId, Set<Long> placeSlotIds) {
         if (placeSlotReader.existConfirm(meetId)) {
             throw new AlreadyPlaceConfirmVoteException();
         }
@@ -204,7 +212,7 @@ public class VoteService {
             throw new AlreadyTimeConfirmVoteException();
         }
         Meet meet = meetReader.read(meetId);
-        List<TimeSlot> allTimeSlotsInMeet = timeSlotReader.readByMeetId(meetId);
+        List<TimeSlot> allTimeSlotsInMeet = timeSlotReader.readAllByMeetId(meetId);
         if (allTimeSlotsInMeet.stream().anyMatch(TimeSlot::getConfirm) ||
                 meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) {
             throw new AlreadyTimeConfirmVoteException();
@@ -224,12 +232,15 @@ public class VoteService {
 
         timeSlotWriter.writeAll(meet, notExistTime);
 
-        List<TimeSlot> chooseTimeSlot = timeSlotReader.findAllByMeetIdAndTimes(meetId, requestDto.getEnableTimes());
+        List<TimeSlot> chooseTimeSlot = timeSlotReader.findAllByMeetIdAndTimes(meetId, requestDto.getEnableTimes().stream().toList());
 
         return timeVoteWriter.writeAll(user, chooseTimeSlot);
     }
 
     public void confirmPlace(Long userId, Long meetId, Long confirmPlaceSlotId) {
+        if (placeSlotReader.existConfirm(meetId)) {
+            throw new AlreadyPlaceConfirmVoteException();
+        }
         Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
         if (!participant.isLeader()) {
             throw new ParticipantConfirmException();
@@ -239,6 +250,9 @@ public class VoteService {
     }
 
     public void confirmTime(Long userId, Long meetId, Long confirmTimeSlotId) {
+        if (timeSlotReader.existConfirm(meetId)) {
+            throw new AlreadyTimeConfirmVoteException();
+        }
         Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
         if (!participant.isLeader()) {
             throw new ParticipantConfirmException();

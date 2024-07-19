@@ -3,16 +3,17 @@ package com.prography.yakgwa.global.format.exception.param;
 import com.prography.yakgwa.global.format.exception.ApplicationRunException;
 import com.prography.yakgwa.global.format.exception.ErrorEnumCode;
 
+import static com.prography.yakgwa.global.format.exception.param.errorCode.ParamErrorCode.DATA_INTEGRATE_EXCEPTION;
 import static com.prography.yakgwa.global.format.exception.param.errorCode.ParamErrorCode.MULTIPART_PARAMETER_EXCEPTION;
 
-public class MultipartParamException extends ApplicationRunException {
-    private static final ErrorEnumCode CODE = MULTIPART_PARAMETER_EXCEPTION;
+public class DataIntegrateException extends ApplicationRunException {
+    private static final ErrorEnumCode CODE = DATA_INTEGRATE_EXCEPTION;
 
-    private MultipartParamException(ErrorEnumCode CODE) {
+    private DataIntegrateException(ErrorEnumCode CODE) {
         super(CODE);
     }
 
-    public MultipartParamException() {
+    public DataIntegrateException() {
         this(CODE);
     }
 }

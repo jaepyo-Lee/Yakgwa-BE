@@ -17,7 +17,7 @@ public interface TimeSlotJpaRepository extends JpaRepository<TimeSlot, Long> {
     List<TimeSlot> findAllByMeetId(Long meetId);
 
     @Query("SELECT TS FROM TIMESLOT_TABLE TS WHERE TS.meet.id = :meetId AND TS.confirm = true")
-    Optional<TimeSlot> findConfirmByMeetId(@Param("meetId") Long meetId);
+    List<TimeSlot> findAllConfirmByMeetId(@Param("meetId") Long meetId);
 
     @Query("select count(*)>0 from TIMESLOT_TABLE as ts where ts.confirm=true and ts.meet.id=:meetId")
     boolean existsByMeetId(@Param("meetId") Long meetId);

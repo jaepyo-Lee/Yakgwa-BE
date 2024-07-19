@@ -18,12 +18,14 @@ import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
+import com.prography.yakgwa.domain.vote.impl.TimeSlotReader;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
+import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -38,6 +40,7 @@ import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @ActiveProfiles("test")
@@ -64,6 +67,8 @@ class VoteServiceTest {
     private ParticipantJpaRepository participantJpaRepository;
     @Autowired
     private VoteService voteService;
+    @Autowired
+    private TimeSlotReader timeSlotReader;
 
     @Test
     void 약과원_모임확정되지않았을때_투표안했을때_조회() {
@@ -312,7 +317,51 @@ class VoteServiceTest {
     }
 
 
+    @Test
+    void 시간투표_확정하기() {
+        // given
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = createAndSaveMeet(1L, theme, 24);
+        User saveUser = createAndSaveUser(1L);
+        Participant saveParticipant = createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextDay = now.plusDays(1L);
+        TimeSlot saveTimeSlot = createAndSaveTimeSlot(saveMeet, now, false);
+        TimeSlot saveTimeSlot1 = createAndSaveTimeSlot(saveMeet, nextDay, false);
+        // when
+        System.out.println("=====Logic Start=====");
 
+        voteService.confirmTime(saveUser.getId(), saveMeet.getId(), saveTimeSlot.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        TimeSlot timeSlot = timeSlotReader.read(saveTimeSlot.getId());
+        assertThat(timeSlot.getConfirm()).isEqualTo(Boolean.TRUE);
+
+    }
+
+    @Test
+    void 이미확정되었는데_시간투표할때_예외() {
+        // given
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = createAndSaveMeet(1L, theme, 24);
+        User saveUser = createAndSaveUser(1L);
+        Participant saveParticipant = createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextDay = now.plusDays(1L);
+        TimeSlot saveTimeSlot = createAndSaveTimeSlot(saveMeet, now, false);
+        TimeSlot saveTimeSlot1 = createAndSaveTimeSlot(saveMeet, nextDay, false);
+        // when
+        System.out.println("=====Logic Start=====");
+
+        voteService.confirmTime(saveUser.getId(), saveMeet.getId(), saveTimeSlot.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertThrows(AlreadyTimeConfirmVoteException.class,()->voteService.confirmTime(saveUser.getId(), saveMeet.getId(), saveTimeSlot1.getId()));
+
+
+    }
 
 
 
