@@ -33,6 +33,8 @@ public class PlaceVoteInfoWithStatusResponse {
         private Long placeSlotId;
         private String title;
         private String roadAddress;
+        private String mapx;
+        private String mapy;
     }
 
     public static PlaceVoteInfoWithStatusResponse of(VoteStatus voteStatus, List<PlaceSlot> places) {
@@ -44,6 +46,8 @@ public class PlaceVoteInfoWithStatusResponse {
                                 .placeSlotId(placeSlot.getId())
                                 .roadAddress(placeSlot.getPlace().getRoadAddress())
                                 .title(placeSlot.getPlace().getTitle())
+                                .mapy(placeSlot.getPlace().getMapy())
+                                .mapx(placeSlot.getPlace().getMapx())
                                 .build()
                         ).toList()
                 ).build();
