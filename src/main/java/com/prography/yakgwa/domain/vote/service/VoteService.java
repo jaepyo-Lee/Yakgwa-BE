@@ -19,6 +19,7 @@ import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
 import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
 import com.prography.yakgwa.global.format.exception.param.DataIntegrateException;
+import com.prography.yakgwa.global.format.exception.slot.NotMatchSlotInMeetException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
 import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
@@ -66,12 +67,12 @@ public class VoteService {
         if (isConfirm) { //장소확정되었을때
             List<PlaceSlot> placeSlots = placeSlotReader.readAllConfirmByMeetId(meetId);
             if (placeSlots.size() > 1) {
-                log.info("{}번 모임의 장소투표 데이터확인",meetId);
+                log.info("{}번 모임의 장소투표 데이터확인", meetId);
                 throw new DataIntegrateException();
             }
             return PlaceInfosByMeetStatus.builder()
                     .voteStatus(VoteStatus.CONFIRM)
-                    .places(placeSlots.stream().map(PlaceSlot::getPlace).toList())
+                    .places(placeSlots)
                     .meet(meet)
                     .build();
         } else {
@@ -88,14 +89,14 @@ public class VoteService {
                             .orElse(0L);
 
                     // 최대값을 가진것으로 확인
-                    List<Place> maxVotePlaces = placeSlotVoteCounts.entrySet().stream()
+                    List<PlaceSlot> placeSlotList = placeSlotVoteCounts.entrySet().stream()
                             .filter(entry -> entry.getValue() == maxVoteCount)
-                            .map(placeSlotLongEntry -> placeSlotLongEntry.getKey().getPlace())
-                            .collect(Collectors.toList());
+                            .map(Map.Entry::getKey)
+                            .toList();
 
                     return PlaceInfosByMeetStatus.builder()
                             .voteStatus(VoteStatus.BEFORE_CONFIRM)
-                            .places(maxVotePlaces)
+                            .places(placeSlotList)
                             .meet(meet)
                             .build();
                 }
@@ -105,7 +106,7 @@ public class VoteService {
                 return PlaceInfosByMeetStatus.builder()
                         .voteStatus(VoteStatus.VOTE)
                         .places(placeVoteOfUserInMeet.stream()
-                                .map(placeVote -> placeVote.getPlaceSlot().getPlace())
+                                .map(PlaceVote::getPlaceSlot)
                                 .toList())
                         .meet(meet)
                         .build();
@@ -131,8 +132,8 @@ public class VoteService {
 
         if (isConfirm) { // 시간확정되었을때
             List<TimeSlot> timeSlot = timeSlotReader.readAllConfirmByMeetId(meetId);
-            if(timeSlot.size()>1){
-                log.info("{}번 모임의 시간투표 데이터확인",meetId);
+            if (timeSlot.size() > 1) {
+                log.info("{}번 모임의 시간투표 데이터확인", meetId);
                 throw new DataIntegrateException();
             }
             return TimeInfosByMeetStatus.builder()
@@ -246,6 +247,9 @@ public class VoteService {
             throw new ParticipantConfirmException();
         }
         PlaceSlot placeSlot = placeSlotReader.read(confirmPlaceSlotId);
+        if (!placeSlot.getMeet().getId().equals(meetId)) {
+            throw new NotMatchSlotInMeetException();
+        }
         placeSlot.confirm();
     }
 
