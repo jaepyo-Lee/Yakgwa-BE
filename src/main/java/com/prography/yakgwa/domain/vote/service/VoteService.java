@@ -72,7 +72,7 @@ public class VoteService {
             }
             return PlaceInfosByMeetStatus.builder()
                     .voteStatus(VoteStatus.CONFIRM)
-                    .places(placeSlots.stream().map(PlaceSlot::getPlace).toList())
+                    .places(placeSlots)
                     .meet(meet)
                     .build();
         } else {
@@ -89,14 +89,14 @@ public class VoteService {
                             .orElse(0L);
 
                     // 최대값을 가진것으로 확인
-                    List<Place> maxVotePlaces = placeSlotVoteCounts.entrySet().stream()
+                    List<PlaceSlot> placeSlotList = placeSlotVoteCounts.entrySet().stream()
                             .filter(entry -> entry.getValue() == maxVoteCount)
-                            .map(placeSlotLongEntry -> placeSlotLongEntry.getKey().getPlace())
-                            .collect(Collectors.toList());
+                            .map(Map.Entry::getKey)
+                            .toList();
 
                     return PlaceInfosByMeetStatus.builder()
                             .voteStatus(VoteStatus.BEFORE_CONFIRM)
-                            .places(maxVotePlaces)
+                            .places(placeSlotList)
                             .meet(meet)
                             .build();
                 }
@@ -106,7 +106,7 @@ public class VoteService {
                 return PlaceInfosByMeetStatus.builder()
                         .voteStatus(VoteStatus.VOTE)
                         .places(placeVoteOfUserInMeet.stream()
-                                .map(placeVote -> placeVote.getPlaceSlot().getPlace())
+                                .map(PlaceVote::getPlaceSlot)
                                 .toList())
                         .meet(meet)
                         .build();

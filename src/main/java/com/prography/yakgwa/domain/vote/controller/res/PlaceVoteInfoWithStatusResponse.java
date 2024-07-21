@@ -1,11 +1,9 @@
 package com.prography.yakgwa.domain.vote.controller.res;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
-import com.prography.yakgwa.domain.place.entity.Place;
 
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
+import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
@@ -32,25 +30,22 @@ public class PlaceVoteInfoWithStatusResponse {
     @Builder
     @Schema(name = "PlaceVoteInfoWithStatusResponse-VotePlaceInfo")
     private static class VotePlaceInfo {
-        private Long placeId;
+        private Long placeSlotId;
         private String title;
         private String roadAddress;
-        private String mapx;
-        private String mapy;
     }
 
-    public static PlaceVoteInfoWithStatusResponse of(VoteStatus voteStatus, List<Place> places) {
+    public static PlaceVoteInfoWithStatusResponse of(VoteStatus voteStatus, List<PlaceSlot> places) {
 
         return PlaceVoteInfoWithStatusResponse.builder()
                 .meetStatus(voteStatus)
                 .placeInfos(places.isEmpty() ? null : places.stream()
-                        .map(place -> VotePlaceInfo.builder()
-                                .placeId(place.getId())
-                                .mapx(place.getMapx())
-                                .mapy(place.getMapy())
-                                .roadAddress(place.getRoadAddress())
-                                .title(place.getTitle()).build())
-                        .toList())
-                .build();
+                        .map(placeSlot -> VotePlaceInfo.builder()
+                                .placeSlotId(placeSlot.getId())
+                                .roadAddress(placeSlot.getPlace().getRoadAddress())
+                                .title(placeSlot.getPlace().getTitle())
+                                .build()
+                        ).toList()
+                ).build();
     }
 }
