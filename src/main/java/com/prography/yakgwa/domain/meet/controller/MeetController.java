@@ -4,13 +4,13 @@ import com.prography.yakgwa.domain.meet.controller.req.CreateMeetRequest;
 import com.prography.yakgwa.domain.meet.controller.res.CreateMeetResponse;
 import com.prography.yakgwa.domain.meet.controller.res.MeetInfoWithParticipantResponse;
 import com.prography.yakgwa.domain.meet.controller.res.MeetWithStatusInfoResponse;
+import com.prography.yakgwa.domain.meet.controller.res.PostConfirmMeetInfoResponse;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.service.MeetService;
 import com.prography.yakgwa.domain.meet.service.req.MeetWithVoteAndStatus;
 import com.prography.yakgwa.domain.meet.service.res.MeetInfoWithParticipant;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -42,5 +42,11 @@ public class MeetController implements MeetApi{
     public SuccessResponse<MeetWithStatusInfoResponse> findCurrentMeetsForUser(@AuthenticationPrincipal CustomUserDetail user) {
         List<MeetWithVoteAndStatus> meetWithVoteAndStatuses = meetService.findWithStatus(user.getUserId());
         return new SuccessResponse<>(MeetWithStatusInfoResponse.of(meetWithVoteAndStatuses));
+    }
+
+    @GetMapping("/meets/record")
+    public SuccessResponse<PostConfirmMeetInfoResponse> findPostConfirmMeet(@AuthenticationPrincipal CustomUserDetail userDetail){
+        List<MeetWithVoteAndStatus> postCofirm = meetService.findPostConfirm(userDetail.getUserId());
+        return new SuccessResponse<>(PostConfirmMeetInfoResponse.of(postCofirm));
     }
 }
