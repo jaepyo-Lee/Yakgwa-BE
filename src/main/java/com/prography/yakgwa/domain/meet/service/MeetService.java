@@ -22,8 +22,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -89,5 +91,12 @@ public class MeetService {
         }
 
         return list;
+    }
+
+    public List<MeetWithVoteAndStatus> findPostConfirm(Long userId) {
+        return findWithStatus(userId).stream()
+                .filter(meet -> meet.getMeetStatus().equals(MeetStatus.CONFIRM))
+                .filter(meet -> meet.getTimeSlot().getTime().isAfter(LocalDateTime.now().plusHours(1L)))
+                .toList();
     }
 }

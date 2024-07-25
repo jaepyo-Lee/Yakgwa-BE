@@ -2,19 +2,15 @@ package com.prography.yakgwa.domain.magazine.impl;
 
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
 import com.prography.yakgwa.domain.magazine.entity.Image;
-import com.prography.yakgwa.domain.magazine.entity.ImageType;
 import com.prography.yakgwa.domain.magazine.entity.Magazine;
 import com.prography.yakgwa.domain.magazine.repository.ImageJpaRepository;
-import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static com.prography.yakgwa.domain.magazine.entity.ImageType.CONTENT;
 import static com.prography.yakgwa.domain.magazine.entity.ImageType.THUMBNAIL;

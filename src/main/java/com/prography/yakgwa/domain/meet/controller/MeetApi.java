@@ -5,6 +5,7 @@ import com.prography.yakgwa.domain.meet.controller.req.CreateMeetRequest;
 import com.prography.yakgwa.domain.meet.controller.res.CreateMeetResponse;
 import com.prography.yakgwa.domain.meet.controller.res.MeetInfoWithParticipantResponse;
 import com.prography.yakgwa.domain.meet.controller.res.MeetWithStatusInfoResponse;
+import com.prography.yakgwa.domain.meet.controller.res.PostConfirmMeetInfoResponse;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,4 +25,8 @@ public interface MeetApi {
 
     @Operation(summary = "사용자가 현재 참여중인 모임목록 조회 API", description = "")
     SuccessResponse<MeetWithStatusInfoResponse> findCurrentMeetsForUser(@AuthenticationPrincipal CustomUserDetail user);
+
+    @Operation(summary = "사용자의 약속히스토리 api", description = "현재 시점에서 확정한 약속 시간 +1시간 이상인 항목만 노출<br>" +
+            "정렬 기준 : 약속 시간 최신순")
+    SuccessResponse<PostConfirmMeetInfoResponse> findPostConfirmMeet(@AuthenticationPrincipal CustomUserDetail userDetail);
 }

@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "USER_TABLE")
-@Table(indexes = @Index(name = "auth_type",columnList = "auth_type"))
 public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +23,7 @@ public class User extends BaseTimeEntity {
     private Boolean isNew;
     private String imageUrl;
     private String fcmToken;
+
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private Role role= Role.ROLE_USER;
