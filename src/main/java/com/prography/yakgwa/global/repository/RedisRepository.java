@@ -11,11 +11,25 @@ import java.time.Duration;
 @Repository
 public class RedisRepository {
     private final RedisTemplate<String, Object> redisTemplate;
-    private String GOOD_PLACE_KEYWORD = "USER_GOOD_PLACE:";
+
+    public void likePlace(Long userId, String title, String mapx, String mapy){
+        String value = likePlaceValueCreate(title, mapx, mapy);
+        String key = likePlaceKeyCreate(userId);
+        redisTemplate.opsForSet().add(key, value);
+    }
+    public void cancelLikePlace(Long userId, String title, String mapx, String mapy){
+        String value = likePlaceValueCreate(title, mapx, mapy);
+        String key = likePlaceKeyCreate(userId);
+        redisTemplate.opsForSet().remove(key, value);
+    }
+
+    private String likePlaceValueCreate(String title, String mapx, String mapy) {
+        return title + "_" + mapx + "_" + mapy;
+    }
 
     public boolean isUserGoodPlace(Long userId, String title, String mapx, String mapy) {
-        String key = GOOD_PLACE_KEYWORD + userId;
-        String value = title + "_" + mapx + "_" + mapy;
+        String key = likePlaceKeyCreate(userId);
+        String value = likePlaceValueCreate(title, mapx, mapy);
 
         // 이미 좋아요를 눌렀는지 확인
         if (Boolean.TRUE.equals(redisTemplate.opsForSet().isMember(key, value))) {
@@ -23,6 +37,12 @@ public class RedisRepository {
         }
         return false; // 좋아요를 처음 누르는 경우 false 반환
     }
+    private String likePlaceKeyCreate(Long userId) {
+        String GOOD_PLACE_KEYWORD = "GOOD_PLACE_USER:";
+        return GOOD_PLACE_KEYWORD + userId;
+    }
+
+
 
 
     public void refreshSave(String authId, String refreshToken, Duration duration) {
