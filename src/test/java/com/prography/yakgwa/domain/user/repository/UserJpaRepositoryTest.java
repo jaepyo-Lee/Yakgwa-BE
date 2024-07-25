@@ -38,7 +38,7 @@ class UserJpaRepositoryTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        Optional<User> byAuthIdAndAndAuthType = userJpaRepository.findByAuthIdAndAndAuthType(authId, authType);
+        Optional<User> byAuthIdAndAndAuthType = userJpaRepository.findByAuthIdAndAuthType(authId, authType);
 
         System.out.println("=====Logic End=====");
         // then
@@ -55,7 +55,7 @@ class UserJpaRepositoryTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        Optional<User> byAuthIdAndAndAuthType = userJpaRepository.findByAuthIdAndAndAuthType(authId, authType);
+        Optional<User> byAuthIdAndAndAuthType = userJpaRepository.findByAuthIdAndAuthType(authId, authType);
 
         System.out.println("=====Logic End=====");
 

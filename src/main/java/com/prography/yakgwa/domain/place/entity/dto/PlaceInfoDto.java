@@ -30,7 +30,9 @@ public class PlaceInfoDto {
     private String mapx;
     @Schema(description = "y좌표",example = "123")
     private String mapy;
-
+    public void removeHtmlOfTitle(){
+        this.title = this.title.replaceAll("<[^>]*>", "");
+    }
     public Place toEntity() {
         return Place.builder()
                 .title(title)

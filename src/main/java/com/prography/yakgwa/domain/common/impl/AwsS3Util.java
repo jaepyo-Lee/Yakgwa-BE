@@ -1,7 +1,6 @@
 package com.prography.yakgwa.domain.common.impl;
 
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,10 +32,10 @@ public class AwsS3Util {
         File uploadFile = convert(multipartFile)
                 .orElseThrow(() -> new RuntimeException("이미지 업로드가 안되었습니다."));
 
-        return upload(uploadFile, dirName);
+        return uploadToAws(uploadFile, dirName);
     }
 
-    private String upload(File uploadFile, String dirName){
+    private String uploadToAws(File uploadFile, String dirName){
 
         String fileName = dirName + "/" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);

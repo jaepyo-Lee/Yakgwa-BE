@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.place.entity;
 
+import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -27,4 +28,18 @@ public class Place {
     private String roadAddress;
     private String mapx;
     private String mapy;
+
+    public PlaceInfoDto toInfoDto(){
+        return PlaceInfoDto.builder()
+                .mapx(mapx)
+                .mapy(mapy)
+                .link(link)
+                .title(title)
+                .address(address)
+                .roadAddress(roadAddress)
+                .category(category)
+                .telephone(telephone)
+                .description(description)
+                .build();
+    }
 }

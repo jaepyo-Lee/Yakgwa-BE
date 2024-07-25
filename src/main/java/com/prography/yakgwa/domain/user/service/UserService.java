@@ -1,7 +1,6 @@
 package com.prography.yakgwa.domain.user.service;
 
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
-import com.prography.yakgwa.domain.magazine.impl.ImageWriter;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.impl.UserReader;
 import com.prography.yakgwa.global.format.exception.param.MultipartParamException;
