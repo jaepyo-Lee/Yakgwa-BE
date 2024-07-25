@@ -24,4 +24,6 @@ public class PlaceController implements PlaceApi {
         placeService.decideLike(user.getUserId(), like, likePlaceRequest);
         return new SuccessResponse<>(like);
     }
+
+
 }
