@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.place.controller;
 
 import com.prography.yakgwa.domain.place.controller.req.LikePlaceRequest;
+import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,6 +11,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 @Tag(name = "Place", description = "장소 API입니다.")
 public interface PlaceApi {
     @Operation(summary = "나의 장소 등록 API", description = "나의 장소 등록시 사용")
@@ -18,4 +21,7 @@ public interface PlaceApi {
                                        @RequestParam("like") boolean like,
                                        @AuthenticationPrincipal CustomUserDetail user,
                                        @RequestBody LikePlaceRequest likePlaceRequest);
+
+    @Operation(summary = "나의 장소 조회 API")
+    SuccessResponse<List<PlaceInfoWithUserLike>> findLikePlace(@AuthenticationPrincipal CustomUserDetail user);
 }

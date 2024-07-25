@@ -15,6 +15,9 @@ public class PlaceReader {
     public Optional<Place> readByMapxAndMapy(String mapx, String mapy) {
         return placeJpaRepository.findByMapxAndMapy(mapx, mapy);
     }
+    public Optional<Place> readByMapxAndMapyAndTitle(String mapx, String mapy,String title) {
+        return placeJpaRepository.findByTitleAndMapxAndMapy(title,mapx, mapy);
+    }
 
     public Place read(Long placeId) {
         return placeJpaRepository.findById(placeId)

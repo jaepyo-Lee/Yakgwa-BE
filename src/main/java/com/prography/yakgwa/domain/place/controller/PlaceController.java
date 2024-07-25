@@ -25,5 +25,8 @@ public class PlaceController implements PlaceApi {
         return new SuccessResponse<>(like);
     }
 
-
+    @GetMapping("/place/like")
+    public SuccessResponse<List<PlaceInfoWithUserLike>> findLikePlace(@AuthenticationPrincipal CustomUserDetail user) {
+        return new SuccessResponse<>(placeService.findLike(user.getUserId()));
+    }
 }

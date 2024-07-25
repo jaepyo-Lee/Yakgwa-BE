@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
+import java.util.Set;
 
 @RequiredArgsConstructor
 @Repository
@@ -21,6 +22,10 @@ public class RedisRepository {
         String value = likePlaceValueCreate(title, mapx, mapy);
         String key = likePlaceKeyCreate(userId);
         redisTemplate.opsForSet().remove(key, value);
+    }
+    public Set<Object> findLikePlaces(Long userId){
+        return redisTemplate.opsForSet().members(likePlaceKeyCreate(userId));
+
     }
 
     private String likePlaceValueCreate(String title, String mapx, String mapy) {
