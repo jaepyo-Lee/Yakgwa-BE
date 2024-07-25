@@ -238,6 +238,12 @@ public class VoteService {
         return timeVoteWriter.writeAll(user, chooseTimeSlot);
     }
 
+    /**
+     * Todo
+     * Work) 테스트코드
+     * Write-Date) 2024-07-25
+     * Finish-Date)
+     */
     public void confirmPlace(Long userId, Long meetId, Long confirmPlaceSlotId) {
         if (placeSlotReader.existConfirm(meetId)) {
             throw new AlreadyPlaceConfirmVoteException();
@@ -253,6 +259,12 @@ public class VoteService {
         placeSlot.confirm();
     }
 
+    /**
+     * Todo
+     * Work) 테스트코드
+     * Write-Date) 2024-07-25
+     * Finish-Date)
+     */
     public void confirmTime(Long userId, Long meetId, Long confirmTimeSlotId) {
         if (timeSlotReader.existConfirm(meetId)) {
             throw new AlreadyTimeConfirmVoteException();

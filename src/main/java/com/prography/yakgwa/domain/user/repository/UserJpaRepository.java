@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface UserJpaRepository extends JpaRepository<User, Long> {
-    Optional<User> findByAuthIdAndAndAuthType(String authId, AuthType authType);
+    Optional<User> findByAuthIdAndAuthType(String authId, AuthType authType);
 }

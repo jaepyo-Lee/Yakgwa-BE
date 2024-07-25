@@ -13,7 +13,6 @@ import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.Role;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
-import org.junit.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -26,7 +25,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.io.IOException;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
