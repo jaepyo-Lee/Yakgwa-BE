@@ -45,12 +45,14 @@ public class ScheduleExecutor {
 
         Runnable runnable = () -> {
             try {
-                //누구에게 보내야할지 정해야함(meetId로 조회 -> participant조회 -> user의 fcm뽑기 -> 메시지 생성 -> 전송)
                 List<Participant> participants = participantReader.readAllWithUserByMeetId(meet.getId());
                 for (Participant participant : participants) {
                     Alarm alarm = Alarm.builder()
-                            .taskID(taskID).meet(meet)
-                            .body(body).title(title).user(participant.getUser()).time(alarmTime)
+                            .taskID(taskID)
+                            .meet(meet)
+                            .body(body)
+                            .title(title)
+                            .user(participant.getUser()).time(alarmTime)
                             .build();
                     alarmJpaRepository.save(alarm);
                     String fcmToken = participant.getUser().getFcmToken();
