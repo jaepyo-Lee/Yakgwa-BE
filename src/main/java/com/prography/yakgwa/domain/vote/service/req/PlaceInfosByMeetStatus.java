@@ -16,4 +16,10 @@ public class PlaceInfosByMeetStatus {
     private VoteStatus voteStatus;
     private List<PlaceSlot> places;
     private Meet meet;
+
+    public static PlaceInfosByMeetStatus of(VoteStatus voteStatus, List<PlaceSlot> places, Meet meet) {
+        return PlaceInfosByMeetStatus.builder()
+                .meet(meet).places(places).voteStatus(voteStatus)
+                .build();
+    }
 }
