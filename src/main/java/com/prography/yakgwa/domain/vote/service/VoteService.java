@@ -6,7 +6,6 @@ import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.participant.impl.ParticipantReader;
-import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.impl.UserReader;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
@@ -34,6 +33,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus.BEFORE_CONFIRM;
+import static com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus.VOTE;
 
 @Slf4j
 @Transactional
@@ -66,58 +68,63 @@ public class VoteService {
 
         if (isConfirm) { //장소확정되었을때
             List<PlaceSlot> placeSlots = placeSlotReader.readAllConfirmByMeetId(meetId);
-            if (placeSlots.size() > 1) {
+            if (isCorrectConfirmPlaceSlotSize(placeSlots)) {
                 log.info("{}번 모임의 장소투표 데이터확인", meetId);
                 throw new DataIntegrateException();
             }
-            return PlaceInfosByMeetStatus.builder()
-                    .voteStatus(VoteStatus.CONFIRM)
-                    .places(placeSlots)
-                    .meet(meet)
-                    .build();
+            return PlaceInfosByMeetStatus.of(VoteStatus.CONFIRM, placeSlots, meet);
         } else {
-            if (meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
-                if (participant.getMeetRole().equals(MeetRole.LEADER)) {
+            if (isConfirmOverTime(meet)) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
+                if (isLeader(participant)) {
                     List<PlaceVote> allInMeet = placeVoteReader.findAllInMeet(meet.getId());
-                    // 맵으로 후보지 세기
-                    Map<PlaceSlot, Long> placeSlotVoteCounts = allInMeet.stream()
-                            .collect(Collectors.groupingBy(PlaceVote::getPlaceSlot, Collectors.counting()));
+                    List<PlaceSlot> placeSlotList = findMaxVotePlaceSlot(allInMeet);
 
-                    // 투표 최대값
-                    long maxVoteCount = placeSlotVoteCounts.values().stream()
-                            .max(Long::compare)
-                            .orElse(0L);
-
-                    // 최대값을 가진것으로 확인
-                    List<PlaceSlot> placeSlotList = placeSlotVoteCounts.entrySet().stream()
-                            .filter(entry -> entry.getValue() == maxVoteCount)
-                            .map(Map.Entry::getKey)
-                            .toList();
-
-                    return PlaceInfosByMeetStatus.builder()
-                            .voteStatus(VoteStatus.BEFORE_CONFIRM)
-                            .places(placeSlotList)
-                            .meet(meet)
-                            .build();
+                    return PlaceInfosByMeetStatus.of(BEFORE_CONFIRM, placeSlotList, meet);
                 }
             }
             List<PlaceVote> placeVoteOfUserInMeet = placeVoteReader.findAllPlaceVoteOfUserInMeet(userId, meetId);
-            if (!placeVoteOfUserInMeet.isEmpty()) { //사용자가 투표했을때
-                return PlaceInfosByMeetStatus.builder()
-                        .voteStatus(VoteStatus.VOTE)
-                        .places(placeVoteOfUserInMeet.stream()
-                                .map(PlaceVote::getPlaceSlot)
-                                .toList())
-                        .meet(meet)
-                        .build();
+            if (isUserVotePlace(placeVoteOfUserInMeet)) { //사용자가 투표했을때
+                return PlaceInfosByMeetStatus.of(VOTE, placeVoteOfUserInMeet.stream()
+                        .map(PlaceVote::getPlaceSlot)
+                        .toList(), meet);
             } else { //사용자가 투표 안했을때
-                return PlaceInfosByMeetStatus.builder()
-                        .voteStatus(VoteStatus.BEFORE_VOTE)
-                        .places(List.of())//투표안했으니 빈리스트
-                        .meet(meet)
-                        .build();
+                return PlaceInfosByMeetStatus.of(VoteStatus.BEFORE_VOTE, List.of(), meet);
             }
         }
+    }
+
+    private static boolean isUserVotePlace(List<PlaceVote> placeVoteOfUserInMeet) {
+        return !placeVoteOfUserInMeet.isEmpty();
+    }
+
+    private static List<PlaceSlot> findMaxVotePlaceSlot(List<PlaceVote> allInMeet) {
+        // 맵으로 후보지 세기
+        Map<PlaceSlot, Long> placeSlotVoteCounts = allInMeet.stream()
+                .collect(Collectors.groupingBy(PlaceVote::getPlaceSlot, Collectors.counting()));
+
+        // 투표 최대값
+        long maxVoteCount = placeSlotVoteCounts.values().stream()
+                .max(Long::compare)
+                .orElse(0L);
+
+        // 최대값을 가진것으로 확인
+        List<PlaceSlot> placeSlotList = placeSlotVoteCounts.entrySet().stream()
+                .filter(entry -> entry.getValue() == maxVoteCount)
+                .map(Map.Entry::getKey)
+                .toList();
+        return placeSlotList;
+    }
+
+    private static boolean isLeader(Participant participant) {
+        return participant.isLeader();
+    }
+
+    private static boolean isConfirmOverTime(Meet meet) {
+        return meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now());
+    }
+
+    private static boolean isCorrectConfirmPlaceSlotSize(List<PlaceSlot> placeSlots) {
+        return placeSlots.size() > 1;
     }
 
     /**
@@ -132,7 +139,7 @@ public class VoteService {
 
         if (isConfirm) { // 시간확정되었을때
             List<TimeSlot> timeSlot = timeSlotReader.readAllConfirmByMeetId(meetId);
-            if (timeSlot.size() > 1) {
+            if (isCorrectConfirmTimeSlotSize(timeSlot)) {
                 log.info("{}번 모임의 시간투표 데이터확인", meetId);
                 throw new DataIntegrateException();
             }
@@ -142,33 +149,20 @@ public class VoteService {
                     .meet(meet)
                     .build();
         } else {
-            if (meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
-                if (participant.getMeetRole().equals(MeetRole.LEADER)) {
+            if (isConfirmOverTime(meet)) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
+                if (isLeader(participant)) {
                     List<TimeVote> allInMeet = timeVoteReader.readAllInMeet(meet.getId());
-                    // 맵으로 후보지 세기
-                    Map<TimeSlot, Long> timeSlotVoteCounts = allInMeet.stream()
-                            .collect(Collectors.groupingBy(TimeVote::getTimeSlot, Collectors.counting()));
-
-                    // 투표 최대값
-                    long maxVoteCount = timeSlotVoteCounts.values().stream()
-                            .max(Long::compare)
-                            .orElse(0L);
-
-                    // 최대값을 가진것으로 확인
-                    List<TimeSlot> collect = timeSlotVoteCounts.entrySet().stream()
-                            .filter(entry -> entry.getValue() == maxVoteCount)
-                            .map(Map.Entry::getKey)
-                            .collect(Collectors.toList());
+                    List<TimeSlot> collect = findMaxVoteTimeSlot(allInMeet);
 
                     return TimeInfosByMeetStatus.builder()
-                            .voteStatus(VoteStatus.BEFORE_CONFIRM)
+                            .voteStatus(BEFORE_CONFIRM)
                             .timeSlots(collect)
                             .meet(meet)
                             .build();
                 }
             }
             List<TimeVote> timeVoteOfUserInMeet = timeVoteReader.findAllTimeVoteOfUserInMeet(userId, meet.getId());
-            if (!timeVoteOfUserInMeet.isEmpty()) { //사용자가 투표했을때
+            if (isUserVoteTimeSlot(timeVoteOfUserInMeet)) { //사용자가 투표했을때
                 return TimeInfosByMeetStatus.builder()
                         .voteStatus(VoteStatus.VOTE)
                         .timeSlots(timeVoteOfUserInMeet.stream()
@@ -184,6 +178,32 @@ public class VoteService {
                         .build();
             }
         }
+    }
+
+    private static boolean isUserVoteTimeSlot(List<TimeVote> timeVoteOfUserInMeet) {
+        return !timeVoteOfUserInMeet.isEmpty();
+    }
+
+    private static List<TimeSlot> findMaxVoteTimeSlot(List<TimeVote> allInMeet) {
+        // 맵으로 후보지 세기
+        Map<TimeSlot, Long> timeSlotVoteCounts = allInMeet.stream()
+                .collect(Collectors.groupingBy(TimeVote::getTimeSlot, Collectors.counting()));
+
+        // 투표 최대값
+        long maxVoteCount = timeSlotVoteCounts.values().stream()
+                .max(Long::compare)
+                .orElse(0L);
+
+        // 최대값을 가진것으로 확인
+        List<TimeSlot> collect = timeSlotVoteCounts.entrySet().stream()
+                .filter(entry -> entry.getValue() == maxVoteCount)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        return collect;
+    }
+
+    private static boolean isCorrectConfirmTimeSlotSize(List<TimeSlot> timeSlot) {
+        return timeSlot.size() > 1;
     }
 
     /**
@@ -214,28 +234,40 @@ public class VoteService {
         }
         Meet meet = meetReader.read(meetId);
         List<TimeSlot> allTimeSlotsInMeet = timeSlotReader.readAllByMeetId(meetId);
-        if (allTimeSlotsInMeet.stream().anyMatch(TimeSlot::getConfirm) ||
-                meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now())) {
+        if (isNotVoteTimeCondition(allTimeSlotsInMeet, meet)) {
             throw new AlreadyTimeConfirmVoteException();
         }
         for (LocalDateTime enableTime : requestDto.getEnableTimes()) {
-            if (meet.getPeriod().getEndDate().isBefore(enableTime.toLocalDate()) || meet.getPeriod().getStartDate().isAfter(enableTime.toLocalDate())) {
+            if (verifyvalidVoteTIme(enableTime, meet)) {
                 throw new NotValidVoteTimeException();
             }
         }
         User user = userReader.read(userId);
         timeVoteWriter.deleteAllVoteOfUser(user, meetId);
 
-        List<LocalDateTime> notExistTime = requestDto.getEnableTimes().stream()
-                .filter(time -> allTimeSlotsInMeet.stream()
-                        .noneMatch(timeSlot -> timeSlot.getTime().isEqual(time)))
-                .toList();
+        List<LocalDateTime> notExistTime = findNotExistTimeInTimeSlot(requestDto, allTimeSlotsInMeet);
 
         timeSlotWriter.writeAll(meet, notExistTime);
 
         List<TimeSlot> chooseTimeSlot = timeSlotReader.findAllByMeetIdAndTimes(meetId, requestDto.getEnableTimes().stream().toList());
 
         return timeVoteWriter.writeAll(user, chooseTimeSlot);
+    }
+
+    private static List<LocalDateTime> findNotExistTimeInTimeSlot(EnableTimeRequestDto requestDto, List<TimeSlot> allTimeSlotsInMeet) {
+        return requestDto.getEnableTimes().stream()
+                .filter(time -> allTimeSlotsInMeet.stream()
+                        .noneMatch(timeSlot -> timeSlot.getTime().isEqual(time)))
+                .toList();
+    }
+
+    private static boolean isNotVoteTimeCondition(List<TimeSlot> allTimeSlotsInMeet, Meet meet) {
+        return allTimeSlotsInMeet.stream().anyMatch(TimeSlot::getConfirm) ||
+                isConfirmOverTime(meet);
+    }
+
+    private static boolean verifyvalidVoteTIme(LocalDateTime enableTime, Meet meet) {
+        return meet.getPeriod().getEndDate().isBefore(enableTime.toLocalDate()) || meet.getPeriod().getStartDate().isAfter(enableTime.toLocalDate());
     }
 
     /**
@@ -249,14 +281,18 @@ public class VoteService {
             throw new AlreadyPlaceConfirmVoteException();
         }
         Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
-        if (!participant.isLeader()) {
+        if (!isLeader(participant)) {
             throw new ParticipantConfirmException();
         }
         PlaceSlot placeSlot = placeSlotReader.read(confirmPlaceSlotId);
-        if (!placeSlot.getMeet().getId().equals(meetId)) {
+        if (!isPlaceSlotMatchMeet(meetId, placeSlot)) {
             throw new NotMatchSlotInMeetException();
         }
         placeSlot.confirm();
+    }
+
+    private static boolean isPlaceSlotMatchMeet(Long meetId, PlaceSlot placeSlot) {
+        return placeSlot.getMeet().getId().equals(meetId);
     }
 
     /**
@@ -270,7 +306,7 @@ public class VoteService {
             throw new AlreadyTimeConfirmVoteException();
         }
         Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
-        if (!participant.isLeader()) {
+        if (!isLeader(participant)) {
             throw new ParticipantConfirmException();
         }
         TimeSlot timeSlot = timeSlotReader.read(confirmTimeSlotId);
