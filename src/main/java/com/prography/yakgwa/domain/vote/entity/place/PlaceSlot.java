@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.Hibernate;
+
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,7 +30,21 @@ public class PlaceSlot extends BaseTimeEntity {
     @JoinColumn(name = "place_id")
     private Place place;
 
-    public void confirm(){
+    public void confirm() {
         confirm = true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o))
+            return false;
+        PlaceSlot placeSlot = (PlaceSlot) o;
+        return Objects.equals(id, placeSlot.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.intValue();
     }
 }

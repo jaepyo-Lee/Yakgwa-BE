@@ -6,6 +6,7 @@ import com.prography.yakgwa.domain.vote.controller.req.VotePlaceRequest;
 import com.prography.yakgwa.domain.vote.controller.req.EnableTimeRequest;
 import com.prography.yakgwa.domain.vote.controller.res.PlaceVoteInfoWithStatusResponse;
 import com.prography.yakgwa.domain.vote.controller.res.TimeVoteInfoWithStatusResponse;
+import com.prography.yakgwa.domain.vote.service.VoteExecuteService;
 import com.prography.yakgwa.domain.vote.service.VoteService;
 import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("${app.api.base}")
 public class VoteController implements VoteApi {
     private final VoteService voteService;
-
+    private final VoteExecuteService voteExecuteService;
     //나의 장소투표 목록
     @GetMapping("/meets/{meetId}/places")
     public SuccessResponse<PlaceVoteInfoWithStatusResponse> placeInfoByMeetStatus(@AuthenticationPrincipal CustomUserDetail user,
@@ -44,7 +45,7 @@ public class VoteController implements VoteApi {
     public SuccessResponse votePlaces(@AuthenticationPrincipal CustomUserDetail user,
                                       @PathVariable("meetId") Long meetId,
                                       @RequestBody @Valid VotePlaceRequest votePlaceRequest) {
-        voteService.votePlace(user.getUserId(), meetId, votePlaceRequest.getCurrentVotePlaceSlotIds());
+        voteExecuteService.votePlace(user.getUserId(), meetId, votePlaceRequest.getCurrentVotePlaceSlotIds());
         return SuccessResponse.ok("장소 투표하였습니다.");
     }
 
@@ -53,7 +54,7 @@ public class VoteController implements VoteApi {
     public SuccessResponse voteTimes(@AuthenticationPrincipal CustomUserDetail user,
                                      @PathVariable("meetId") Long meetId,
                                      @RequestBody @Valid EnableTimeRequest enableTimeRequest) {
-        voteService.voteTime(user.getUserId(), meetId, enableTimeRequest.toRequestDto());
+        voteExecuteService.voteTime(user.getUserId(), meetId, enableTimeRequest.toRequestDto());
         return SuccessResponse.ok("시간 투표하였습니다");
     }
 

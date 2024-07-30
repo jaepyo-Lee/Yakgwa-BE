@@ -11,5 +11,11 @@ import java.util.Optional;
 
 @Repository
 public interface ImageJpaRepository extends JpaRepository<Image,Long> {
+    /**
+     * Todo
+     * Work) Test Code
+     * Write-Date) 2024-07-28, 일, 1:16
+     * Finish-Date)
+     */
     List<Image> findAllByMagazineId(@Param("magazineId") Long magazineId);
 }

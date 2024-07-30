@@ -51,8 +51,8 @@ dependencies {
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-    //embedded-redis
-    testImplementation 'it.ozimov:embedded-redis:0.7.2'
+    //testcontainer
+    testImplementation group: 'org.testcontainers', name: 'testcontainers', version: '1.17.2'
 
     //mysql
     implementation 'mysql:mysql-connector-java:8.0.32'
@@ -65,6 +65,7 @@ dependencies {
 
     //s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    testImplementation 'io.findify:s3mock_2.13:0.2.6'
 }
 
 /**

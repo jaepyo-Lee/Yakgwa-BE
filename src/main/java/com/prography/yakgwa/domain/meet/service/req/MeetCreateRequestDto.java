@@ -5,12 +5,11 @@ import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
 import com.prography.yakgwa.domain.meet.impl.dto.MeetWriteDto;
 import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
-import com.prography.yakgwa.domain.vote.impl.dto.ConfirmPlaceDto;
-import com.prography.yakgwa.domain.vote.impl.dto.ConfirmTimeDto;
+import com.prography.yakgwa.domain.meet.impl.dto.ConfirmPlaceDto;
+import com.prography.yakgwa.domain.meet.impl.dto.ConfirmTimeDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 import java.util.List;

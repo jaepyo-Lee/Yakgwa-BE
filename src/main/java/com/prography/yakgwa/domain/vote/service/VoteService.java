@@ -1,28 +1,29 @@
 package com.prography.yakgwa.domain.vote.service;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.impl.MeetReader;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
+import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
-import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
-import com.prography.yakgwa.domain.participant.impl.ParticipantReader;
-import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.user.impl.UserReader;
+import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
-import com.prography.yakgwa.domain.vote.impl.*;
-import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
+import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
+import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
+import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
+import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
+import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.param.DataIntegrateException;
+import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
+import com.prography.yakgwa.global.format.exception.slot.NotFoundPlaceSlotException;
+import com.prography.yakgwa.global.format.exception.slot.NotFoundTimeSlotException;
 import com.prography.yakgwa.global.format.exception.slot.NotMatchSlotInMeetException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
-import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
-import com.prography.yakgwa.global.format.exception.vote.ParticipantConfirmException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,9 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus.BEFORE_CONFIRM;
 import static com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus.VOTE;
@@ -42,17 +40,14 @@ import static com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus.VOTE;
 @Service
 @RequiredArgsConstructor
 public class VoteService {
-    private final MeetReader meetReader;
-    private final PlaceVoteReader placeVoteReader;
-    private final TimeVoteReader timeVoteReader;
-    private final PlaceSlotReader placeSlotReader;
-    private final TimeSlotReader timeSlotReader;
-    private final PlaceVoteWriter placeVoteWriter;
-    private final UserReader userReader;
-    private final TimeVoteWriter timeVoteWriter;
-    private final TimeSlotWriter timeSlotWriter;
-    private final ParticipantReader participantReader;
     private final MeetStatusJudger meetStatusJudger;
+    private final MeetJpaRepository meetJpaRepository;
+    private final ParticipantJpaRepository participantJpaRepository;
+    private final PlaceSlotJpaRepository placeSlotJpaRepository;
+    private final PlaceVoteJpaRepository placeVoteJpaRepository;
+    private final TimeSlotJpaRepository timeSlotJpaRepository;
+    private final TimeVoteJpaRepository timeVoteJpaRepository;
+    private final VoteCounter voteCounter;
 
     /**
      * Work) 테스트코드
@@ -61,28 +56,26 @@ public class VoteService {
      * 원래 BEFORE_VOTE이면 PLACE가 NULL인데 빈리스트 반환으로 변경
      */
     public PlaceInfosByMeetStatus findPlaceInfoWithMeetStatus(Long userId, Long meetId) {
-        Meet meet = meetReader.read(meetId);
-        Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
+        Meet meet = findBy(meetId);
+        Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
+                .orElseThrow(NotFoundParticipantException::new);
 
         boolean isConfirm = meetStatusJudger.verifyConfirmAndConfirmPlacePossible(meet);
 
         if (isConfirm) { //장소확정되었을때
-            List<PlaceSlot> placeSlots = placeSlotReader.readAllConfirmByMeetId(meetId);
+            List<PlaceSlot> placeSlots = placeSlotJpaRepository.findConfirmByMeetId(meetId);
             if (isCorrectConfirmPlaceSlotSize(placeSlots)) {
                 log.info("{}번 모임의 장소투표 데이터확인", meetId);
                 throw new DataIntegrateException();
             }
             return PlaceInfosByMeetStatus.of(VoteStatus.CONFIRM, placeSlots, meet);
         } else {
-            if (isConfirmOverTime(meet)) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
-                if (isLeader(participant)) {
-                    List<PlaceVote> allInMeet = placeVoteReader.findAllInMeet(meet.getId());
-                    List<PlaceSlot> placeSlotList = findMaxVotePlaceSlot(allInMeet);
-
-                    return PlaceInfosByMeetStatus.of(BEFORE_CONFIRM, placeSlotList, meet);
-                }
+            if (isOverVotePeriodFrom(meet)) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
+                List<PlaceVote> allInMeet = placeVoteJpaRepository.findAllInMeet(meet.getId());
+                List<PlaceSlot> placeSlotList = voteCounter.findMaxVotePlaceSlotFrom(meet);
+                return PlaceInfosByMeetStatus.of(BEFORE_CONFIRM, placeSlotList, meet);
             }
-            List<PlaceVote> placeVoteOfUserInMeet = placeVoteReader.findAllPlaceVoteOfUserInMeet(userId, meetId);
+            List<PlaceVote> placeVoteOfUserInMeet = placeVoteJpaRepository.findAllByUserIdAndMeetId(userId, meetId);
             if (isUserVotePlace(placeVoteOfUserInMeet)) { //사용자가 투표했을때
                 return PlaceInfosByMeetStatus.of(VOTE, placeVoteOfUserInMeet.stream()
                         .map(PlaceVote::getPlaceSlot)
@@ -93,52 +86,19 @@ public class VoteService {
         }
     }
 
-    private static boolean isUserVotePlace(List<PlaceVote> placeVoteOfUserInMeet) {
-        return !placeVoteOfUserInMeet.isEmpty();
-    }
-
-    private static List<PlaceSlot> findMaxVotePlaceSlot(List<PlaceVote> allInMeet) {
-        // 맵으로 후보지 세기
-        Map<PlaceSlot, Long> placeSlotVoteCounts = allInMeet.stream()
-                .collect(Collectors.groupingBy(PlaceVote::getPlaceSlot, Collectors.counting()));
-
-        // 투표 최대값
-        long maxVoteCount = placeSlotVoteCounts.values().stream()
-                .max(Long::compare)
-                .orElse(0L);
-
-        // 최대값을 가진것으로 확인
-        List<PlaceSlot> placeSlotList = placeSlotVoteCounts.entrySet().stream()
-                .filter(entry -> entry.getValue() == maxVoteCount)
-                .map(Map.Entry::getKey)
-                .toList();
-        return placeSlotList;
-    }
-
-    private static boolean isLeader(Participant participant) {
-        return participant.isLeader();
-    }
-
-    private static boolean isConfirmOverTime(Meet meet) {
-        return meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now());
-    }
-
-    private static boolean isCorrectConfirmPlaceSlotSize(List<PlaceSlot> placeSlots) {
-        return placeSlots.size() > 1;
-    }
-
     /**
      * Work) 테스트코드
      * Write-Date) 2024-07-13
      * Finish-Date)
      */
     public TimeInfosByMeetStatus findTimeInfoWithMeetStatus(Long userId, Long meetId) {
-        Meet meet = meetReader.read(meetId); //일단 모임 존재여부 확인용
-        Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
+        Meet meet = findBy(meetId);
+        Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
+                .orElseThrow(NotFoundParticipantException::new);
         boolean isConfirm = meetStatusJudger.verifyConfirmAndConfirmTimePossible(meet);
 
         if (isConfirm) { // 시간확정되었을때
-            List<TimeSlot> timeSlot = timeSlotReader.readAllConfirmByMeetId(meetId);
+            List<TimeSlot> timeSlot = timeSlotJpaRepository.findAllConfirmByMeetId(meetId);
             if (isCorrectConfirmTimeSlotSize(timeSlot)) {
                 log.info("{}번 모임의 시간투표 데이터확인", meetId);
                 throw new DataIntegrateException();
@@ -149,167 +109,103 @@ public class VoteService {
                     .meet(meet)
                     .build();
         } else {
-            if (isConfirmOverTime(meet)) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
-                if (isLeader(participant)) {
-                    List<TimeVote> allInMeet = timeVoteReader.readAllInMeet(meet.getId());
-                    List<TimeSlot> collect = findMaxVoteTimeSlot(allInMeet);
+            if (isOverVotePeriodFrom(meet)) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
+                List<TimeVote> allInMeet = timeVoteJpaRepository.findAllByMeetId(meet.getId());
+                List<TimeSlot> collect = voteCounter.findMaxVoteTimeSlotFrom(meet);
 
+                return TimeInfosByMeetStatus.builder()
+                        .voteStatus(BEFORE_CONFIRM)
+                        .timeSlots(collect)
+                        .meet(meet)
+                        .build();
+            } else {
+                List<TimeVote> timeVoteOfUserInMeet = timeVoteJpaRepository.findAllByTimeSlotOfUser(userId, meet.getId());
+                if (isUserVoteTimeSlot(timeVoteOfUserInMeet)) { //사용자가 투표했을때
                     return TimeInfosByMeetStatus.builder()
-                            .voteStatus(BEFORE_CONFIRM)
-                            .timeSlots(collect)
+                            .voteStatus(VoteStatus.VOTE)
+                            .timeSlots(timeVoteOfUserInMeet.stream()
+                                    .map(TimeVote::getTimeSlot)
+                                    .toList())
+                            .meet(meet)
+                            .build();
+                } else { //사용자가 투표 안했을때
+                    return TimeInfosByMeetStatus.builder()
+                            .voteStatus(VoteStatus.BEFORE_VOTE)
+                            .timeSlots(List.of())
                             .meet(meet)
                             .build();
                 }
             }
-            List<TimeVote> timeVoteOfUserInMeet = timeVoteReader.findAllTimeVoteOfUserInMeet(userId, meet.getId());
-            if (isUserVoteTimeSlot(timeVoteOfUserInMeet)) { //사용자가 투표했을때
-                return TimeInfosByMeetStatus.builder()
-                        .voteStatus(VoteStatus.VOTE)
-                        .timeSlots(timeVoteOfUserInMeet.stream()
-                                .map(TimeVote::getTimeSlot)
-                                .toList())
-                        .meet(meet)
-                        .build();
-            } else { //사용자가 투표 안했을때
-                return TimeInfosByMeetStatus.builder()
-                        .voteStatus(VoteStatus.BEFORE_VOTE)
-                        .timeSlots(List.of())
-                        .meet(meet)
-                        .build();
-            }
         }
-    }
-
-    private static boolean isUserVoteTimeSlot(List<TimeVote> timeVoteOfUserInMeet) {
-        return !timeVoteOfUserInMeet.isEmpty();
-    }
-
-    private static List<TimeSlot> findMaxVoteTimeSlot(List<TimeVote> allInMeet) {
-        // 맵으로 후보지 세기
-        Map<TimeSlot, Long> timeSlotVoteCounts = allInMeet.stream()
-                .collect(Collectors.groupingBy(TimeVote::getTimeSlot, Collectors.counting()));
-
-        // 투표 최대값
-        long maxVoteCount = timeSlotVoteCounts.values().stream()
-                .max(Long::compare)
-                .orElse(0L);
-
-        // 최대값을 가진것으로 확인
-        List<TimeSlot> collect = timeSlotVoteCounts.entrySet().stream()
-                .filter(entry -> entry.getValue() == maxVoteCount)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
-        return collect;
-    }
-
-    private static boolean isCorrectConfirmTimeSlotSize(List<TimeSlot> timeSlot) {
-        return timeSlot.size() > 1;
     }
 
     /**
-     * 1. 확정여부 확인
-     * 2. 기존투표 삭제
-     * 3. 새로운 투표생성
-     */
-    public List<PlaceVote> votePlace(Long userId, Long meetId, Set<Long> placeSlotIds) {
-        if (placeSlotReader.existConfirm(meetId)) {
-            throw new AlreadyPlaceConfirmVoteException();
-        }
-        User user = userReader.read(userId);
-        placeVoteWriter.deleteAllVoteOfUser(user, meetId);
-
-        List<PlaceSlot> choosePlaceSlot = placeSlotReader.findAllByIds(placeSlotIds);
-        return placeVoteWriter.writeAll(user, choosePlaceSlot);
-    }
-
-    /**
-     * 1. 투표확정여부 확인
-     * 2. 기존의 투표목록 삭제
-     * 3. 시간 투표항목에 없는 시간이 들어왔는지 확인 -> 새로운 항목이라면 추가
-     * 4. 시간 투표 생성
-     */
-    public List<TimeVote> voteTime(Long userId, Long meetId, EnableTimeRequestDto requestDto) {
-        if (timeSlotReader.existConfirm(meetId)) {
-            throw new AlreadyTimeConfirmVoteException();
-        }
-        Meet meet = meetReader.read(meetId);
-        List<TimeSlot> allTimeSlotsInMeet = timeSlotReader.readAllByMeetId(meetId);
-        if (isNotVoteTimeCondition(allTimeSlotsInMeet, meet)) {
-            throw new AlreadyTimeConfirmVoteException();
-        }
-        for (LocalDateTime enableTime : requestDto.getEnableTimes()) {
-            if (verifyvalidVoteTIme(enableTime, meet)) {
-                throw new NotValidVoteTimeException();
-            }
-        }
-        User user = userReader.read(userId);
-        timeVoteWriter.deleteAllVoteOfUser(user, meetId);
-
-        List<LocalDateTime> notExistTime = findNotExistTimeInTimeSlot(requestDto, allTimeSlotsInMeet);
-
-        timeSlotWriter.writeAll(meet, notExistTime);
-
-        List<TimeSlot> chooseTimeSlot = timeSlotReader.findAllByMeetIdAndTimes(meetId, requestDto.getEnableTimes().stream().toList());
-
-        return timeVoteWriter.writeAll(user, chooseTimeSlot);
-    }
-
-    private static List<LocalDateTime> findNotExistTimeInTimeSlot(EnableTimeRequestDto requestDto, List<TimeSlot> allTimeSlotsInMeet) {
-        return requestDto.getEnableTimes().stream()
-                .filter(time -> allTimeSlotsInMeet.stream()
-                        .noneMatch(timeSlot -> timeSlot.getTime().isEqual(time)))
-                .toList();
-    }
-
-    private static boolean isNotVoteTimeCondition(List<TimeSlot> allTimeSlotsInMeet, Meet meet) {
-        return allTimeSlotsInMeet.stream().anyMatch(TimeSlot::getConfirm) ||
-                isConfirmOverTime(meet);
-    }
-
-    private static boolean verifyvalidVoteTIme(LocalDateTime enableTime, Meet meet) {
-        return meet.getPeriod().getEndDate().isBefore(enableTime.toLocalDate()) || meet.getPeriod().getStartDate().isAfter(enableTime.toLocalDate());
-    }
-
-    /**
-     * Todo
      * Work) 테스트코드
      * Write-Date) 2024-07-25
-     * Finish-Date)
+     * Finish-Date) 2024-07-30
      */
     public void confirmPlace(Long userId, Long meetId, Long confirmPlaceSlotId) {
-        if (placeSlotReader.existConfirm(meetId)) {
+        if (placeSlotJpaRepository.isConfirmFrom(meetId)) {
             throw new AlreadyPlaceConfirmVoteException();
         }
-        Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
-        if (!isLeader(participant)) {
-            throw new ParticipantConfirmException();
-        }
-        PlaceSlot placeSlot = placeSlotReader.read(confirmPlaceSlotId);
+        Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
+                .orElseThrow(NotFoundParticipantException::new);
+        PlaceSlot placeSlot = placeSlotJpaRepository.findById(confirmPlaceSlotId)
+                .orElseThrow(NotFoundPlaceSlotException::new);
         if (!isPlaceSlotMatchMeet(meetId, placeSlot)) {
             throw new NotMatchSlotInMeetException();
         }
         placeSlot.confirm();
     }
 
-    private static boolean isPlaceSlotMatchMeet(Long meetId, PlaceSlot placeSlot) {
+    private boolean isPlaceSlotMatchMeet(Long meetId, PlaceSlot placeSlot) {
         return placeSlot.getMeet().getId().equals(meetId);
     }
 
     /**
-     * Todo
      * Work) 테스트코드
      * Write-Date) 2024-07-25
-     * Finish-Date)
+     * Finish-Date) 2024-07-30
      */
     public void confirmTime(Long userId, Long meetId, Long confirmTimeSlotId) {
-        if (timeSlotReader.existConfirm(meetId)) {
+        if (isTimeConfirmedFrom(meetId)) {
             throw new AlreadyTimeConfirmVoteException();
         }
-        Participant participant = participantReader.readByUserIdAndMeetId(userId, meetId);
-        if (!isLeader(participant)) {
-            throw new ParticipantConfirmException();
-        }
-        TimeSlot timeSlot = timeSlotReader.read(confirmTimeSlotId);
+        Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
+                .orElseThrow(NotFoundParticipantException::new);
+        TimeSlot timeSlot = timeSlotJpaRepository.findById(confirmTimeSlotId)
+                .orElseThrow(NotFoundTimeSlotException::new);
         timeSlot.confirm();
     }
+
+
+    private static boolean isUserVoteTimeSlot(List<TimeVote> timeVoteOfUserInMeet) {
+        return !timeVoteOfUserInMeet.isEmpty();
+    }
+
+    private static boolean isCorrectConfirmTimeSlotSize(List<TimeSlot> timeSlot) {
+        return timeSlot.size() > 1;
+    }
+
+    private Meet findBy(Long meetId) {
+        return meetJpaRepository.findById(meetId)
+                .orElseThrow(NotFoundMeetException::new);
+    }
+
+    private boolean isTimeConfirmedFrom(Long meetId) {
+        return timeSlotJpaRepository.existsConfirmFrom(meetId);
+    }
+
+    private static boolean isUserVotePlace(List<PlaceVote> placeVoteOfUserInMeet) {
+        return !placeVoteOfUserInMeet.isEmpty();
+    }
+
+    private static boolean isOverVotePeriodFrom(Meet meet) {
+        return meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now());
+    }
+
+    private static boolean isCorrectConfirmPlaceSlotSize(List<PlaceSlot> placeSlots) {
+        return placeSlots.size() > 1;
+    }
+
 }

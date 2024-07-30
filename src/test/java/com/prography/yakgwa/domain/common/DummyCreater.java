@@ -4,6 +4,7 @@ import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
+import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
@@ -31,6 +32,8 @@ import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
 @Component
 public class DummyCreater {
     @Autowired
+    MeetThemeJpaRepository meetThemeJpaRepository;
+    @Autowired
     UserJpaRepository userJpaRepository;
     @Autowired
     private MeetJpaRepository meetJpaRepository;
@@ -47,7 +50,14 @@ public class DummyCreater {
     @Autowired
     private ParticipantJpaRepository participantJpaRepository;
 
-    public User createAndSaveUser(Long id) {
+    public MeetTheme createAndSaveMeetTheme(int id) {
+        MeetTheme theme = MeetTheme.builder()
+                .name("name" + id)
+                .build();
+        return meetThemeJpaRepository.save(theme);
+    }
+
+    public User createAndSaveUser(int id) {
         User user = User.builder()
                 .name("user" + id).isNew(true).authId("authId1").authType(KAKAO)
                 .build();
@@ -73,31 +83,23 @@ public class DummyCreater {
         return timeSlotJpaRepository.save(TimeSlot.builder().meet(saveMeet).time(time).confirm(confirm).build());
     }
 
-    public Meet createAndSaveMeet(Long id, MeetTheme saveMeetTheme, int validInviteHour) {
+    public Meet createAndSaveMeet(int id, MeetTheme saveMeetTheme, int validInviteHour) {
         Meet meet = Meet.builder()
                 .title("title" + id).validInviteHour(validInviteHour).period(new VotePeriod(LocalDate.now(), LocalDate.now().plusDays(1L))).meetTheme(saveMeetTheme)
                 .build();
         return meetJpaRepository.save(meet);
     }
 
-    public Place createAndSavePlace(Long id) {
+    public Place createAndSavePlace(int id) {
         Place place = PlaceInfoDto.builder()
                 .mapx("" + id).mapy("" + id).link("link" + id).address("address" + id).roadAddress("roadAddress" + id).category("category" + id).description("description" + id).title("title" + id).telephone("telephone" + id)
                 .build().toEntity();
         return placeJpaRepository.save(place);
     }
 
-    public PlaceVote createAndSavePlaceVote(PlaceSlot savePlaceSlot, User saveUser) {
-        PlaceVote placeVote = PlaceVote.builder()
-                .placeSlot(savePlaceSlot).user(saveUser)
-                .build();
-        return placeVoteJpaRepository.save(placeVote);
-
-    }
-
-    public PlaceSlot createAndSavePlaceSlot(Place savePlace, Meet saveMeet1, boolean confirm) {
+    public PlaceSlot createAndSavePlaceSlot(Place savePlace, Meet saveMeet, boolean confirm) {
         return placeSlotJpaRepository.save(PlaceSlot.builder()
-                .place(savePlace).meet(saveMeet1).confirm(confirm)
+                .place(savePlace).meet(saveMeet).confirm(confirm)
                 .build());
     }
 }

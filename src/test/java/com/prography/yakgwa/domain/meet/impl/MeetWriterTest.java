@@ -10,8 +10,8 @@ import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
-import com.prography.yakgwa.domain.vote.impl.dto.ConfirmPlaceDto;
-import com.prography.yakgwa.domain.vote.impl.dto.ConfirmTimeDto;
+import com.prography.yakgwa.domain.meet.impl.dto.ConfirmPlaceDto;
+import com.prography.yakgwa.domain.meet.impl.dto.ConfirmTimeDto;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -24,8 +24,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static com.prography.yakgwa.domain.meet.entity.MeetStatus.CONFIRM;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -71,31 +69,19 @@ class MeetWriterTest {
         PlaceInfoDto placeInfoDto1 = PlaceInfoDto.builder().title("title").build();
         PlaceInfoDto placeInfoDto2 = PlaceInfoDto.builder().title("title").build();
 
-        ConfirmPlaceDto confirmPlaceDto = ConfirmPlaceDto.builder()
-                .placeInfo(List.of(placeInfoDto1, placeInfoDto2)).confirmPlace(false)
-                .build();
-
-        ConfirmTimeDto confirmTimeDto = ConfirmTimeDto.builder()
-                .meetTime(null)
-                .build();
-
         // when
         System.out.println("=====Logic Start=====");
 
-        Meet meet = meetWriter.write(writeDto, confirmPlaceDto, confirmTimeDto);
+        Meet meet = meetWriter.write(writeDto);
 
         System.out.println("=====Logic End=====");
-        // then
-        List<TimeSlot> byMeetId = timeSlotJpaRepository.findByMeetId(meet.getId());
-        List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meet.getId());
 
+        // then
         assertAll(() -> assertThat(meet.getTitle()).isEqualTo(title),
                 () -> assertThat(meet.getValidInviteHour()).isEqualTo(24),
                 () -> assertThat(meet.getMeetTheme().getName()).isEqualTo(meetTheme.getName()),
                 () -> assertThat(meet.getPeriod().getEndDate()).isEqualTo(to),
-                () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(from),
-                () -> assertThat(byMeetId.size()).isZero(),
-                () -> assertThat(placeSlots.size()).isEqualTo(2));
+                () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(from));
     }
 
     @Test
@@ -126,21 +112,14 @@ class MeetWriterTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        Meet meet = meetWriter.write(writeDto, confirmPlaceDto, confirmTimeDto);
+        Meet meet = meetWriter.write(writeDto);
 
         System.out.println("=====Logic End=====");
         // then
-        List<TimeSlot> timeSlots = timeSlotJpaRepository.findByMeetId(meet.getId());
-        List<TimeSlot> confirmTimeSlot = timeSlots.stream().filter(TimeSlot::getConfirm).toList();
-        List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meet.getId());
-
         assertAll(() -> assertThat(meet.getTitle()).isEqualTo(title),
                 () -> assertThat(meet.getValidInviteHour()).isEqualTo(24),
                 () -> assertThat(meet.getMeetTheme().getName()).isEqualTo(meetTheme.getName()),
-                () -> assertThat(meet.getPeriod()).isNull(),
-                () -> assertThat(timeSlots.size()).isEqualTo(1),
-                () -> assertThat(confirmTimeSlot.size()).isEqualTo(1),
-                ()-> assertThat(placeSlots.size()).isEqualTo(2));
+                () -> assertThat(meet.getPeriod()).isNull());
     }
 
     @Test
@@ -172,7 +151,7 @@ class MeetWriterTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        assertThrows(RuntimeException.class, () -> meetWriter.write(writeDto, confirmPlaceDto, confirmTimeDto));
+        assertThrows(RuntimeException.class, () -> meetWriter.write(writeDto));
 
         System.out.println("=====Logic End=====");
         // then
@@ -210,7 +189,7 @@ class MeetWriterTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        assertThrows(RuntimeException.class, () -> meetWriter.write(writeDto, confirmPlaceDto, confirmTimeDto));
+        assertThrows(RuntimeException.class, () -> meetWriter.write(writeDto));
 
         System.out.println("=====Logic End=====");
         // then
