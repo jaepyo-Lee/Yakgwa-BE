@@ -5,28 +5,29 @@ import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
 import com.prography.yakgwa.domain.meet.impl.dto.MeetWriteDto;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
-import com.prography.yakgwa.domain.vote.impl.PlaceVoteWriter;
-import com.prography.yakgwa.domain.vote.impl.TimeVoteWriter;
-import com.prography.yakgwa.domain.vote.impl.dto.ConfirmPlaceDto;
-import com.prography.yakgwa.domain.vote.impl.dto.ConfirmTimeDto;
+import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
+import com.prography.yakgwa.domain.meet.impl.dto.ConfirmPlaceDto;
+import com.prography.yakgwa.domain.meet.impl.dto.ConfirmTimeDto;
 import com.prography.yakgwa.global.format.exception.meet.MeetTimeParamDuplicationException;
+import com.prography.yakgwa.global.format.exception.meet.NotFoundThemeException;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @ImplService
 public class MeetWriter {
     private final MeetJpaRepository meetJpaRepository;
-    private final MeetThemeReader meetThemeReader;
-    private final PlaceVoteWriter placeVoteWriter;
-    private final TimeVoteWriter timeVoteWriter;
+    private final MeetThemeJpaRepository meetThemeJpaRepository;
 
-    public Meet write(MeetWriteDto writeDto, ConfirmPlaceDto confirmPlaceDto, ConfirmTimeDto confirmTimeDto) {
+    public Meet write(MeetWriteDto writeDto) {
         if ((writeDto.getMeetTime() == null && writeDto.getPeriod() == null) ||
                 (writeDto.getMeetTime() != null && writeDto.getPeriod() != null)) {
             throw new MeetTimeParamDuplicationException();
         }
-        MeetTheme meetTheme = meetThemeReader.read(writeDto.getMeetThemeId());
+        MeetTheme meetTheme = meetThemeJpaRepository.findById(writeDto.getMeetThemeId())
+                .orElseThrow(NotFoundThemeException::new);
 
         VotePeriod votePeriod = null;
         if (writeDto.getPeriod() != null) {
@@ -45,9 +46,6 @@ public class MeetWriter {
                 .build();
 
         Meet saveMeet = meetJpaRepository.save(meet);
-        placeVoteWriter.decideConfirmAndWrite(saveMeet,confirmPlaceDto);
-        timeVoteWriter.confirmAndWrite(saveMeet, confirmTimeDto);
         return saveMeet;
     }
-
 }

@@ -1,18 +1,17 @@
 package com.prography.yakgwa.domain.vote.service;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.impl.MeetReader;
+import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
-import com.prography.yakgwa.domain.place.impl.PlaceReader;
-import com.prography.yakgwa.domain.place.impl.PlaceWriter;
+import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
-import com.prography.yakgwa.domain.vote.impl.PlaceSlotReader;
-import com.prography.yakgwa.domain.vote.impl.PlaceSlotWriter;
-import com.prography.yakgwa.domain.vote.impl.PlaceVoteReader;
+import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
+import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.service.res.PlaceSlotWithUserResponse;
+import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.slot.AlreadyAppendPlaceException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,15 +24,19 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PlaceSlotService {
-    private final PlaceSlotReader placeSlotReader;
-    private final PlaceWriter placeWriter;
-    private final PlaceReader placeReader;
-    private final PlaceSlotWriter placeSlotWriter;
-    private final MeetReader meetReader;
-    private final PlaceVoteReader placeVoteReader;
+    private final MeetJpaRepository meetJpaRepository;
+    private final PlaceJpaRepository placeJpaRepository;
+    private final PlaceSlotJpaRepository placeSlotJpaRepository;
+    private final PlaceVoteJpaRepository placeVoteJpaRepository;
 
+    /**
+     * Todo
+     * Work) Test Code
+     * Write-Date) 2024-07-29, 월, 14:20
+     * Finish-Date) 
+     */
     public PlaceSlot appendSlotInMeet(Long meetId, PlaceInfoDto placeInfo) {
-        List<PlaceSlot> placeSlots = placeSlotReader.readAllByMeetId(meetId);
+        List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meetId);
         boolean isExistSamePlaceSlot = placeSlots.stream()
                 .noneMatch(placeSlot -> placeSlot.getPlace().getMapx().equals(placeInfo.getMapx()) &&
                         placeSlot.getPlace().getMapy().equals(placeInfo.getMapy()) &&
@@ -41,22 +44,28 @@ public class PlaceSlotService {
         if (!isExistSamePlaceSlot) {
             throw new AlreadyAppendPlaceException();
         }
-        Place place = placeReader.readByMapxAndMapy(placeInfo.getMapx(), placeInfo.getMapy())
-                .orElseGet(() -> placeWriter.write(placeInfo.toEntity()));
-        Meet meet = meetReader.read(meetId);
-        return placeSlotWriter.write(PlaceSlot.builder()
+        Place place = placeJpaRepository.findByMapxAndMapy(placeInfo.getMapx(), placeInfo.getMapy())
+                .orElseGet(() -> placeJpaRepository.save(placeInfo.toEntity()));
+        Meet meet = meetJpaRepository.findById(meetId)
+                .orElseThrow(NotFoundMeetException::new);
+        return placeSlotJpaRepository.save(PlaceSlot.builder()
                 .meet(meet)
                 .confirm(Boolean.FALSE)
                 .place(place)
                 .build());
-
     }
 
+    /**
+     * Todo
+     * Work) Test Code
+     * Write-Date) 2024-07-29, 월, 14:20
+     * Finish-Date) 
+     */
     public List<PlaceSlotWithUserResponse> findSlotInMeet(Long meetId) {
         List<PlaceSlotWithUserResponse> placeSlotWithUser = new ArrayList<>();
-        List<PlaceSlot> placeSlots = placeSlotReader.readAllByMeetId(meetId);
+        List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meetId);
         for (PlaceSlot placeSlot : placeSlots) {
-            List<PlaceVote> placeVotes = placeVoteReader.readAllByPlaceSlotIdWithUser(placeSlot.getId());
+            List<PlaceVote> placeVotes = placeVoteJpaRepository.findAllByPlaceSlotId(placeSlot.getId());
             List<User> users = new ArrayList<>();
             for (PlaceVote placeVote : placeVotes) {
                 users.add(placeVote.getUser());

@@ -13,19 +13,24 @@ import java.util.Set;
 public class RedisRepository {
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void likePlace(Long userId, String title, String mapx, String mapy){
+    public void likePlace(Long userId, String title, String mapx, String mapy) {
         String value = likePlaceValueCreate(title, mapx, mapy);
         String key = likePlaceKeyCreate(userId);
         redisTemplate.opsForSet().add(key, value);
     }
-    public void cancelLikePlace(Long userId, String title, String mapx, String mapy){
+
+    public void cancelLikePlace(Long userId, String title, String mapx, String mapy) {
         String value = likePlaceValueCreate(title, mapx, mapy);
         String key = likePlaceKeyCreate(userId);
         redisTemplate.opsForSet().remove(key, value);
     }
-    public Set<Object> findLikePlaces(Long userId){
-        return redisTemplate.opsForSet().members(likePlaceKeyCreate(userId));
 
+    public void removeAllFrom(String key) {
+        redisTemplate.delete(key);
+    }
+
+    public Set<Object> findLikePlaces(Long userId) {
+        return redisTemplate.opsForSet().members(likePlaceKeyCreate(userId));
     }
 
     private String likePlaceValueCreate(String title, String mapx, String mapy) {
@@ -42,12 +47,11 @@ public class RedisRepository {
         }
         return false; // 좋아요를 처음 누르는 경우 false 반환
     }
+
     private String likePlaceKeyCreate(Long userId) {
         String GOOD_PLACE_KEYWORD = "GOOD_PLACE_USER:";
         return GOOD_PLACE_KEYWORD + userId;
     }
-
-
 
 
     public void refreshSave(String authId, String refreshToken, Duration duration) {

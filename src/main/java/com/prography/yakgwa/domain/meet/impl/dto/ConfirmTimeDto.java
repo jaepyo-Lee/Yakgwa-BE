@@ -1,6 +1,5 @@
-package com.prography.yakgwa.domain.vote.impl.dto;
+package com.prography.yakgwa.domain.meet.impl.dto;
 
-import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
 import lombok.Builder;
 import lombok.Getter;
 

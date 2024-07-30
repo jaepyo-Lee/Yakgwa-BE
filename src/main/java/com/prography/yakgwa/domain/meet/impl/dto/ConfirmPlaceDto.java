@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.vote.impl.dto;
+package com.prography.yakgwa.domain.meet.impl.dto;
 
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import lombok.Builder;

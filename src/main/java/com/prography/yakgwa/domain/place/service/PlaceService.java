@@ -2,11 +2,12 @@ package com.prography.yakgwa.domain.place.service;
 
 import com.prography.yakgwa.domain.place.controller.req.LikePlaceRequest;
 import com.prography.yakgwa.domain.place.entity.Place;
-import com.prography.yakgwa.domain.place.impl.PlaceReader;
+import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.user.impl.UserReader;
+import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.format.exception.place.NotFoundPlaceException;
+import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import com.prography.yakgwa.global.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,11 +23,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PlaceService {
     private final RedisRepository redisRepository;
-    private final UserReader userReader;
-    private final PlaceReader placeReader;
+    private final PlaceJpaRepository placeJpaRepository;
+    private final UserJpaRepository userJpaRepository;
 
+    /**
+     * Work) Test Code
+     * Write-Date) 2024-07-29, 월, 14:20
+     * Finish-Date) 
+     */
     public void decideLike(Long userId, boolean like, LikePlaceRequest likePlaceRequest) {
-        User user = userReader.read(userId);
+        User user = userJpaRepository.findById(userId).orElseThrow(NotFoundUserException::new);
         if (!like) {
             redisRepository.cancelLikePlace(userId, likePlaceRequest.getTitle(), likePlaceRequest.getMapx(), likePlaceRequest.getMapy());
             return;
@@ -34,6 +40,11 @@ public class PlaceService {
         redisRepository.likePlace(userId, likePlaceRequest.getTitle(), likePlaceRequest.getMapx(), likePlaceRequest.getMapy());
     }
 
+    /**
+     * Work) Test Code
+     * Write-Date) 2024-07-29, 월, 14:20
+     * Finish-Date) 
+     */
     public List<PlaceInfoWithUserLike> findLike(Long userId) {
         Set<Object> likePlaces = redisRepository.findLikePlaces(userId);
 
@@ -51,7 +62,7 @@ public class PlaceService {
         String mapx = placeData[1];
         String mapy = placeData[2];
 
-        Place place = placeReader.readByMapxAndMapyAndTitle(mapx, mapy, title)
+        Place place = placeJpaRepository.findByTitleAndMapxAndMapy(title,mapx, mapy)
                 .orElseThrow(NotFoundPlaceException::new);
 
         return PlaceInfoWithUserLike.builder()
