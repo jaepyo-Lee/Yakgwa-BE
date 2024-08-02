@@ -26,8 +26,12 @@ public class MeetInfoWithParticipantResponse {
     @Getter
     @Schema(name = "MeetInfoWithParticipantResponse-meetInfo")
     private static class MeetInfo {
+        @Schema(description = "모임 테마명",example = "데이트")
         private String ThemeName;
+        @Schema(description = "모임명",example = "다음 세션 모임")
         private String meetTitle;
+        @Schema(description = "모임설명", example = "설명")
+        private String description;
     }
 
     @NoArgsConstructor
@@ -36,16 +40,19 @@ public class MeetInfoWithParticipantResponse {
     @Getter
     @Schema(name = "MeetInfoWithParticipantResponse-participantInfo")
     private static class ParticipantInfo {
+        @Schema(description = "모임에서의 역할",example = "LEADER(약과장) 또는 PARTICIPANT(약과원)")
         private MeetRole meetRole;
+        @Schema(description = "이미지 url")
         private String imageUrl;
-        private Long participantId;
+        @Schema(description = "참여자의 이름")
+        private String name;
     }
 
     public static MeetInfoWithParticipantResponse of(Meet meet, List<Participant> participants) {
         return MeetInfoWithParticipantResponse.builder()
                 .participantInfo(participants.stream()
                         .map(participant -> ParticipantInfo.builder()
-                                .participantId(participant.getId())
+                                .name(participant.getUser().getName())
                                 .meetRole(participant.getMeetRole())
                                 .imageUrl(participant.getUser().getImageUrl())
                                 .build())
@@ -53,6 +60,7 @@ public class MeetInfoWithParticipantResponse {
                 .meetInfo(MeetInfo.builder()
                         .ThemeName(meet.getMeetTheme().getName())
                         .meetTitle(meet.getTitle())
+                        .description(meet.getDescription())
                         .build())
                 .build();
     }
