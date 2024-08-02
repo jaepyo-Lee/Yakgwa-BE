@@ -29,6 +29,8 @@ public class PostConfirmMeetInfoResponse {
         private MeetStatus meetStatus;
         @Schema(description = "모임정보")
         private MeetInfo meetInfo;
+        @Schema(description = "모임설명")
+        private String description;
     }
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -64,6 +66,7 @@ public class PostConfirmMeetInfoResponse {
                                     .placeName(meetWithVoteAndStatus.getPlaceSlot() == null ? null : meetWithVoteAndStatus.getPlaceSlot().getPlace().getTitle())
                                     .meetTitle(meet.getTitle())
                                     .build())
+                            .description(meet.getDescription())
                             .build();
                 }).toList()
         ).build();
