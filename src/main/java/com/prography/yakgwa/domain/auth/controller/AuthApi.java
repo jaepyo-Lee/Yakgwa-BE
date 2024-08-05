@@ -32,7 +32,7 @@ public interface AuthApi {
     @Operation(summary = "로그아웃 API")
     SuccessResponse logout(@RequestHeader("Authorization") String accessToken);
 
-    @Operation(summary = "탈퇴 API")
+    @Operation(summary = "탈퇴 API",description = "사용자가 탈퇴할경우 로그인시 기존의 정보가 아닌 새롭게 회원가입하게됩니다")
     SuccessResponse signout(@AuthenticationPrincipal CustomUserDetail userDetail,
                             @RequestHeader(value = "refreshToken") String refreshToken);
 
