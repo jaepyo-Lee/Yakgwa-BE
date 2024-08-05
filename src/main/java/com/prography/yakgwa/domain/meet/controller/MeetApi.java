@@ -20,7 +20,7 @@ public interface MeetApi {
     SuccessResponse<CreateMeetResponse> create(@AuthenticationPrincipal CustomUserDetail user,
                                                @RequestBody CreateMeetRequest createMeetRequest);
 
-    @Operation(summary = "모임의 상세정보 조회 API", description = "")
+    @Operation(summary = "모임의 상세정보 조회 API")
     SuccessResponse<MeetInfoWithParticipantResponse> findDetail(@PathVariable("meetId") Long meetId);
 
     @Operation(summary = "사용자가 현재 참여중인 모임목록 조회 API", description = "")

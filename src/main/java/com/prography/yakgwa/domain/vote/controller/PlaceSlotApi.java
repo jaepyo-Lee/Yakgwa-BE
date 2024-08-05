@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface PlaceSlotApi {
 
     @Operation(summary = "투표를 위한 모임의 장소투표후보지 추가 API", description = "")
-    SuccessResponse<NewPlaceSlotResponse> appendPlaceSlotOfMeet(@PathVariable("meetId") Long meetId,
-                                                                @RequestBody PlaceSlotAppendRequest placeSlotAppendRequest);
+    SuccessResponse<NewPlaceSlotResponse> appendPlaceSlotFrom(@PathVariable("meetId") Long meetId,
+                                                              @RequestBody PlaceSlotAppendRequest placeSlotAppendRequest);
 
     @Operation(summary = "투표를 위한 모임의 장소후보 정보조회 API", description = "")
-    SuccessResponse<AllPlaceSlotOfMeetResponse> findPlaceSlotOfMeet(@PathVariable("meetId") Long meetId);
+    SuccessResponse<AllPlaceSlotOfMeetResponse> findPlaceSlotFrom(@PathVariable("meetId") Long meetId);
 }

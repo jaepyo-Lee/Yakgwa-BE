@@ -1,11 +1,14 @@
 package com.prography.yakgwa.domain.meet.controller.req;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.prography.yakgwa.domain.common.validator.date.DateValid;
+import com.prography.yakgwa.domain.common.validator.datetime.DateTimeValid;
 import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
 import com.prography.yakgwa.domain.meet.service.req.MeetCreateRequestDto;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.global.format.exception.param.TimeParamException;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -24,6 +27,7 @@ import java.util.List;
 @Getter
 public class CreateMeetRequest {
     @Schema(description = "모임정보")
+    @Valid
     @NotNull
     private MeetInfo meetInfo;
 
@@ -32,13 +36,12 @@ public class CreateMeetRequest {
     @Builder
     @Getter
     @Schema(name = "CreateMeetRequest-meetInfo")
-    private static class MeetInfo {
+    public static class MeetInfo {
         @Schema(description = "모임명", example = "다음 세션 모임")
         @NotBlank(message = "모임명은 필수요소입니다.")
         private String meetTitle;
 
         @Schema(description = "모임설명", example = "다음세션화이팅!")
-        @NotNull
         private String description;
 
         @Schema(description = "모임테마id", example = "1")
@@ -47,7 +50,7 @@ public class CreateMeetRequest {
 
         @Schema(description = "모임 장소 확정 여부", example = "true")
         @NotNull
-        private boolean confirmPlace;
+        private Boolean confirmPlace;
 
         //null이라면 장소투표로
         @Schema(description = "모임장소정보<br>" +
@@ -74,7 +77,7 @@ public class CreateMeetRequest {
     @Builder
     @Getter
     @Schema(name = "CreateMeetRequest-voteDate")
-    private static class VoteDate {
+    public static class VoteDate {
         @Schema(description = "모임 투표 시작시간범위", example = "2024-07-10")
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
         private LocalDate startVoteDate;

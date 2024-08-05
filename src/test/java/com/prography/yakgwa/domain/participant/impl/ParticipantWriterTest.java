@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.participant.impl;
 
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
@@ -11,7 +12,6 @@ import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,13 +37,12 @@ class ParticipantWriterTest {
     ParticipantJpaRepository participantJpaRepository;
     @Autowired
     ParticipantWriter participantWriter;
+    @Autowired
+    RepositoryDeleter deleter;
 
     @AfterEach
     void init() {
-        participantJpaRepository.deleteAll();
-        userJpaRepository.deleteAll();
-        meetJpaRepository.deleteAll();
-        meetThemeJpaRepository.deleteAll();
+    deleter.deleteAll();
     }
 
     @Test

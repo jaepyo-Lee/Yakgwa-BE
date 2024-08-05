@@ -14,4 +14,12 @@ public class MeetWithVoteAndStatus {
     private MeetStatus meetStatus;
     private PlaceSlot placeSlot;
     private TimeSlot timeSlot;
+
+    public static MeetWithVoteAndStatus of(Meet meet, TimeSlot timeSlot, PlaceSlot placeSlot, MeetStatus meetStatus) {
+        return MeetWithVoteAndStatus.builder()
+                .meet(meet)
+                .timeSlot(timeSlot)
+                .placeSlot(placeSlot)
+                .meetStatus(meetStatus).build();
+    }
 }

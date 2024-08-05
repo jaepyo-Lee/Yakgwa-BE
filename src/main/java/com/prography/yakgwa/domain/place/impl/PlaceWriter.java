@@ -11,13 +11,9 @@ import org.springframework.scheduling.annotation.Async;
 public class PlaceWriter {
     private final PlaceJpaRepository placeJpaRepository;
 
-    public Place write(Place place) {
-        return placeJpaRepository.save(place);
-    }
-
     @Async
     public void writeNotExist(Place place) {
         placeJpaRepository.findByTitleAndMapxAndMapy(place.getTitle(), place.getMapx(), place.getMapy())
-                .orElseGet(() -> write(place));
+                .orElseGet(() -> placeJpaRepository.save(place));
     }
 }

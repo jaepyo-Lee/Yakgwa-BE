@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MagazineJpaRepository extends JpaRepository<Magazine,Long> {
-    Page<Magazine> findAllByOrderByCreatedDateDesc(Pageable pageable);
 }

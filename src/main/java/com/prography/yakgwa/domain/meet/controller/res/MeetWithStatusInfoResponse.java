@@ -53,6 +53,8 @@ public class MeetWithStatusInfoResponse {
         private String meetTitle;
         @Schema(description = "모임id",example = "1")
         private Long meetId;
+        @Schema(description = "모임설명", example = "설명")
+        private String description;
     }
 
     public static MeetWithStatusInfoResponse of(List<MeetWithVoteAndStatus> list) {
@@ -67,6 +69,7 @@ public class MeetWithStatusInfoResponse {
                                     .meetThemeName(meet.getMeetTheme().getName())
                                     .placeName(meetWithVoteAndStatus.getPlaceSlot() == null ? null : meetWithVoteAndStatus.getPlaceSlot().getPlace().getTitle())
                                     .meetTitle(meet.getTitle())
+                                    .description(meet.getDescription())
                                     .build())
                             .build();
                 }).toList()

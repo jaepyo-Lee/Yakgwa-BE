@@ -4,10 +4,12 @@ package com.prography.yakgwa.domain.auth.controller;
 import com.prography.yakgwa.domain.auth.controller.request.LoginRequest;
 import com.prography.yakgwa.domain.auth.controller.response.ReissueTokenSetResponse;
 import com.prography.yakgwa.domain.auth.service.response.LoginResponseDto;
+import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
@@ -29,4 +31,9 @@ public interface AuthApi {
 
     @Operation(summary = "로그아웃 API")
     SuccessResponse logout(@RequestHeader("Authorization") String accessToken);
+
+    @Operation(summary = "탈퇴 API",description = "사용자가 탈퇴할경우 로그인시 기존의 정보가 아닌 새롭게 회원가입하게됩니다")
+    SuccessResponse signout(@AuthenticationPrincipal CustomUserDetail userDetail,
+                            @RequestHeader(value = "refreshToken") String refreshToken);
+
 }

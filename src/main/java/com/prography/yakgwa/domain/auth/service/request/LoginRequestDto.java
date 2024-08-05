@@ -10,5 +10,4 @@ public class LoginRequestDto {
     private String token;
     private AuthType loginType;
     private String fcmToken;
-    private String baseImage;
 }

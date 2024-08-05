@@ -18,6 +18,12 @@ import static com.prography.yakgwa.domain.magazine.entity.QMagazine.magazine;
 public class MagazineRepositoryImpl {
     private final JPAQueryFactory queryFactory;
 
+    /**
+     * Todo
+     * Work) Test Code
+     * Write-Date) 2024-07-28, 일, 1:17
+     * Finish-Date)
+     */
     public Page<Magazine> searchPage(Pageable pageable) {
         List<Magazine> content = queryFactory
                 .selectFrom(magazine)

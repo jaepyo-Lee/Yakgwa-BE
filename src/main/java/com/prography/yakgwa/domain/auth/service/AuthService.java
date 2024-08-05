@@ -4,8 +4,10 @@ import com.prography.yakgwa.domain.auth.service.request.LoginRequestDto;
 import com.prography.yakgwa.domain.auth.service.response.KakaoUserResponseDto;
 import com.prography.yakgwa.domain.auth.service.response.LoginResponseDto;
 import com.prography.yakgwa.domain.auth.service.response.ReissueTokenSetResponseDto;
+import com.prography.yakgwa.domain.user.entity.SignoutUser;
 import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.User;
+import com.prography.yakgwa.domain.user.repository.SignoutUserJpaRepository;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.client.auth.KakaoClient;
 import com.prography.yakgwa.global.format.exception.auth.NotSupportLoginTypeException;
@@ -16,6 +18,7 @@ import com.prography.yakgwa.global.util.HeaderUtil;
 import com.prography.yakgwa.global.util.jwt.TokenProvider;
 import com.prography.yakgwa.global.util.jwt.TokenSet;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +37,10 @@ public class AuthService {
     private final UserJpaRepository userJpaRepository;
     private final TokenProvider tokenProvider;
     private final RedisRepository redisRepository;
+    private final SignoutUserJpaRepository signoutUserJpaRepository;
+    @Value("${user.base.image}")
+    private String BASE_IMAGE;
+
 
     @Transactional
     public LoginResponseDto login(LoginRequestDto requestDto) {
@@ -42,7 +49,8 @@ public class AuthService {
 
         User user = userJpaRepository.findByAuthIdAndAuthType(authUser.getAuthId(), requestDto.getLoginType())
                 .orElseGet(() -> userJpaRepository.save(authUser));
-        TokenSet tokenSet = tokenProvider.createTokenSet(String.valueOf(user.getId()),user.getName() ,String.valueOf(requestDto.getLoginType()));
+
+        TokenSet tokenSet = tokenProvider.createTokenSet(String.valueOf(user.getId()), user.getName(), String.valueOf(requestDto.getLoginType()));
         registerRefreshToken(user, tokenSet);
         return LoginResponseDto.builder()
                 .role(user.getRole())
@@ -67,7 +75,7 @@ public class AuthService {
         if (requestDto.getLoginType().equals(KAKAO)) {
             KakaoUserResponseDto userData = kakaoClient.getUserData(requestDto.getToken(), requestDto.getLoginType().getServerUri());
             return User.builder()
-                    .imageUrl(requestDto.getBaseImage())
+                    .imageUrl(BASE_IMAGE)
                     .authId(String.valueOf(userData.getId()))
                     .authType(KAKAO)
                     .name(userData.getProperties().getNickname())
@@ -77,6 +85,7 @@ public class AuthService {
         }
         throw new NotSupportLoginTypeException();
     }
+
     public ReissueTokenSetResponseDto reissue(String refreshToken) {
         String parseToken = HeaderUtil.parseBearer(refreshToken);
 
@@ -88,7 +97,7 @@ public class AuthService {
         User findUserByAuthId = userJpaRepository.findByAuthIdAndAuthType(authId, AuthType.valueOf(loginType))
                 .orElseThrow(NotFoundUserException::new);
 
-        TokenSet tokenSet = tokenProvider.createTokenSet(findUserByAuthId.getAuthId(), findUserByAuthId.getName(),loginType);
+        TokenSet tokenSet = tokenProvider.createTokenSet(findUserByAuthId.getAuthId(), findUserByAuthId.getName(), loginType);
 
         return ReissueTokenSetResponseDto.builder()
                 .reissueAccessToken(tokenSet.getAccessToken())
@@ -122,5 +131,18 @@ public class AuthService {
         if (redisRepository.getRefreshToken(authId) != null) {
             redisRepository.removeRefreshToken(authId);
         }
+    }
+
+    @Transactional
+    public void signout(Long userId, String accessToken) {
+        User user = userJpaRepository.findById(userId).orElseThrow(NotFoundUserException::new);
+
+        SignoutUser signoutUser = SignoutUser.builder()
+                .name(user.getName()).authType(KAKAO).imageUrl(user.getImageUrl()).authId(user.getAuthId()).userId(user.getId()).modifiedDate(user.getModifiedDate()).createdDate(user.getCreatedDate())
+                .build();
+        signoutUserJpaRepository.save(signoutUser);
+
+        user.signout(BASE_IMAGE);
+        logout(accessToken);
     }
 }

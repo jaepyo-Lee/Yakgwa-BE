@@ -5,13 +5,12 @@ import com.prography.yakgwa.domain.place.impl.PlaceWriter;
 import com.prography.yakgwa.domain.place.service.dto.NaverMapResponseDto;
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.user.impl.UserReader;
+import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.client.map.NaverClient;
+import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import com.prography.yakgwa.global.repository.RedisRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,9 +19,9 @@ import java.util.List;
 @Service
 public class SearchService {
     private final RedisRepository redisRepository;
-    private final UserReader userReader;
     private final NaverClient naverClient;
     private final PlaceWriter placeWriter;
+    private final UserJpaRepository userJpaRepository;
 
     /**
      * Work) 테스트코드
@@ -30,7 +29,8 @@ public class SearchService {
      * Finish-Date)
      */
     public List<PlaceInfoWithUserLike> search(String search, Long userId) {
-        User user = userReader.read(userId);
+        User user = userJpaRepository.findById(userId)
+                .orElseThrow(NotFoundUserException::new);
         NaverMapResponseDto naverResponse = naverClient.searchNaverAPIClient(search);
         List<PlaceInfoDto> items = naverResponse.getItems();
         List<PlaceInfoWithUserLike> placeInfoWithUserLikes = new ArrayList<>();

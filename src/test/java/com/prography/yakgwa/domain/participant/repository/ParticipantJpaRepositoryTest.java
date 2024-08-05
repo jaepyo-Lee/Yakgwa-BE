@@ -1,5 +1,7 @@
 package com.prography.yakgwa.domain.participant.repository;
 
+import com.prography.yakgwa.testHelper.config.DeleterConfig;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
@@ -7,15 +9,14 @@ import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
-import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
@@ -23,9 +24,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Import(DeleterConfig.class)
 @ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -38,13 +39,11 @@ class ParticipantJpaRepositoryTest {
     ParticipantJpaRepository participantJpaRepository;
     @Autowired
     MeetThemeJpaRepository meetThemeJpaRepository;
-
+    @Autowired
+    RepositoryDeleter deleter;
     @AfterEach
     void init() {
-        participantJpaRepository.deleteAll();
-        meetJpaRepository.deleteAll();
-        userJpaRepository.deleteAll();
-        meetThemeJpaRepository.deleteAll();
+        deleter.deleteAll();
     }
 
     @Test
@@ -135,6 +134,7 @@ class ParticipantJpaRepositoryTest {
         System.out.println("=====Logic End=====");
         // then
     }
+
 
     @Test
     void 특정모임에사용자가참여중일때_참가여부조회_Test() {

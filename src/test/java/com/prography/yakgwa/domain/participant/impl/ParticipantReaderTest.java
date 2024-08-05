@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.participant.impl;
 
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
@@ -10,8 +11,8 @@ import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
+import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,10 +20,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,14 +37,11 @@ class ParticipantReaderTest {
     @Autowired
     ParticipantJpaRepository participantJpaRepository;
     @Autowired
-    ParticipantReader participantReader;
+    RepositoryDeleter deleter;
 
     @AfterEach
     void init() {
-        participantJpaRepository.deleteAll();
-        meetJpaRepository.deleteAll();
-        userJpaRepository.deleteAll();
-        meetThemeJpaRepository.deleteAll();
+        deleter.deleteAll();
     }
 
     @Test
@@ -75,7 +71,7 @@ class ParticipantReaderTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        List<Participant> allByMeetId = participantReader.readAllByMeetId(saveMeet.getId());
+        List<Participant> allByMeetId = participantJpaRepository.findAllByMeetId(saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -123,7 +119,7 @@ class ParticipantReaderTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        List<Participant> allByMeetId = participantReader.readAllByUserId(saveUser1.getId());
+        List<Participant> allByMeetId = participantJpaRepository.findAllByUserId(saveUser1.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -148,7 +144,8 @@ class ParticipantReaderTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        assertThrows(RuntimeException.class,()->participantReader.readByUserIdAndMeetId(saveUser1.getId(),saveMeet1.getId()));
+        assertThrows(RuntimeException.class, () -> participantJpaRepository.findByUserIdAndMeetId(saveUser1.getId(), saveMeet1.getId())
+                .orElseThrow(NotFoundParticipantException::new));
 
         System.out.println("=====Logic End=====");
 
@@ -176,7 +173,8 @@ class ParticipantReaderTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        Participant participant = participantReader.readByUserIdAndMeetId(saveUser1.getId(), saveMeet1.getId());
+        Participant participant = participantJpaRepository.findByUserIdAndMeetId(saveUser1.getId(), saveMeet1.getId())
+                .orElseThrow(NotFoundParticipantException::new);
 
         System.out.println("=====Logic End=====");
 
