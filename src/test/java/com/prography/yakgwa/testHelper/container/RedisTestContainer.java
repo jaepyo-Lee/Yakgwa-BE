@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.common.container;
+package com.prography.yakgwa.testHelper.container;
 
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.context.annotation.Configuration;

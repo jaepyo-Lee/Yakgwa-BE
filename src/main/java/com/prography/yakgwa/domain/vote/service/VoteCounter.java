@@ -9,21 +9,22 @@ import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Transactional
 @RequiredArgsConstructor
 @ImplService
 public class VoteCounter {
     private final PlaceVoteJpaRepository placeVoteJpaRepository;
     private final TimeVoteJpaRepository timeVoteJpaRepository;
     /**
-     * Todo
      * Work) Test Code
      * Write-Date) 2024-07-29, 월, 15:40
-     * Finish-Date)
+     * Finish-Date) 2024-08-02
      */
     public List<PlaceSlot> findMaxVotePlaceSlotFrom(Meet meet) {
         List<PlaceVote> allInMeet = placeVoteJpaRepository.findAllInMeet(meet.getId());
@@ -42,10 +43,9 @@ public class VoteCounter {
     }
 
     /**
-     * Todo
      * Work) Test Code
      * Write-Date) 2024-07-29, 월, 15:47
-     * Finish-Date)
+     * Finish-Date) 2024-08-02
      */
     public List<TimeSlot> findMaxVoteTimeSlotFrom(Meet meet) {
         List<TimeVote> timeVotes = timeVoteJpaRepository.findAllByMeetId(meet.getId());

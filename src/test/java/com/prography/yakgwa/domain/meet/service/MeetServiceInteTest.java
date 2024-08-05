@@ -1,10 +1,10 @@
 package com.prography.yakgwa.domain.meet.service;
 
-import com.prography.yakgwa.domain.common.DummyCreater;
+import com.prography.yakgwa.testHelper.DummyCreater;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
-import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
 import com.prography.yakgwa.domain.meet.service.req.MeetCreateRequestDto;
 import com.prography.yakgwa.domain.meet.service.req.MeetWithVoteAndStatus;
@@ -15,7 +15,6 @@ import com.prography.yakgwa.domain.participant.repository.ParticipantJpaReposito
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
@@ -25,11 +24,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -45,23 +44,18 @@ class MeetServiceInteTest {
     @Autowired
     MeetService meetService;
     @Autowired
-    private MeetJpaRepository meetJpaRepository;
-    @Autowired
     private PlaceSlotJpaRepository placeSlotJpaRepository;
     @Autowired
     private TimeSlotJpaRepository timeSlotJpaRepository;
     @Autowired
     private ParticipantJpaRepository participantJpaRepository;
+
     @Autowired
-    private UserJpaRepository userJpaRepository;
+    RepositoryDeleter deleter;
 
     @AfterEach
     void init() {
-        placeSlotJpaRepository.deleteAll();
-        timeSlotJpaRepository.deleteAll();
-        participantJpaRepository.deleteAll();
-        meetJpaRepository.deleteAll();
-        userJpaRepository.deleteAll();
+        deleter.deleteAll();
     }
 
     @Test
@@ -258,6 +252,31 @@ class MeetServiceInteTest {
                 () -> assertThat(meetInfoWithParticipant.getParticipants().size()).isEqualTo(2));
     }
 
+    @Transactional
+    @Test
+    void 탐퇴한회원이있는모임의참여원조회() {
+        // given
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        User saveUser1 = dummyCreater.createAndSaveUser(1);
+        User saveUser2 = dummyCreater.createAndSaveUser(2);
+        String baseImage = "baseImage";
+        saveUser2.signout(baseImage);
+        Participant saveParticipant1 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser1, MeetRole.LEADER);
+        Participant saveParticipant2 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser2, MeetRole.PARTICIPANT);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        MeetInfoWithParticipant meetInfoWithParticipant = meetService.findWithParticipant(saveMeet.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertAll(() -> assertThat(meetInfoWithParticipant.getMeet().getId()).isEqualTo(saveMeet.getId()),
+                () -> assertThat(meetInfoWithParticipant.getParticipants()).hasSize(2).extracting(participant -> participant.getUser().getName())
+                        .containsNull());
+    }
+
     /*====================findWithStatus====================*/
 
 
@@ -362,5 +381,41 @@ class MeetServiceInteTest {
                 () -> assertThat(withStatus).extracting(MeetWithVoteAndStatus::getTimeSlot).containsExactly((TimeSlot) null),
                 () -> assertThat(withStatus).extracting(MeetWithVoteAndStatus::getPlaceSlot).containsExactly((PlaceSlot) null));
     }
+
     /*=================findPostConfirm=================*/
+    @Test
+    void 나의모임확인_확정상태이고_확정시간에서1시간이지난모임들_조회() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+        Place savePlace = dummyCreater.createAndSavePlace(1);
+        dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet, true);
+        dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now().minusHours(2L), true);
+
+        Meet saveMeet2 = dummyCreater.createAndSaveMeet(2, saveMeetTheme, 24);
+        dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet2, true);
+        dummyCreater.createAndSaveTimeSlot(saveMeet2, LocalDateTime.now(), true);
+        dummyCreater.createAndSaveParticipant(saveMeet2, saveUser, MeetRole.LEADER);
+
+        Meet saveMeet3 = dummyCreater.createAndSaveMeet(3, saveMeetTheme, 24);
+        dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet3, true);
+        dummyCreater.createAndSaveTimeSlot(saveMeet3, LocalDateTime.now().minusHours(2L), false);
+        dummyCreater.createAndSaveParticipant(saveMeet3, saveUser, MeetRole.LEADER);
+
+        Meet saveMeet4 = dummyCreater.createAndSaveMeet(4, saveMeetTheme, 24);
+        dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet4, false);
+        dummyCreater.createAndSaveTimeSlot(saveMeet4, LocalDateTime.now().minusHours(2L), false);
+        dummyCreater.createAndSaveParticipant(saveMeet4, saveUser, MeetRole.LEADER);
+        // when
+        System.out.println("=====Logic Start=====");
+
+        List<MeetWithVoteAndStatus> postConfirm = meetService.findPostConfirm(saveUser.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertThat(postConfirm.size()).isEqualTo(1);
+    }
 }

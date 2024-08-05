@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.meet.service;
 
-import com.prography.yakgwa.domain.common.DummyCreater;
+import com.prography.yakgwa.testHelper.DummyCreater;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -22,9 +23,11 @@ class MeetThemeServiceInteTest {
     MeetThemeJpaRepository meetThemeJpaRepository;
     @Autowired
     DummyCreater dummyCreater;
+    @Autowired
+    RepositoryDeleter deleter;
     @AfterEach
     void init(){
-        meetThemeJpaRepository.deleteAll();
+        deleter.deleteAll();
     }
 
     @Test

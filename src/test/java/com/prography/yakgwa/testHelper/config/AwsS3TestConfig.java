@@ -1,4 +1,4 @@
-package com.prography.yakgwa.global.config;
+package com.prography.yakgwa.testHelper.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.AnonymousAWSCredentials;

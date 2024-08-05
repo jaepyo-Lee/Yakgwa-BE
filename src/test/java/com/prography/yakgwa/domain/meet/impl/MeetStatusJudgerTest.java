@@ -1,87 +1,45 @@
 package com.prography.yakgwa.domain.meet.impl;
 
-import com.prography.yakgwa.domain.common.DummyCreater;
+import com.prography.yakgwa.testHelper.DummyCreater;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
-import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
-import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
-import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
-import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
-import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
-import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
-import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
-import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import static com.prography.yakgwa.domain.meet.entity.MeetStatus.*;
-import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
 @SpringBootTest
 class MeetStatusJudgerTest {
     @Autowired
-    private MeetJpaRepository meetJpaRepository;
-    @Autowired
-    private TimeSlotJpaRepository timeSlotJpaRepository;
-    @Autowired
     private MeetThemeJpaRepository meetThemeJpaRepository;
     @Autowired
-    private PlaceSlotJpaRepository placeSlotJpaRepository;
-    @Autowired
-    private PlaceJpaRepository placeJpaRepository;
-    @Autowired
-    private PlaceVoteJpaRepository placeVoteJpaRepository;
-    @Autowired
-    private UserJpaRepository userJpaRepository;
-    @Autowired
     private MeetStatusJudger meetStatusJudger;
-    @Autowired
-    private TimeVoteJpaRepository timeVoteJpaRepository;
 
+    @Autowired
+    RepositoryDeleter deleter;
     @Autowired
     DummyCreater dummyCreater;
 
     @AfterEach
-    void init(){
-        timeVoteJpaRepository.deleteAll();
-        timeSlotJpaRepository.deleteAll();
-        placeVoteJpaRepository.deleteAll();
-        placeSlotJpaRepository.deleteAll();
-        placeJpaRepository.deleteAll();
-        meetJpaRepository.deleteAll();
-        meetThemeJpaRepository.deleteAll();
-        userJpaRepository.deleteAll();
-    }
-
-    @BeforeEach
     void initial(){
-        timeVoteJpaRepository.deleteAll();
-        timeSlotJpaRepository.deleteAll();
-        placeVoteJpaRepository.deleteAll();
-        placeSlotJpaRepository.deleteAll();
-        placeJpaRepository.deleteAll();
-        meetJpaRepository.deleteAll();
-        meetThemeJpaRepository.deleteAll();
-        userJpaRepository.deleteAll();
+        deleter.deleteAll();
     }
 
     @Test
@@ -109,7 +67,7 @@ class MeetStatusJudgerTest {
     void 장소와시간투표두개모두에최다득표가있어서_모임의시간이지나서_확정시키고_CONFIRM_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
-        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 0);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, -1);
         Place place = dummyCreater.createAndSavePlace(1);
         TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), Boolean.FALSE);
         PlaceSlot andSavePlaceSlot =dummyCreater. createAndSavePlaceSlot(place, saveMeet, Boolean.FALSE);
@@ -133,7 +91,7 @@ class MeetStatusJudgerTest {
     void 모임의시간이지나서_장소와시간투표두개모두에최다득표가없어서_BEFORE_CONFIRM_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
-        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 0);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, -1);
         Place place1 = dummyCreater.createAndSavePlace(1);
         Place place2 = dummyCreater.createAndSavePlace(2);
         TimeSlot saveTimeSlot1 = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), Boolean.FALSE);

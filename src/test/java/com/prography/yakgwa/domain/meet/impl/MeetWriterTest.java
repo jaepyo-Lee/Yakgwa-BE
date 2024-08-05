@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.meet.impl;
 
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
@@ -8,12 +9,8 @@ import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
-import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
-import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.meet.impl.dto.ConfirmPlaceDto;
 import com.prography.yakgwa.domain.meet.impl.dto.ConfirmTimeDto;
-import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
-import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,18 +34,13 @@ class MeetWriterTest {
     @Autowired
     MeetWriter meetWriter;
     @Autowired
-    private TimeSlotJpaRepository timeSlotJpaRepository;
-    @Autowired
-    private PlaceSlotJpaRepository placeSlotJpaRepository;
-    @Autowired
     PlaceJpaRepository placeJpaRepository;
+    @Autowired
+    RepositoryDeleter deleter;
+
     @AfterEach
     void init() {
-        timeSlotJpaRepository.deleteAll();
-        placeSlotJpaRepository.deleteAll();
-        meetJpaRepository.deleteAll();
-        meetThemeJpaRepository.deleteAll();
-        placeJpaRepository.deleteAll();
+        deleter.deleteAll();
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.place.service;
 
-import com.prography.yakgwa.domain.common.DummyCreater;
+import com.prography.yakgwa.testHelper.DummyCreater;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.place.controller.req.LikePlaceRequest;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
@@ -16,9 +17,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 import java.util.Set;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -35,10 +34,12 @@ class PlaceServiceTest {
     String key;
     @Autowired
     private PlaceJpaRepository placeJpaRepository;
-
+    @Autowired
+    RepositoryDeleter deleter;
     @AfterEach
     void init(){
         redisRepository.removeAllFrom(key);
+        deleter.deleteAll();
     }
     @Test
     void 장소에좋아요기능() {

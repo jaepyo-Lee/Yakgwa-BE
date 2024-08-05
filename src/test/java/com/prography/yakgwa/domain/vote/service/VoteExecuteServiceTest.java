@@ -1,7 +1,7 @@
 package com.prography.yakgwa.domain.vote.service;
 
-import com.prography.yakgwa.domain.common.DummyCreater;
-import com.prography.yakgwa.domain.common.RepositoryDeleter;
+import com.prography.yakgwa.testHelper.DummyCreater;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
@@ -14,7 +14,7 @@ import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
-import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
 import com.prography.yakgwa.global.format.exception.vote.NotValidVotePlaceException;
 import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
 import org.junit.jupiter.api.AfterEach;
@@ -203,7 +203,7 @@ class VoteExecuteServiceTest {
         // when
         // then
         System.out.println("=====Logic Start=====");
-        assertThrows(AlreadyPlaceConfirmVoteException.class, () -> voteExecuteService.votePlace(saveUser.getId(), saveMeet.getId(), Set.of(1L)));
+        assertThrows(AlreadyPlaceConfirmException.class, () -> voteExecuteService.votePlace(saveUser.getId(), saveMeet.getId(), Set.of(1L)));
         System.out.println("=====Logic End=====");
     }
 

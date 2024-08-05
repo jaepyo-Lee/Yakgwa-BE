@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.participant.service;
 
-import com.prography.yakgwa.domain.common.DummyCreater;
+import com.prography.yakgwa.testHelper.DummyCreater;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
@@ -38,13 +39,12 @@ class ParticipantServiceTest {
     @Autowired
     UserJpaRepository userJpaRepository;
 
+    @Autowired
+    RepositoryDeleter deleter;
 
     @AfterEach
     void init(){
-        participantJpaRepository.deleteAll();
-        meetJpaRepository.deleteAll();
-        meetThemeJpaRepository.deleteAll();
-        userJpaRepository.deleteAll();
+    deleter.deleteAll();
     }
 
 

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.3.1'
     id 'io.spring.dependency-management' version '1.1.5'
+    id 'jacoco'
 }
 
 group = 'com.prography'
@@ -17,12 +18,75 @@ repositories {
     mavenCentral()
 }
 
+jacoco {
+    toolVersion = "0.8.8"
+//     reportsDir = file("$buildDir/customJacocoReportDir")
+}
+jacocoTestReport {
+    def Qdomains = []
+    for(qPattern in "**/QA" .. "**/QZ"){
+        Qdomains.add(qPattern+"*")
+    }
+    dependsOn test
+
+    reports {
+        xml.required = true
+        html.required = true
+        csv.required = false
+    }
+
+    // 결과 리포트에서 제외할 클래스들
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, excludes: [
+                    'com/prography/yakgwa/global/**' // global 패키지 하위 모든 클래스 제외
+            ] + Qdomains)
+        }))
+    }
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+jacocoTestCoverageVerification {
+    def Qdomains = []
+    // 패키지 + 클래스명
+    for (qPattern in '*.QA'..'*.QZ') { // qPattern = '*.QA', '*.QB', ... '*.QZ'
+        Qdomains.add(qPattern + '*')
+    }
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+
+            limit {
+                counter = 'METHOD'
+                value = 'COVEREDRATIO'
+                minimum = 0.00
+            }
+            // 제외할 클래스들
+            excludes = [
+                    '*.XXXApplication',
+                    'com.prography.yakgwa.global.*'
+            ] + Qdomains
+        }
+    }
+}
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
 dependencies {
     //jpa
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     //web
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -37,6 +101,7 @@ dependencies {
 
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
+    testImplementation 'org.springframework.security:spring-security-test'
 
     // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
@@ -66,6 +131,12 @@ dependencies {
     //s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
     testImplementation 'io.findify:s3mock_2.13:0.2.6'
+
+    //test
+    implementation 'com.google.code.findbugs:findbugs-annotations:3.0.1'
+    implementation 'net.java.dev.jna:jna:5.8.0'
+    implementation 'net.java.dev.jna:jna-platform:5.8.0'
+    testImplementation 'org.mockito:mockito-inline:3.11.2'
 }
 
 /**
@@ -74,7 +145,7 @@ dependencies {
 def querydslDir = "src/main/generated"
 
 sourceSets {
-    main.java.srcDirs += [ querydslDir ]
+    main.java.srcDirs += [querydslDir]
 }
 
 tasks.withType(JavaCompile) {

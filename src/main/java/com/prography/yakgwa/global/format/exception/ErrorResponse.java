@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import static java.time.LocalDateTime.now;
@@ -34,12 +35,22 @@ public class ErrorResponse {
         this.code = e.getBindingResult().getFieldError().getCode();
         this.message = getValidationErrorMessage(e);
     }
+    private ErrorResponse(DateTimeParseException e){
+        this.time = now();
+        this.status = HttpStatus.BAD_REQUEST.value();
+        this.code = HttpStatus.BAD_REQUEST.name();
+        this.message = e.getMessage();
+    }
 
     private static String getValidationErrorMessage(MethodArgumentNotValidException e) {
         return e.getBindingResult().getAllErrors().get(0).getDefaultMessage();
     }
 
     public static ErrorResponse of(MethodArgumentNotValidException e){
+        return new ErrorResponse(e);
+    }
+
+    public static ErrorResponse of(DateTimeParseException e){
         return new ErrorResponse(e);
     }
 

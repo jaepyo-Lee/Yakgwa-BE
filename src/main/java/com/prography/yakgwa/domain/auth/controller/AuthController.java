@@ -5,6 +5,7 @@ import com.prography.yakgwa.domain.auth.controller.response.ReissueTokenSetRespo
 import com.prography.yakgwa.domain.auth.service.AuthService;
 import com.prography.yakgwa.domain.auth.service.request.LoginRequestDto;
 import com.prography.yakgwa.domain.auth.service.response.LoginResponseDto;
+import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import com.prography.yakgwa.global.util.HeaderUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -20,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController implements AuthApi {
     private final AuthService authService;
 
-    @Value("${user.base.image}")
-    private String BASE_IMAGE;
 
     @PostMapping("/login")
     public SuccessResponse<LoginResponseDto> login(@RequestHeader("Authorization") String accessToken,
@@ -29,7 +29,6 @@ public class AuthController implements AuthApi {
         String token = HeaderUtil.parseBearer(accessToken);
 
         return new SuccessResponse(authService.login(LoginRequestDto.builder()
-                .baseImage(BASE_IMAGE)
                 .loginType(loginRequest.getLoginType())
                 .token(token)
                 .fcmToken(loginRequest.getFcmToken())
@@ -47,5 +46,12 @@ public class AuthController implements AuthApi {
     public SuccessResponse logout(@RequestHeader("Authorization") String accessToken) {
         authService.logout(accessToken);
         return SuccessResponse.ok();
+    }
+
+    @PostMapping("/signout")
+    public SuccessResponse signout(@AuthenticationPrincipal CustomUserDetail userDetail,
+                                   @RequestHeader(value = "Authorization") String Authorization) {
+        authService.signout(userDetail.getUserId(),Authorization);
+        return SuccessResponse.ok("탈퇴되었습니다.");
     }
 }

@@ -91,10 +91,11 @@ public class MeetService {
      * Finish-Date)
      */
     public List<MeetWithVoteAndStatus> findPostConfirm(Long userId) {
-        return findWithStatus(userId).stream()
+        List<MeetWithVoteAndStatus> list = findWithStatus(userId).stream()
                 .filter(meet -> meet.getMeetStatus().equals(MeetStatus.CONFIRM))
-                .filter(meet -> meet.getTimeSlot().getTime().isAfter(LocalDateTime.now().plusHours(1L)))
+                .filter(meet -> meet.getTimeSlot().getTime().isBefore(LocalDateTime.now().minusHours(1L)))
                 .toList();
+        return list;
     }
 
     /**

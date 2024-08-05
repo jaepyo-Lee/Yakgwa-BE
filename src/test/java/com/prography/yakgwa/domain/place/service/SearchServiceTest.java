@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.place.service;
 
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
+import com.prography.yakgwa.domain.place.impl.PlaceWriter;
 import com.prography.yakgwa.domain.place.service.dto.NaverMapResponseDto;
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.domain.user.entity.User;
@@ -15,10 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SearchServiceTest {
@@ -30,6 +32,8 @@ class SearchServiceTest {
     UserJpaRepository userJpaRepository;
     @InjectMocks
     SearchService service;
+    @Mock
+    PlaceWriter placeWriter;
 
     @Test
     void 사용자가검색한장소가좋아요가눌렸는지_조회() {
@@ -46,9 +50,10 @@ class SearchServiceTest {
                 .build();
 
         User user = new User();
-        when(userJpaRepository.findById(anyLong()).orElseThrow()).thenReturn(user);
+        when(userJpaRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(naverClient.searchNaverAPIClient(anyString())).thenReturn(build);
         when(redisRepository.isUserGoodPlace(any(), any(), any(), any())).thenReturn(true);
+        doNothing().when(placeWriter).writeNotExist(any());
 
         // when
         String searchString = "testSearch";
@@ -64,8 +69,12 @@ class SearchServiceTest {
         assertThat(search.stream()
                 .filter(placeInfoWithUserLike -> placeInfoWithUserLike.getIsUserLike().equals(Boolean.TRUE))
                 .toList().size()).isEqualTo(3);
-    }
 
+        // Verify that mocks were called as expected
+        verify(userJpaRepository).findById(userId);
+        verify(naverClient).searchNaverAPIClient(searchString);
+        verify(redisRepository, times(3)).isUserGoodPlace(any(), any(), any(), any());
+    }
 
     private PlaceInfoDto createPlaceInfoDtoDummy(int i) {
         return PlaceInfoDto.builder()

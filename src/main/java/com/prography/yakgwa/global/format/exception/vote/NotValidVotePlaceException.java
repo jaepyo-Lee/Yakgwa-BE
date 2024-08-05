@@ -3,7 +3,6 @@ package com.prography.yakgwa.global.format.exception.vote;
 import com.prography.yakgwa.global.format.exception.ApplicationRunException;
 import com.prography.yakgwa.global.format.exception.ErrorEnumCode;
 
-import static com.prography.yakgwa.global.format.exception.vote.errorCode.VoteErrorCode.ALREADY_PLACE_CONFIRM_VOTE_EXCEPTION;
 import static com.prography.yakgwa.global.format.exception.vote.errorCode.VoteErrorCode.NOT_VALID_VOTE_PLACE_EXCEPTION;
 
 

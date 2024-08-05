@@ -22,7 +22,7 @@ import com.prography.yakgwa.global.format.exception.participant.NotFoundParticip
 import com.prography.yakgwa.global.format.exception.slot.NotFoundPlaceSlotException;
 import com.prography.yakgwa.global.format.exception.slot.NotFoundTimeSlotException;
 import com.prography.yakgwa.global.format.exception.slot.NotMatchSlotInMeetException;
-import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -146,7 +146,7 @@ public class VoteService {
      */
     public void confirmPlace(Long userId, Long meetId, Long confirmPlaceSlotId) {
         if (placeSlotJpaRepository.isConfirmFrom(meetId)) {
-            throw new AlreadyPlaceConfirmVoteException();
+            throw new AlreadyPlaceConfirmException();
         }
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
                 .orElseThrow(NotFoundParticipantException::new);

@@ -1,7 +1,7 @@
 package com.prography.yakgwa.domain.user.service;
 
-import com.prography.yakgwa.domain.common.DummyCreater;
-import com.prography.yakgwa.domain.common.RepositoryDeleter;
+import com.prography.yakgwa.testHelper.DummyCreater;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;

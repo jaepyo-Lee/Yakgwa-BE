@@ -17,7 +17,7 @@ import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
-import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
 import com.prography.yakgwa.global.format.exception.vote.NotValidVotePlaceException;
 import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
@@ -105,7 +105,7 @@ public class VoteExecuteService {
      */
     public List<PlaceVote> votePlace(Long userId, Long meetId, Set<Long> placeSlotIds) {
         if (placeSlotJpaRepository.isConfirmFrom(meetId)) {
-            throw new AlreadyPlaceConfirmVoteException();
+            throw new AlreadyPlaceConfirmException();
         }
         if (!participantJpaRepository.existsByUserIdAndMeetId(userId, meetId)) {
             throw new NotFoundParticipantException();

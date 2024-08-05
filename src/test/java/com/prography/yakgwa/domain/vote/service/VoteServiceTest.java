@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.vote.service;
 
-import com.prography.yakgwa.domain.common.DummyCreater;
+import com.prography.yakgwa.testHelper.DummyCreater;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
@@ -23,7 +24,7 @@ import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
 import com.prography.yakgwa.global.format.exception.slot.NotMatchSlotInMeetException;
-import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -52,33 +52,14 @@ class VoteServiceTest {
     @Autowired
     private VoteService voteService;
     @Autowired
-    private UserJpaRepository userJpaRepository;
-    @Autowired
-    private MeetJpaRepository meetJpaRepository;
-    @Autowired
-    private PlaceJpaRepository placeJpaRepository;
-    @Autowired
     private PlaceSlotJpaRepository placeSlotJpaRepository;
-    @Autowired
-    private TimeVoteJpaRepository timeVoteJpaRepository;
     @Autowired
     private TimeSlotJpaRepository timeSlotJpaRepository;
     @Autowired
-    private PlaceVoteJpaRepository placeVoteJpaRepository;
-    @Autowired
-    private ParticipantJpaRepository participantJpaRepository;
-
+    RepositoryDeleter deleter;
     @AfterEach
     void init() {
-        participantJpaRepository.deleteAll();
-        meetJpaRepository.deleteAll();
-        meetThemeJpaRepository.deleteAll();
-        userJpaRepository.deleteAll();
-        placeVoteJpaRepository.deleteAll();
-        placeSlotJpaRepository.deleteAll();
-        placeJpaRepository.deleteAll();
-        timeVoteJpaRepository.deleteAll();
-        timeSlotJpaRepository.deleteAll();
+        deleter.deleteAll();
     }
 
     @Test
@@ -134,7 +115,7 @@ class VoteServiceTest {
     void 약과원_모임장소확정안되었을때_투표시간지났을때_최다득표가없을때_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
-        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 0);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, -1);
         User saveUser1 = dummyCreater.createAndSaveUser(1);
         User saveUser2 = dummyCreater.createAndSaveUser(1);
         Participant saveParticipant1 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser1, MeetRole.LEADER);
@@ -168,7 +149,7 @@ class VoteServiceTest {
     void 약과장_모임장소확정안되었을때_투표시간지났을때_최다득표가있을때_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
-        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 0);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, -1);
         User saveUser1 = dummyCreater.createAndSaveUser(1);
         User saveUser2 = dummyCreater.createAndSaveUser(1);
         Participant saveParticipant1 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser1, MeetRole.LEADER);
@@ -425,7 +406,7 @@ class VoteServiceTest {
         //then
         System.out.println("=====Logic Start=====");
 
-        assertThrows(AlreadyPlaceConfirmVoteException.class, () -> voteService.confirmPlace(saveUser.getId(), saveMeet.getId(), savePlaceSlot.getId()));
+        assertThrows(AlreadyPlaceConfirmException.class, () -> voteService.confirmPlace(saveUser.getId(), saveMeet.getId(), savePlaceSlot.getId()));
 
         System.out.println("=====Logic End=====");
     }

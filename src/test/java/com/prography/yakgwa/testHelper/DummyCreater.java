@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.common;
+package com.prography.yakgwa.testHelper;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;

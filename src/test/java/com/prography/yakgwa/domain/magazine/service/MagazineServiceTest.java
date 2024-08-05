@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.magazine.service;
 
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
 import com.prography.yakgwa.domain.magazine.entity.Image;
 import com.prography.yakgwa.domain.magazine.entity.Magazine;
@@ -19,9 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,12 +51,11 @@ class MagazineServiceTest {
     @Mock
     AwsS3Util awsS3Util;
 
+    @Autowired
+    RepositoryDeleter deleter;
     @AfterEach
     void init() {
-        imageJpaRepository.deleteAll();
-        magazineJpaRepository.deleteAll();
-        userJpaRepository.deleteAll();
-        placeJpaRepository.deleteAll();
+        deleter.deleteAll();
     }
 
     @Test

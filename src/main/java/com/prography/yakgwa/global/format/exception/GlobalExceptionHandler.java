@@ -6,6 +6,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.time.format.DateTimeParseException;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -21,4 +23,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ErrorResponse.of(e));
     }
 
+    @ExceptionHandler(DateTimeParseException.class)
+    public Object dateFormatValidationError(DateTimeParseException e) {
+        log.error(e.getMessage());
+        return ResponseEntity.badRequest().body(ErrorResponse.of(e));
+    }
 }

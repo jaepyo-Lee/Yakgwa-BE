@@ -22,16 +22,16 @@ public class PlaceSlotController implements PlaceSlotApi {
     private final PlaceSlotService placeSlotService;
 
     @PostMapping("/meets/{meetId}/placeslots")
-    public SuccessResponse<NewPlaceSlotResponse> appendPlaceSlotOfMeet(@PathVariable("meetId") Long meetId,
-                                                                       @RequestBody @Valid PlaceSlotAppendRequest placeSlotAppendRequest) {
-        PlaceSlot placeSlot = placeSlotService.appendSlotInMeet(meetId, placeSlotAppendRequest.getPlaceInfo());
+    public SuccessResponse<NewPlaceSlotResponse> appendPlaceSlotFrom(@PathVariable("meetId") Long meetId,
+                                                                     @RequestBody @Valid PlaceSlotAppendRequest placeSlotAppendRequest) {
+        PlaceSlot placeSlot = placeSlotService.appendPlaceSlotFrom(meetId, placeSlotAppendRequest.getPlaceInfo());
         Place place = placeSlot.getPlace();
         return new SuccessResponse<>(NewPlaceSlotResponse.of(place));
     }
 
     @GetMapping("/meets/{meetId}/placeslots")
-    public SuccessResponse<AllPlaceSlotOfMeetResponse> findPlaceSlotOfMeet(@PathVariable("meetId") Long meetId) {
-        List<PlaceSlotWithUserResponse> slotInMeet = placeSlotService.findSlotInMeet(meetId);
+    public SuccessResponse<AllPlaceSlotOfMeetResponse> findPlaceSlotFrom(@PathVariable("meetId") Long meetId) {
+        List<PlaceSlotWithUserResponse> slotInMeet = placeSlotService.findPlaceSlotFrom(meetId);
         List<PlaceSlotOfMeet> placeSlotOfMeets = slotInMeet.stream()
                 .map(placeSlotWithUserResponse -> PlaceSlotOfMeet.of(placeSlotWithUserResponse.getPlaceSlot(), placeSlotWithUserResponse.getUsers()))
                 .toList();

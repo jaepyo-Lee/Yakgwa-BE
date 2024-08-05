@@ -1,23 +1,26 @@
 package com.prography.yakgwa.domain.common.impl;
 
-import com.prography.yakgwa.global.config.AwsS3TestConfig;
+import com.prography.yakgwa.testHelper.config.AwsS3TestConfig;
 import io.findify.s3mock.S3Mock;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Spy;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ActiveProfiles("test")
-@Import(AwsS3TestConfig.class)
+@ContextConfiguration(classes = {AwsS3TestConfig.class})
 @SpringBootTest
+@ExtendWith({SpringExtension.class, MockitoExtension.class})
 class AwsS3UtilTest {
 
     @Autowired
@@ -46,7 +49,6 @@ class AwsS3UtilTest {
         // then
         assertThat(urlPath).contains(path);
         assertThat(urlPath).contains(dirName);
-
     }
 
 }

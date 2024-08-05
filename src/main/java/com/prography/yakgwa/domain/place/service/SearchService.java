@@ -29,7 +29,8 @@ public class SearchService {
      * Finish-Date)
      */
     public List<PlaceInfoWithUserLike> search(String search, Long userId) {
-        User user = userJpaRepository.findById(userId).orElseThrow(NotFoundUserException::new);
+        User user = userJpaRepository.findById(userId)
+                .orElseThrow(NotFoundUserException::new);
         NaverMapResponseDto naverResponse = naverClient.searchNaverAPIClient(search);
         List<PlaceInfoDto> items = naverResponse.getItems();
         List<PlaceInfoWithUserLike> placeInfoWithUserLikes = new ArrayList<>();
