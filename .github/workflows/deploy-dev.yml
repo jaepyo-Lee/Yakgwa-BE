@@ -35,6 +35,11 @@ jobs:
           touch ./application-dev.yml # application-dev.yml 생성
           echo "${{ secrets.APPLICATION }}" > ./application.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
           echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
+          
+          mkdir ./firebase
+          cd ./firebase
+          touch ./firebase-key.json
+          echo echo "${{ secrets.FIREBASE_DEV }}" > ./firebase.json
         shell: bash
 
       - name: Grant execute permission for gradlew
