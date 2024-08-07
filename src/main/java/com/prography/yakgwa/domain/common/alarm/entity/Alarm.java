@@ -27,4 +27,7 @@ public class Alarm extends BaseTimeEntity {
     @OneToOne
     @JoinColumn(name = "meet_id")
     private Meet meet;
+    public void send(){
+        this.send=true;
+    }
 }

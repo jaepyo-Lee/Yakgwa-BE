@@ -146,10 +146,6 @@ dependencies {
     implementation 'net.java.dev.jna:jna:5.8.0'
     implementation 'net.java.dev.jna:jna-platform:5.8.0'
     testImplementation 'org.mockito:mockito-inline:3.11.2'
-
-    //sqs
-    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:3.0.1")
-    implementation 'io.awspring.cloud:spring-cloud-aws-starter-sqs'
 }
 
 /**
