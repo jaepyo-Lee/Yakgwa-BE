@@ -30,10 +30,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.time.LocalDateTime.now;
 
 
 @RequiredArgsConstructor
@@ -43,41 +42,13 @@ public class MeetService {
     public static final int CORRECT_CONFIRM_PLACESLOT_SIZE = 1;
     public static final int CORRECT_CONFIRM_TIMESLOT_SIZE = 1;
 
-    private final MeetWriter meetWriter;
-    private final ParticipantWriter participantWriter;
     private final MeetStatusJudger meetStatusJudger;
     private final MeetJpaRepository meetJpaRepository;
     private final ParticipantJpaRepository participantJpaRepository;
     private final UserJpaRepository userJpaRepository;
     private final PlaceSlotJpaRepository placeSlotJpaRepository;
     private final TimeSlotJpaRepository timeSlotJpaRepository;
-    private final PlaceJpaRepository placeJpaRepository;
-    private final AlarmScheduler alarmScheduler;
 
-    /**
-     * Todo
-     * 요청 dto에서 투표확정시간과 투표가능시간을 둘다 받는데 이것을 모임 생성할때
-     * 해당 값들을 검증하는게 맞을까? 둘다 null이거나 둘다 값이 들어가있는경우 예외처리해야하는데 현재는 meetWriter.write에서 처리하고 있음
-     */
-    /**
-     * Work) Test Code
-     * Write-Date) 2024-07-29, 월, 1:54
-     * Finish-Date) 2024-07-29
-     */
-    @Transactional
-    public Meet create(MeetCreateRequestDto requestDto) throws JsonProcessingException {
-        User user = readUser(requestDto.getCreatorId());
-        Meet meet = createMeet(requestDto);
-
-        savePlaceSlotOfNewMeet(requestDto, meet);
-        saveTimeSlotIfNotConfirm(requestDto, meet);
-        participantWriter.registLeader(meet, user);
-        if (meetStatusJudger.isConfirm(meet)) {
-            // 당일 알림주기
-            alarmScheduler.registerAlarm(meet);
-        }
-        return meet;
-    }
 
     /**
      * Work) Test Code
@@ -85,8 +56,9 @@ public class MeetService {
      * Finish-Date) 2024-07-29
      */
     public MeetInfoWithParticipant findWithParticipant(Long meetId) {
-        Meet meet = readMeet(meetId);
-        List<Participant> participants = readAllParticipantOfMeet(meetId);
+        Meet meet = meetJpaRepository.findById(meetId)
+                .orElseThrow(NotFoundMeetException::new);
+        List<Participant> participants = participantJpaRepository.findAllByMeetId(meetId);
         return MeetInfoWithParticipant.of(meet, participants);
     }
 
@@ -97,21 +69,14 @@ public class MeetService {
      * Finish-Date)
      */
     public List<MeetWithVoteAndStatus> findPostConfirm(Long userId) {
-        User user = readUser(userId);
+        User user = userJpaRepository.findById(userId)
+                .orElseThrow(NotFoundUserException::new);
         List<Participant> participants = participantJpaRepository.findAllByUserId(userId);
-        List<MeetWithVoteAndStatus> meetsForUser = new ArrayList<>();
-        for (Participant participant : participants) {
-            Meet meet = participant.getMeet();
-            MeetStatus meetStatus = meetStatusJudger.judge(meet, user);
-            PlaceSlot placeSlot = getConfirmPlaceSlot(meet);
-            TimeSlot timeSlot = getConfirmTimeSlot(meet);
-            meetsForUser.add(MeetWithVoteAndStatus.of(meet, timeSlot, placeSlot, meetStatus));
-        }
-        List<MeetWithVoteAndStatus> list = meetsForUser.stream()
+        return participants.stream()
+                .map(participant -> createMeetWithVoteAndStatus(participant, user))
                 .filter(meet -> meet.getMeetStatus().equals(MeetStatus.CONFIRM) ||
                         meet.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM))
                 .toList();
-        return list;
     }
 
     /**
@@ -120,31 +85,36 @@ public class MeetService {
      * Finish-Date) 2024-07-29
      */
     public List<MeetWithVoteAndStatus> findWithStatus(Long userId) {
-        User user = readUser(userId);
+        User user = userJpaRepository.findById(userId)
+                .orElseThrow(NotFoundUserException::new);
         List<Participant> participants = readAllParticipantOfUser(userId);
-
         return getMeetAndSlotWithStatusList(participants, user);
     }
 
     private List<MeetWithVoteAndStatus> getMeetAndSlotWithStatusList(List<Participant> participants, User user) {
         List<MeetWithVoteAndStatus> list = new ArrayList<>();
         for (Participant participant : participants) {
-            Meet meet = participant.getMeet();
-            MeetStatus meetStatus = meetStatusJudger.judge(meet, user);
-
-            PlaceSlot placeSlot = getConfirmPlaceSlot(meet);
-            TimeSlot timeSlot = getConfirmTimeSlot(meet);
-
-            if (meetStatus.equals(MeetStatus.CONFIRM) && timeSlot.getTime().plusHours(3L).isAfter(now())) {
+            MeetWithVoteAndStatus meetWithVoteAndStatus = createMeetWithVoteAndStatus(participant, user);
+            if (shouldSkipMeet(meetWithVoteAndStatus)) {
                 continue;
             }
-            if (meetStatus.equals(MeetStatus.BEFORE_CONFIRM) && meet.getValidConfirmTime().isBefore(now())) {
-                continue;
-            }
-
-            list.add(MeetWithVoteAndStatus.of(meet, timeSlot, placeSlot, meetStatus));
+            list.add(meetWithVoteAndStatus);
         }
         return list;
+    }
+
+    private MeetWithVoteAndStatus createMeetWithVoteAndStatus(Participant participant, User user) {
+        Meet meet = participant.getMeet();
+        MeetStatus meetStatus = meetStatusJudger.judge(meet, user);
+        PlaceSlot placeSlot = getConfirmPlaceSlot(meet);
+        TimeSlot timeSlot = getConfirmTimeSlot(meet);
+        return MeetWithVoteAndStatus.of(meet, timeSlot, placeSlot, meetStatus);
+    }
+
+    private boolean shouldSkipMeet(MeetWithVoteAndStatus meet) {
+        LocalDateTime now = LocalDateTime.now();
+        return (meet.getMeetStatus().equals(MeetStatus.CONFIRM) && meet.getTimeSlot().getTime().plusHours(3L).isAfter(now)) ||
+                (meet.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meet.getMeet().getValidConfirmTime().isBefore(now));
     }
 
     private TimeSlot getConfirmTimeSlot(Meet meet) {
@@ -152,9 +122,7 @@ public class MeetService {
         if (timeSlots.size() > CORRECT_CONFIRM_TIMESLOT_SIZE) {
             throw new DataIntegrateException();
         }
-        return timeSlots.stream()
-                .findFirst()
-                .orElse(null);
+        return timeSlots.stream().findFirst().orElse(null);
     }
 
     private PlaceSlot getConfirmPlaceSlot(Meet meet) {
@@ -162,60 +130,11 @@ public class MeetService {
         if (placeSlots.size() > CORRECT_CONFIRM_PLACESLOT_SIZE) {
             throw new DataIntegrateException();
         }
-        return placeSlots.stream()
-                .findFirst()
-                .orElse(null);
-    }
-
-    private Meet createMeet(MeetCreateRequestDto requestDto) {
-        return meetWriter.write(requestDto.toMeetWriteDto());
+        return placeSlots.stream().findFirst().orElse(null);
     }
 
     private List<Participant> readAllParticipantOfUser(Long userId) {
         return participantJpaRepository.findAllByUserId(userId);
-    }
-
-    private User readUser(Long userId) {
-        return userJpaRepository.findById(userId).orElseThrow(NotFoundUserException::new);
-    }
-
-    private Meet readMeet(Long meetId) {
-        return meetJpaRepository.findById(meetId)
-                .orElseThrow(NotFoundMeetException::new);
-    }
-
-    private List<Participant> readAllParticipantOfMeet(Long meetId) {
-        return participantJpaRepository.findAllByMeetId(meetId);
-    }
-
-    private void saveTimeSlotIfNotConfirm(MeetCreateRequestDto requestDto, Meet meet) {
-        if (requestDto.getMeetTime() == null) {
-            return;
-        }
-        TimeSlot timeSlot = TimeSlot.builder()
-                .meet(meet).time(requestDto.getMeetTime()).confirm(Boolean.TRUE)
-                .build();
-        timeSlotJpaRepository.save(timeSlot);
-    }
-
-    private void savePlaceSlotOfNewMeet(MeetCreateRequestDto requestDto, Meet meet) {
-        List<PlaceInfoDto> placeInfo = requestDto.getPlaceInfo();
-        boolean isConfirmPlace = requestDto.isConfirmPlace();
-
-        if (isConfirmPlace && placeInfo.size() != 1) {
-            throw new ConfirmPlaceCountException();
-        }
-
-        List<Place> placeList = placeInfo.stream()
-                .map(placeInfoDto -> placeJpaRepository.findByMapxAndMapy(placeInfoDto.getMapx(), placeInfoDto.getMapy())
-                        .orElseGet(() -> placeJpaRepository.save(placeInfoDto.toEntity())))
-                .toList();
-
-        placeList.forEach(place -> placeSlotJpaRepository.save(PlaceSlot.builder()
-                .meet(meet)
-                .confirm(isConfirmPlace)
-                .place(place)
-                .build()));
     }
 
 

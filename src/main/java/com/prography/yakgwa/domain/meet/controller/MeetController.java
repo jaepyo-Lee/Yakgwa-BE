@@ -26,13 +26,6 @@ public class MeetController implements MeetApi{
 
     private final MeetService meetService;
 
-    @PostMapping("/meets")
-    public SuccessResponse<CreateMeetResponse> create(@AuthenticationPrincipal CustomUserDetail user,
-                                                      @RequestBody @Valid CreateMeetRequest createMeetRequest) throws JsonProcessingException {
-        Meet meet = meetService.create(createMeetRequest.toRequestDto(user.getUserId()));
-        return new SuccessResponse<>(CreateMeetResponse.of(meet.getId()));
-    }
-
     @GetMapping("/meets/{meetId}")
     public SuccessResponse<MeetInfoWithParticipantResponse> findDetail(@PathVariable("meetId") Long meetId) {
         MeetInfoWithParticipant meetWithParticipant = meetService.findWithParticipant(meetId);
