@@ -26,7 +26,7 @@ public class User extends BaseTimeEntity {
 
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    private Role role = Role.ROLE_USER;
+    private Role role= Role.ROLE_USER;
 
     public void changeImage(String imageUrl) {
         this.imageUrl = imageUrl;

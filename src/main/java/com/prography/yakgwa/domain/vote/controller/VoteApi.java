@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.prography.yakgwa.domain.vote.controller.req.ConfirmPlaceVoteInMeetRequest;
 import com.prography.yakgwa.domain.vote.controller.req.ConfirmTimeVoteInMeetRequest;
 import com.prography.yakgwa.domain.vote.controller.req.EnableTimeRequest;
@@ -37,10 +38,10 @@ public interface VoteApi {
     @Operation(summary = "모임의 장소확정 API", description = "약과장만 가능")
     SuccessResponse<String> confirmPlaceInMeet(@AuthenticationPrincipal CustomUserDetail user,
                                                @PathVariable Long meetId,
-                                               @RequestBody ConfirmPlaceVoteInMeetRequest request);
+                                               @RequestBody ConfirmPlaceVoteInMeetRequest request) throws JsonProcessingException;
 
     @Operation(summary = "모임의 시간확정 API", description = "약과장만 가능")
     SuccessResponse<String> confirmTimeInMeet(@AuthenticationPrincipal CustomUserDetail user,
                                               @PathVariable Long meetId,
-                                              @RequestBody ConfirmTimeVoteInMeetRequest request);
+                                              @RequestBody ConfirmTimeVoteInMeetRequest request) throws JsonProcessingException;
 }

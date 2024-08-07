@@ -110,7 +110,7 @@ public class MeetStatusJudger {
     }
 
 
-    private boolean isConfirm(Meet meet) {
+    public boolean isConfirm(Meet meet) {
         return isTimeConfirm(meet) && isPlaceConfirm(meet);
     }
 

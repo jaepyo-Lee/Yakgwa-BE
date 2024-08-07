@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.meet.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.prography.yakgwa.domain.meet.controller.req.CreateMeetRequest;
 import com.prography.yakgwa.domain.meet.controller.res.CreateMeetResponse;
 import com.prography.yakgwa.domain.meet.controller.res.MeetInfoWithParticipantResponse;
@@ -27,7 +28,7 @@ public class MeetController implements MeetApi{
 
     @PostMapping("/meets")
     public SuccessResponse<CreateMeetResponse> create(@AuthenticationPrincipal CustomUserDetail user,
-                                                      @RequestBody @Valid CreateMeetRequest createMeetRequest) {
+                                                      @RequestBody @Valid CreateMeetRequest createMeetRequest) throws JsonProcessingException {
         Meet meet = meetService.create(createMeetRequest.toRequestDto(user.getUserId()));
         return new SuccessResponse<>(CreateMeetResponse.of(meet.getId()));
     }

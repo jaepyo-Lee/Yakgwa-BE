@@ -66,7 +66,8 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers(new MvcRequestMatcher[]{
                                         new MvcRequestMatcher(introspector, "/api/v1/auth/**"),
-                                        new MvcRequestMatcher(introspector, "/actuator/**")})
+                                        new MvcRequestMatcher(introspector, "/actuator/**"),
+                                        new MvcRequestMatcher(introspector, "/test/**")})
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
