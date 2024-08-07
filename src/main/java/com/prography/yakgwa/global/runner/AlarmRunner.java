@@ -2,7 +2,7 @@ package com.prography.yakgwa.global.runner;
 
 import com.prography.yakgwa.domain.common.alarm.entity.Alarm;
 import com.prography.yakgwa.domain.common.alarm.repository.AlarmJpaRepository;
-import com.prography.yakgwa.domain.common.schedule.ScheduleExecutor;
+import com.prography.yakgwa.domain.common.schedule.AlarmScheduler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 public class AlarmRunner implements ApplicationRunner {
     private final AlarmJpaRepository alarmJpaRepository;
-    private final ScheduleExecutor scheduleExecutor;
+    private final AlarmScheduler alarmScheduler;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -25,11 +25,7 @@ public class AlarmRunner implements ApplicationRunner {
         all.stream()
                 .filter(alarm -> !alarm.isSend())
                 .forEach(alarm ->
-                        scheduleExecutor.registerAlarm(alarm.getTaskID(),
-                                alarm.getMeet(),
-                                alarm.getTitle(),
-                                alarm.getBody(),
-                                alarm.getTime()));
+                        alarmScheduler.registerAlarm(alarm.getMeet()));
         log.info("등록");
     }
 }

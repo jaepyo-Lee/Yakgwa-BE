@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.meet.controller;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.prography.yakgwa.domain.meet.controller.req.CreateMeetRequest;
 import com.prography.yakgwa.domain.meet.controller.res.CreateMeetResponse;
 import com.prography.yakgwa.domain.meet.controller.res.MeetInfoWithParticipantResponse;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface MeetApi {
     @Operation(summary = "모임 생성 API", description = "")
     SuccessResponse<CreateMeetResponse> create(@AuthenticationPrincipal CustomUserDetail user,
-                                               @RequestBody CreateMeetRequest createMeetRequest);
+                                               @RequestBody CreateMeetRequest createMeetRequest) throws JsonProcessingException;
 
     @Operation(summary = "모임의 상세정보 조회 API")
     SuccessResponse<MeetInfoWithParticipantResponse> findDetail(@PathVariable("meetId") Long meetId);

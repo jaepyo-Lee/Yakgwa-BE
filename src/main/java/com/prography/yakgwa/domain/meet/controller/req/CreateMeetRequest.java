@@ -1,8 +1,6 @@
 package com.prography.yakgwa.domain.meet.controller.req;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.prography.yakgwa.domain.common.validator.date.DateValid;
-import com.prography.yakgwa.domain.common.validator.datetime.DateTimeValid;
 import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
 import com.prography.yakgwa.domain.meet.service.req.MeetCreateRequestDto;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;

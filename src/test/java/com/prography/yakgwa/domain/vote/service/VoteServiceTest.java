@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
@@ -57,6 +58,7 @@ class VoteServiceTest {
     private TimeSlotJpaRepository timeSlotJpaRepository;
     @Autowired
     RepositoryDeleter deleter;
+
     @AfterEach
     void init() {
         deleter.deleteAll();
@@ -343,7 +345,7 @@ class VoteServiceTest {
     }
 
     @Test
-    void 이미확정되었는데_시간투표할때_예외() {
+    void 이미확정되었는데_시간투표할때_예외() throws JsonProcessingException {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
         Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 24);
@@ -356,16 +358,16 @@ class VoteServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        voteService.confirmTime(saveUser.getId(), saveMeet.getId(), saveTimeSlot.getId());
+        voteService.confirmTime(saveMeet.getId(), saveUser.getId(), saveTimeSlot.getId());
 
         System.out.println("=====Logic End=====");
         // then
-        assertThrows(AlreadyTimeConfirmVoteException.class, () -> voteService.confirmTime(saveUser.getId(), saveMeet.getId(), saveTimeSlot1.getId()));
+        assertThrows(AlreadyTimeConfirmVoteException.class, () -> voteService.confirmTime(saveMeet.getId(), saveUser.getId(), saveTimeSlot1.getId()));
     }
 
     /*==================confirmPlace====================*/
     @Test
-    void 장소확정() {
+    void 장소확정() throws JsonProcessingException {
         // given
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
@@ -454,7 +456,7 @@ class VoteServiceTest {
     /*=========confirmTime==========*/
 
     @Test
-    void 시간확정() {
+    void 시간확정() throws JsonProcessingException {
         // given
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
@@ -465,7 +467,7 @@ class VoteServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        voteService.confirmTime(saveUser.getId(), saveMeet.getId(), saveTimeSlot.getId());
+        voteService.confirmTime(saveMeet.getId(), saveUser.getId(), saveTimeSlot.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -486,7 +488,7 @@ class VoteServiceTest {
         // when
         // then
         System.out.println("=====Logic Start=====");
-        assertThrows(AlreadyTimeConfirmVoteException.class, () -> voteService.confirmTime(saveUser.getId(), saveMeet.getId(), saveTimeSlot.getId()));
+        assertThrows(AlreadyTimeConfirmVoteException.class, () -> voteService.confirmTime(saveMeet.getId(), saveUser.getId(), saveTimeSlot.getId()));
         System.out.println("=====Logic End=====");
     }
 
@@ -500,7 +502,7 @@ class VoteServiceTest {
         // when
         // then
         System.out.println("=====Logic Start=====");
-        assertThrows(NotFoundParticipantException.class, () -> voteService.confirmTime(saveUser.getId(), saveMeet.getId(), saveTimeSlot.getId()));
+        assertThrows(NotFoundParticipantException.class, () -> voteService.confirmTime(saveMeet.getId(), saveUser.getId(), saveTimeSlot.getId()));
         System.out.println("=====Logic End=====");
     }
 }

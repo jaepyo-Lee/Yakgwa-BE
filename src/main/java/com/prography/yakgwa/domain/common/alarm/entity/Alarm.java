@@ -20,24 +20,11 @@ public class Alarm extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String taskID;
-    private String title;
-    private String body;
 
     @Builder.Default
     private boolean send=false;
 
-    private LocalDateTime time;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "meet_id")
     private Meet meet;
-
-    public void changeTime(LocalDateTime time){
-        this.time = time;
-    }
 }

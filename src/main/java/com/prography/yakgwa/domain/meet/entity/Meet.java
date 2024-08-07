@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -25,7 +26,6 @@ public class Meet extends BaseTimeEntity {
     private String title;
     private String description;
     private int validInviteHour;
-
     @Embedded
     private VotePeriod period;
 
@@ -33,6 +33,12 @@ public class Meet extends BaseTimeEntity {
     @JoinColumn(name = "meet_theme_id")
     private MeetTheme meetTheme;
 
+    public LocalDateTime getEndTime() {
+        return this.getCreatedDate().plusHours(this.validInviteHour);
+    }
+    public LocalDateTime getValidConfirmTime(){
+        return getEndTime().plusHours(24);
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

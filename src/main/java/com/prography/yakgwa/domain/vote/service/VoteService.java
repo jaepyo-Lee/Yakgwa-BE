@@ -1,5 +1,8 @@
 package com.prography.yakgwa.domain.vote.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.prography.yakgwa.domain.common.alarm.AlarmProcessor;
+import com.prography.yakgwa.domain.common.schedule.AlarmScheduler;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
@@ -24,6 +27,7 @@ import com.prography.yakgwa.global.format.exception.slot.NotFoundTimeSlotExcepti
 import com.prography.yakgwa.global.format.exception.slot.NotMatchSlotInMeetException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.NotValidConfirmTimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -48,6 +52,7 @@ public class VoteService {
     private final TimeSlotJpaRepository timeSlotJpaRepository;
     private final TimeVoteJpaRepository timeVoteJpaRepository;
     private final VoteCounter voteCounter;
+    private final AlarmScheduler alarmScheduler;
 
     /**
      * Work) 테스트코드
@@ -144,9 +149,19 @@ public class VoteService {
      * Write-Date) 2024-07-25
      * Finish-Date) 2024-07-30
      */
-    public void confirmPlace(Long userId, Long meetId, Long confirmPlaceSlotId) {
+    /**
+     * Todo
+     * Work) 확정가능시간에대한 테스트코드
+     * Write-Date)
+     * Finish-Date)
+     */
+    public void confirmPlace(Long userId, Long meetId, Long confirmPlaceSlotId) throws JsonProcessingException {
+        Meet meet = meetJpaRepository.findById(meetId).orElseThrow(NotFoundMeetException::new);
         if (placeSlotJpaRepository.isConfirmFrom(meetId)) {
             throw new AlreadyPlaceConfirmException();
+        }
+        if(meet.getValidConfirmTime().isBefore(LocalDateTime.now())){
+            throw new NotValidConfirmTimeException();
         }
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
                 .orElseThrow(NotFoundParticipantException::new);
@@ -156,10 +171,9 @@ public class VoteService {
             throw new NotMatchSlotInMeetException();
         }
         placeSlot.confirm();
-    }
-
-    private boolean isPlaceSlotMatchMeet(Long meetId, PlaceSlot placeSlot) {
-        return placeSlot.getMeet().getId().equals(meetId);
+        if(meetStatusJudger.isConfirm(meet)){
+            alarmScheduler.registerAlarm(meet);
+        }
     }
 
     /**
@@ -167,15 +181,32 @@ public class VoteService {
      * Write-Date) 2024-07-25
      * Finish-Date) 2024-07-30
      */
-    public void confirmTime(Long userId, Long meetId, Long confirmTimeSlotId) {
+    /**
+     * Todo
+     * Work) 확정가능시간에대한 테스트코드
+     * Write-Date)
+     * Finish-Date)
+     */
+    public void confirmTime(Long meetId,Long userId, Long confirmTimeSlotId) throws JsonProcessingException {
+        Meet meet = meetJpaRepository.findById(meetId).orElseThrow(NotFoundMeetException::new);
         if (isTimeConfirmedFrom(meetId)) {
             throw new AlreadyTimeConfirmVoteException();
+        }
+        if(meet.getValidConfirmTime().isBefore(LocalDateTime.now())){
+            throw new NotValidConfirmTimeException();
         }
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
                 .orElseThrow(NotFoundParticipantException::new);
         TimeSlot timeSlot = timeSlotJpaRepository.findById(confirmTimeSlotId)
                 .orElseThrow(NotFoundTimeSlotException::new);
         timeSlot.confirm();
+        if(meetStatusJudger.isConfirm(meet)){
+            alarmScheduler.registerAlarm(meet);
+        }
+    }
+
+    private boolean isPlaceSlotMatchMeet(Long meetId, PlaceSlot placeSlot) {
+        return placeSlot.getMeet().getId().equals(meetId);
     }
 
 

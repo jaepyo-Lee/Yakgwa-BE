@@ -1,6 +1,10 @@
 package com.prography.yakgwa.domain.meet.service;
 
-import com.prography.yakgwa.domain.common.alarm.AlarmProcessor;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.prography.yakgwa.domain.common.schedule.AlarmScheduler;
+import com.prography.yakgwa.domain.common.sqs.AwsSqsMessageSender;
+import com.prography.yakgwa.domain.common.sqs.message.AlarmSqsMessage;
+import com.prography.yakgwa.domain.common.sqs.message.EndVoteSqsMessage;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
@@ -33,6 +37,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.time.LocalDateTime.now;
+
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -40,6 +46,7 @@ import java.util.List;
 public class MeetService {
     public static final int CORRECT_CONFIRM_PLACESLOT_SIZE = 1;
     public static final int CORRECT_CONFIRM_TIMESLOT_SIZE = 1;
+
     private final MeetWriter meetWriter;
     private final ParticipantWriter participantWriter;
     private final MeetStatusJudger meetStatusJudger;
@@ -49,6 +56,7 @@ public class MeetService {
     private final PlaceSlotJpaRepository placeSlotJpaRepository;
     private final TimeSlotJpaRepository timeSlotJpaRepository;
     private final PlaceJpaRepository placeJpaRepository;
+    private final AlarmScheduler alarmScheduler;
 
     /**
      * Todo
@@ -61,18 +69,19 @@ public class MeetService {
      * Finish-Date) 2024-07-29
      */
     @Transactional
-    public Meet create(MeetCreateRequestDto requestDto) {
+    public Meet create(MeetCreateRequestDto requestDto) throws JsonProcessingException {
         User user = readUser(requestDto.getCreatorId());
         Meet meet = createMeet(requestDto);
 
         savePlaceSlotOfNewMeet(requestDto, meet);
         saveTimeSlotIfNotConfirm(requestDto, meet);
-
         participantWriter.registLeader(meet, user);
-
+        if (meetStatusJudger.isConfirm(meet)) {
+            // 당일 알림주기
+            alarmScheduler.registerAlarm(meet);
+        }
         return meet;
     }
-
 
     /**
      * Work) Test Code
@@ -92,9 +101,19 @@ public class MeetService {
      * Finish-Date)
      */
     public List<MeetWithVoteAndStatus> findPostConfirm(Long userId) {
-        List<MeetWithVoteAndStatus> list = findWithStatus(userId).stream()
-                .filter(meet -> meet.getMeetStatus().equals(MeetStatus.CONFIRM))
-                .filter(meet -> meet.getTimeSlot().getTime().isBefore(LocalDateTime.now().minusHours(1L)))
+        User user = readUser(userId);
+        List<Participant> participants = participantJpaRepository.findAllByUserId(userId);
+        List<MeetWithVoteAndStatus> meetsForUser = new ArrayList<>();
+        for (Participant participant : participants) {
+            Meet meet = participant.getMeet();
+            MeetStatus meetStatus = meetStatusJudger.judge(meet, user);
+            PlaceSlot placeSlot = getConfirmPlaceSlot(meet);
+            TimeSlot timeSlot = getConfirmTimeSlot(meet);
+            meetsForUser.add(MeetWithVoteAndStatus.of(meet, timeSlot, placeSlot, meetStatus));
+        }
+        List<MeetWithVoteAndStatus> list = meetsForUser.stream()
+                .filter(meet -> meet.getMeetStatus().equals(MeetStatus.CONFIRM) ||
+                        meet.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM))
                 .toList();
         return list;
     }
@@ -119,6 +138,13 @@ public class MeetService {
 
             PlaceSlot placeSlot = getConfirmPlaceSlot(meet);
             TimeSlot timeSlot = getConfirmTimeSlot(meet);
+
+            if (meetStatus.equals(MeetStatus.CONFIRM) && timeSlot.getTime().plusHours(3L).isAfter(now())) {
+                continue;
+            }
+            if (meetStatus.equals(MeetStatus.BEFORE_CONFIRM) && meet.getValidConfirmTime().isBefore(now())) {
+                continue;
+            }
 
             list.add(MeetWithVoteAndStatus.of(meet, timeSlot, placeSlot, meetStatus));
         }

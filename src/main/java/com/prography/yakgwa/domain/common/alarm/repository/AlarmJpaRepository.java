@@ -9,5 +9,4 @@ import java.util.Optional;
 
 @Repository
 public interface AlarmJpaRepository extends JpaRepository<Alarm, Long> {
-    Optional<Alarm> findByTaskID(@Param("taskId") String taskId);
 }

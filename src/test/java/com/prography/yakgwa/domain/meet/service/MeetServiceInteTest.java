@@ -1,5 +1,7 @@
 package com.prography.yakgwa.domain.meet.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.prography.yakgwa.domain.common.schedule.AlarmScheduler;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
@@ -21,8 +23,11 @@ import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +38,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -52,6 +59,8 @@ class MeetServiceInteTest {
 
     @Autowired
     RepositoryDeleter deleter;
+    @MockBean
+    AlarmScheduler scheduler;
 
     @AfterEach
     void init() {
@@ -59,7 +68,7 @@ class MeetServiceInteTest {
     }
 
     @Test
-    void 시간만확정된경우_모임생성() {
+    void 시간만확정된경우_모임생성() throws JsonProcessingException {
         // given
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
@@ -69,6 +78,7 @@ class MeetServiceInteTest {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(confirmTime).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(null).placeInfo(List.of()).confirmPlace(false)
                 .build();
+        when(scheduler.registerAlarm(any())).thenReturn(true);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -95,10 +105,12 @@ class MeetServiceInteTest {
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
+        verify(scheduler, never()).registerAlarm(any());
+
     }
 
     @Test
-    void 장소만확정된경우_모임생성() {
+    void 장소만확정된경우_모임생성() throws JsonProcessingException {
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
         String title = "title";
@@ -112,6 +124,7 @@ class MeetServiceInteTest {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(null).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(voteDateDto).placeInfo(List.of(placeInfoDto)).confirmPlace(true)
                 .build();
+        when(scheduler.registerAlarm(any())).thenReturn(true);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -136,10 +149,11 @@ class MeetServiceInteTest {
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
+        verify(scheduler, never()).registerAlarm(any());
     }
 
     @Test
-    void 시간과장소모두확정된경우_모임생성() {
+    void 시간과장소모두확정된경우_모임생성() throws JsonProcessingException {
         // given
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
@@ -155,6 +169,7 @@ class MeetServiceInteTest {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(confirmTime).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(null).placeInfo(List.of(placeInfoDto)).confirmPlace(true)
                 .build();
+        when(scheduler.registerAlarm(any())).thenReturn(true);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -185,10 +200,11 @@ class MeetServiceInteTest {
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
+        verify(scheduler).registerAlarm(any());
     }
 
     @Test
-    void 시간과장소모두확정안된경우_모임생성() {
+    void 시간과장소모두확정안된경우_모임생성() throws JsonProcessingException {
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
         String title = "title";
@@ -203,6 +219,7 @@ class MeetServiceInteTest {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(null).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(voteDateDto).placeInfo(List.of(placeInfoDto)).confirmPlace(false)
                 .build();
+        when(scheduler.registerAlarm(any())).thenReturn(true);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -227,6 +244,7 @@ class MeetServiceInteTest {
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
+        verify(scheduler, never()).registerAlarm(any());
     }
 
     /*====================findWithParticipant====================*/
@@ -291,8 +309,6 @@ class MeetServiceInteTest {
         TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), true);
         dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
 
-
-        List<MeetWithVoteAndStatus> meetWithVoteAndStatuses = List.of(MeetWithVoteAndStatus.of(saveMeet, saveTimeSlot, savePlaceSlot, MeetStatus.CONFIRM));
         // when
         System.out.println("=====Logic Start=====");
 
@@ -305,6 +321,50 @@ class MeetServiceInteTest {
                 () -> assertThat(withStatus).extracting(MeetWithVoteAndStatus::getMeet).isEqualTo(List.of(saveMeet)),
                 () -> assertThat(withStatus).extracting(MeetWithVoteAndStatus::getTimeSlot).isEqualTo(List.of(saveTimeSlot)),
                 () -> assertThat(withStatus).extracting(MeetWithVoteAndStatus::getPlaceSlot).isEqualTo(List.of(savePlaceSlot)));
+    }
+
+    @Test
+    void 모임시간이3시간이상지났을때모임상태와정보_조회() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        Place savePlace = dummyCreater.createAndSavePlace(1);
+        PlaceSlot savePlaceSlot = dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet, true);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now().plusHours(5L), true);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+
+
+        List<MeetWithVoteAndStatus> meetWithVoteAndStatuses = List.of(MeetWithVoteAndStatus.of(saveMeet, saveTimeSlot, savePlaceSlot, MeetStatus.CONFIRM));
+        // when
+        System.out.println("=====Logic Start=====");
+
+        List<MeetWithVoteAndStatus> withStatus = meetService.findWithStatus(saveUser.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertThat(withStatus.size()).isEqualTo(0);
+    }
+
+    @Test
+    void 모임시간확정에실패하고확정가능시간을지났을때모임상태와정보_조회() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, -30);
+        Place savePlace = dummyCreater.createAndSavePlace(1);
+        PlaceSlot savePlaceSlot = dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet, false);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now().plusHours(5L), false);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        List<MeetWithVoteAndStatus> withStatus = meetService.findWithStatus(saveUser.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertThat(withStatus.size()).isEqualTo(0);
     }
 
     @Test
@@ -383,6 +443,13 @@ class MeetServiceInteTest {
     }
 
     /*=================findPostConfirm=================*/
+    /**
+     * Todo
+     * Work) 변경된 로직에 따라 테코 수정하기
+     * Write-Date)
+     * Finish-Date)
+     */
+
     @Test
     void 나의모임확인_확정상태이고_확정시간에서1시간이지난모임들_조회() {
         // given
@@ -400,7 +467,7 @@ class MeetServiceInteTest {
         dummyCreater.createAndSaveTimeSlot(saveMeet2, LocalDateTime.now(), true);
         dummyCreater.createAndSaveParticipant(saveMeet2, saveUser, MeetRole.LEADER);
 
-        Meet saveMeet3 = dummyCreater.createAndSaveMeet(3, saveMeetTheme, 24);
+        Meet saveMeet3 = dummyCreater.createAndSaveMeet(3, saveMeetTheme, -24);
         dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet3, true);
         dummyCreater.createAndSaveTimeSlot(saveMeet3, LocalDateTime.now().minusHours(2L), false);
         dummyCreater.createAndSaveParticipant(saveMeet3, saveUser, MeetRole.LEADER);
@@ -416,6 +483,6 @@ class MeetServiceInteTest {
 
         System.out.println("=====Logic End=====");
         // then
-        assertThat(postConfirm.size()).isEqualTo(1);
+        assertThat(postConfirm.size()).isEqualTo(3);
     }
 }
