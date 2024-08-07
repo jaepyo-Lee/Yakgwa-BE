@@ -2,9 +2,6 @@ package com.prography.yakgwa.domain.meet.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.prography.yakgwa.domain.common.schedule.AlarmScheduler;
-import com.prography.yakgwa.domain.common.sqs.AwsSqsMessageSender;
-import com.prography.yakgwa.domain.common.sqs.message.AlarmSqsMessage;
-import com.prography.yakgwa.domain.common.sqs.message.EndVoteSqsMessage;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
@@ -33,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -65,6 +65,8 @@ public class AlarmScheduler {
             for (Participant participant : participants) {
                 sendNotification(participant, title, body);
             }
+            Alarm alarm = alarmJpaRepository.findByMeetId(meet.getId()).orElseThrow(() -> new RuntimeException("없는알람입니다."));
+            alarm.send();
         };
     }
 
@@ -72,6 +74,7 @@ public class AlarmScheduler {
         try {
             String message = fcmMessageConverter.makeMessage(participant.getUser().getFcmToken(), title, body);
             firebaseMessageSender.sendMessageTo(message);
+
         } catch (IOException e) {
             log.error("FCM 메시지 전송 실패: {}", participant.getUser().getId(), e);
         }
