@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.vote.service.req;
+package com.prography.yakgwa.domain.vote.service.place.res;
 
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;

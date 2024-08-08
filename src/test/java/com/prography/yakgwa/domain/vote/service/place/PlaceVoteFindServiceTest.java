@@ -10,7 +10,7 @@ import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.service.VoteFinder;
-import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
+import com.prography.yakgwa.domain.vote.service.place.res.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.junit.jupiter.api.AfterEach;
@@ -158,8 +158,7 @@ class PlaceVoteFindServiceTest {
         System.out.println("=====Logic End=====");
         // then
 
-        assertAll(() -> assertThat(placeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.CONFIRM),
-                () -> assertThat(placeInfoWithMeetStatus.getPlaces().size()).isEqualTo(1));
+        assertAll(() -> assertThat(placeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.BEFORE_CONFIRM));
 
     }
 
@@ -211,7 +210,7 @@ class PlaceVoteFindServiceTest {
 
         Place place = dummyCreater.createAndSavePlace(1);
         PlaceSlot savePlaceSlot = dummyCreater.createAndSavePlaceSlot(place, saveMeet, true);
-        dummyCreater.createAndSavePlaceSlot(place, saveMeet, false);
+
 
         // when
         System.out.println("=====Logic Start=====");

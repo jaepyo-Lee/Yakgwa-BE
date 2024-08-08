@@ -55,7 +55,7 @@ class MeetStatusJudgerTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        MeetStatus meetStatus = meetStatusJudger.judge(saveMeet, saveUser);
+        MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(saveMeet, saveUser);
 
         System.out.println("=====Logic End=====");
         // then
@@ -79,7 +79,7 @@ class MeetStatusJudgerTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        MeetStatus meetStatus = meetStatusJudger.judge(saveMeet, saveUser);
+        MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(saveMeet, saveUser);
 
         System.out.println("=====Logic End=====");
         // then
@@ -110,7 +110,7 @@ class MeetStatusJudgerTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        MeetStatus meetStatus = meetStatusJudger.judge(saveMeet, saveUser1);
+        MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(saveMeet, saveUser1);
 
         System.out.println("=====Logic End=====");
         // then
@@ -137,7 +137,7 @@ class MeetStatusJudgerTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        MeetStatus meetStatus = meetStatusJudger.judge(saveMeet, saveUser1);
+        MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(saveMeet, saveUser1);
 
         System.out.println("=====Logic End=====");
         // then
@@ -162,7 +162,7 @@ class MeetStatusJudgerTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        MeetStatus meetStatus = meetStatusJudger.judge(saveMeet, saveUser1);
+        MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(saveMeet, saveUser1);
 
         System.out.println("=====Logic End=====");
         // then

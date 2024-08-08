@@ -67,7 +67,7 @@ public class MeetService {
         List<MeetWithVoteAndStatus> meetsForUser = new ArrayList<>();
         for (Participant participant : participants) {
             Meet meet = participant.getMeet();
-            MeetStatus meetStatus = meetStatusJudger.judge(meet, user);
+            MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(meet, user);
             if (isMeetStatusAfterVote(meetStatus)) {
                 PlaceSlot placeSlot = getConfirmPlaceSlot(meet);
                 TimeSlot timeSlot = getConfirmTimeSlot(meet);
@@ -84,7 +84,7 @@ public class MeetService {
     private MeetWithVoteAndStatus createMeetWithVoteAndStatus(Participant participant, User user) {
         Meet meet = participant.getMeet();
 
-        MeetStatus meetStatus = meetStatusJudger.judge(meet, user);
+        MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(meet, user);
         PlaceSlot placeSlot = getConfirmPlaceSlot(meet);
         TimeSlot timeSlot = getConfirmTimeSlot(meet);
         return MeetWithVoteAndStatus.of(meet, timeSlot, placeSlot, meetStatus);
@@ -115,10 +115,10 @@ public class MeetService {
     }
 
 
-    private boolean shouldSkipMeet(MeetWithVoteAndStatus meet) {
+    private boolean shouldSkipMeet(MeetWithVoteAndStatus meetWithVoteAndStatus) {
         LocalDateTime now = LocalDateTime.now();
-        return (meet.getMeetStatus().equals(MeetStatus.CONFIRM) && meet.getTimeSlot().getTime().plusHours(3L).isAfter(now)) ||
-                (meet.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meet.getMeet().getValidConfirmTime().isBefore(now));
+        return (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.CONFIRM) && meetWithVoteAndStatus.getTimeSlot().getTime().plusHours(3L).isBefore(now)) ||
+                (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meetWithVoteAndStatus.getMeet().getConfirmTime().isBefore(now));
     }
 
     private TimeSlot getConfirmTimeSlot(Meet meet) {

@@ -1,8 +1,8 @@
 package com.prography.yakgwa.domain.vote.service.place;
 
-import com.prography.yakgwa.domain.common.schedule.AlarmScheduler;
+import com.prography.yakgwa.domain.common.schedule.TaskScheduleExecuter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
+import com.prography.yakgwa.domain.meet.impl.MeetConfirmChecker;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
@@ -13,6 +13,7 @@ import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.service.VoteExecuter;
+import com.prography.yakgwa.global.format.enumerate.AlarmType;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
 import com.prography.yakgwa.global.format.exception.slot.NotFoundPlaceSlotException;
@@ -36,11 +37,10 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
     private final MeetJpaRepository meetJpaRepository;
     private final PlaceSlotJpaRepository placeSlotJpaRepository;
     private final ParticipantJpaRepository participantJpaRepository;
-    private final MeetStatusJudger meetStatusJudger;
-    private final AlarmScheduler alarmScheduler;
+    private final TaskScheduleExecuter alarmScheduler;
     private final UserJpaRepository userJpaRepository;
     private final PlaceVoteJpaRepository placeVoteJpaRepository;
-
+    private final MeetConfirmChecker confirmChecker;
 
     @Override
     public List<PlaceVote> vote(Long userId, Long meetId, Set<Long> placeSlotIds) {
@@ -85,7 +85,7 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
         if (placeSlotJpaRepository.isConfirmFrom(meetId)) {
             throw new AlreadyPlaceConfirmException();
         }
-        if (meet.getValidConfirmTime().isBefore(LocalDateTime.now())) {
+        if (meet.getConfirmTime().isBefore(LocalDateTime.now())) {
             throw new NotValidConfirmTimeException();
         }
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
@@ -96,8 +96,8 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
             throw new NotMatchSlotInMeetException();
         }
         placeSlot.confirm();
-        if (meetStatusJudger.isConfirm(meet)) {
-            alarmScheduler.registerAlarm(meet);
+        if (confirmChecker.isMeetConfirm(meet)) {
+            alarmScheduler.registerAlarm(meet, AlarmType.END_VOTE);
         }
     }
 

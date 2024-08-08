@@ -8,6 +8,8 @@ import org.hibernate.Hibernate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+import static java.lang.Boolean.TRUE;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -49,5 +51,9 @@ public class TimeSlot {
                 .time(time)
                 .confirm(true)
                 .build();
+    }
+
+    public boolean isConfirm(){
+        return this.confirm.equals(TRUE);
     }
 }

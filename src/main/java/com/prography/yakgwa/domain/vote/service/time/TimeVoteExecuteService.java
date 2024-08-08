@@ -1,8 +1,8 @@
 package com.prography.yakgwa.domain.vote.service.time;
 
-import com.prography.yakgwa.domain.common.schedule.AlarmScheduler;
+import com.prography.yakgwa.domain.common.schedule.TaskScheduleExecuter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
+import com.prography.yakgwa.domain.meet.impl.MeetConfirmChecker;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
@@ -13,7 +13,8 @@ import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.service.VoteExecuter;
-import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
+import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
+import com.prography.yakgwa.global.format.enumerate.AlarmType;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
 import com.prography.yakgwa.global.format.exception.slot.NotFoundTimeSlotException;
@@ -35,10 +36,10 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
     private final MeetJpaRepository meetJpaRepository;
     private final ParticipantJpaRepository participantJpaRepository;
     private final TimeSlotJpaRepository timeSlotJpaRepository;
-    private final MeetStatusJudger meetStatusJudger;
-    private final AlarmScheduler alarmScheduler;
+    private final TaskScheduleExecuter alarmScheduler;
     private final UserJpaRepository userJpaRepository;
     private final TimeVoteJpaRepository timeVoteJpaRepository;
+    private final MeetConfirmChecker confirmChecker;
 
     @Override
     public List<TimeVote> vote(Long userId, Long meetId, EnableTimeRequestDto requestDto) {
@@ -100,7 +101,7 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
         if (isTimeConfirmedFrom(meetId)) {
             throw new AlreadyTimeConfirmVoteException();
         }
-        if (meet.getValidConfirmTime().isBefore(LocalDateTime.now())) {
+        if (meet.getConfirmTime().isBefore(LocalDateTime.now())) {
             throw new NotValidConfirmTimeException();
         }
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
@@ -108,8 +109,8 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
         TimeSlot timeSlot = timeSlotJpaRepository.findById(timeSlotId)
                 .orElseThrow(NotFoundTimeSlotException::new);
         timeSlot.confirm();
-        if (meetStatusJudger.isConfirm(meet)) {
-            alarmScheduler.registerAlarm(meet);
+        if (confirmChecker.isMeetConfirm(meet)) {
+            alarmScheduler.registerAlarm(meet, AlarmType.END_VOTE);
         }
     }
 

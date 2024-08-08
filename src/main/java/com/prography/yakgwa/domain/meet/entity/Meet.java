@@ -33,11 +33,11 @@ public class Meet extends BaseTimeEntity {
     @JoinColumn(name = "meet_theme_id")
     private MeetTheme meetTheme;
 
-    public LocalDateTime getEndTime() {
+    public LocalDateTime getVoteTime() {
         return this.getCreatedDate().plusHours(this.validInviteHour);
     }
-    public LocalDateTime getValidConfirmTime(){
-        return getEndTime().plusHours(24);
+    public LocalDateTime getConfirmTime(){
+        return getVoteTime().plusHours(24);
     }
     @Override
     public boolean equals(Object o) {

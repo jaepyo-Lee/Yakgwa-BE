@@ -12,6 +12,8 @@ import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
+import static java.lang.Boolean.TRUE;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -34,6 +36,15 @@ public class PlaceSlot extends BaseTimeEntity {
         confirm = true;
     }
 
+
+    public static PlaceSlot of(Meet meet, Boolean confirm, Place place) {
+        return PlaceSlot.builder()
+                .meet(meet)
+                .confirm(confirm)
+                .place(place)
+                .build();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -46,5 +57,24 @@ public class PlaceSlot extends BaseTimeEntity {
     @Override
     public int hashCode() {
         return id.intValue();
+    }
+
+    public boolean isSamePlace(String title, String mapx, String mapy) {
+        return isTitleCompareTo(title) && isXCompareTo(mapx) && isYCompareTo(mapy);
+    }
+
+    private boolean isYCompareTo(String mapy) {
+        return this.getPlace().getMapy().equals(mapy);
+    }
+
+    private boolean isXCompareTo(String mapx) {
+        return this.getPlace().getMapx().equals(mapx);
+    }
+
+    private boolean isTitleCompareTo(String title) {
+        return this.getPlace().getTitle().equals(title);
+    }
+    public boolean isConfirm(){
+        return this.confirm.equals(TRUE);
     }
 }
