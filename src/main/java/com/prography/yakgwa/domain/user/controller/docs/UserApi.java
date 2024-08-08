@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.user.controller;
+package com.prography.yakgwa.domain.user.controller.docs;
 
 import com.prography.yakgwa.domain.user.controller.res.UserInfoResponse;
 import com.prography.yakgwa.global.filter.CustomUserDetail;

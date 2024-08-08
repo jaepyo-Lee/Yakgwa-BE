@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.place.controller;
+package com.prography.yakgwa.domain.place.controller.docs;
 
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.global.filter.CustomUserDetail;

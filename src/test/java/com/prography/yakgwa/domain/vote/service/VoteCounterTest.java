@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.service;
 
+import com.prography.yakgwa.domain.vote.service.impl.VoteCounter;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;

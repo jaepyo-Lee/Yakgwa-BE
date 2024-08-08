@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.meet.controller;
+package com.prography.yakgwa.domain.meet.controller.docs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.prography.yakgwa.domain.meet.controller.req.CreateMeetRequest;

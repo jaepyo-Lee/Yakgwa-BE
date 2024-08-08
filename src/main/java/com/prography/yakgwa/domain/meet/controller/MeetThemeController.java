@@ -1,10 +1,10 @@
 package com.prography.yakgwa.domain.meet.controller;
 
+import com.prography.yakgwa.domain.meet.controller.docs.MeetThemeApi;
 import com.prography.yakgwa.domain.meet.controller.res.MeetThemeResponse;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.service.MeetThemeService;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

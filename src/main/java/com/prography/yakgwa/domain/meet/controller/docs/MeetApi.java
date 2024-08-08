@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.meet.controller;
+package com.prography.yakgwa.domain.meet.controller.docs;
 
 
 import com.prography.yakgwa.domain.meet.controller.res.MeetInfoWithParticipantResponse;

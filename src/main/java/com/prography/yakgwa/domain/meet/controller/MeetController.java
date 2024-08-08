@@ -1,18 +1,14 @@
 package com.prography.yakgwa.domain.meet.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.prography.yakgwa.domain.meet.controller.req.CreateMeetRequest;
-import com.prography.yakgwa.domain.meet.controller.res.CreateMeetResponse;
+import com.prography.yakgwa.domain.meet.controller.docs.MeetApi;
 import com.prography.yakgwa.domain.meet.controller.res.MeetInfoWithParticipantResponse;
 import com.prography.yakgwa.domain.meet.controller.res.MeetWithStatusInfoResponse;
 import com.prography.yakgwa.domain.meet.controller.res.PostConfirmMeetInfoResponse;
-import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.service.MeetService;
 import com.prography.yakgwa.domain.meet.service.req.MeetWithVoteAndStatus;
 import com.prography.yakgwa.domain.meet.service.res.MeetInfoWithParticipant;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${app.api.base}")
-public class MeetController implements MeetApi{
+public class MeetController implements MeetApi {
 
     private final MeetService meetService;
 
