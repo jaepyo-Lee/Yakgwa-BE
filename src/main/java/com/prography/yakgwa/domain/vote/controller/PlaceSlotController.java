@@ -1,12 +1,13 @@
 package com.prography.yakgwa.domain.vote.controller;
 
 import com.prography.yakgwa.domain.place.entity.Place;
+import com.prography.yakgwa.domain.vote.controller.docs.PlaceSlotApi;
 import com.prography.yakgwa.domain.vote.controller.req.PlaceSlotAppendRequest;
 import com.prography.yakgwa.domain.vote.controller.res.NewPlaceSlotResponse;
 import com.prography.yakgwa.domain.vote.controller.res.AllPlaceSlotOfMeetResponse;
 import com.prography.yakgwa.domain.vote.controller.res.PlaceSlotOfMeet;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
-import com.prography.yakgwa.domain.vote.service.PlaceSlotService;
+import com.prography.yakgwa.domain.vote.service.place.PlaceSlotService;
 import com.prography.yakgwa.domain.vote.service.res.PlaceSlotWithUserResponse;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import jakarta.validation.Valid;

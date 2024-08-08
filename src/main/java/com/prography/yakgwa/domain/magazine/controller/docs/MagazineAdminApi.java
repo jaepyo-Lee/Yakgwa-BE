@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.magazine.controller;
+package com.prography.yakgwa.domain.magazine.controller.docs;
 
 import com.prography.yakgwa.domain.magazine.controller.req.CreateMagazineRequest;
 import com.prography.yakgwa.domain.magazine.controller.req.ModifyMagazineOpenStateRequest;

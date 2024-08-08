@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.participant.controller;
+package com.prography.yakgwa.domain.participant.controller.docs;
 
 import com.prography.yakgwa.domain.participant.controller.res.EnterMeetResponse;
 import com.prography.yakgwa.global.filter.CustomUserDetail;

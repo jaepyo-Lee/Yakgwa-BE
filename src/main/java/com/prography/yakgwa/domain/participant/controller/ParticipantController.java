@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.participant.controller;
 
+import com.prography.yakgwa.domain.participant.controller.docs.ParticipantApi;
 import com.prography.yakgwa.domain.participant.controller.res.EnterMeetResponse;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.service.ParticipantService;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${app.api.base}")
-public class ParticipantController implements ParticipantApi{
+public class ParticipantController implements ParticipantApi {
     private final ParticipantService participantService;
 
     @PostMapping("/meets/{meetId}")

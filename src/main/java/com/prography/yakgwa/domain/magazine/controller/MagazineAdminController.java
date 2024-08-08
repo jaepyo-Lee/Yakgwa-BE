@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.magazine.controller;
 
+import com.prography.yakgwa.domain.magazine.controller.docs.MagazineAdminApi;
 import com.prography.yakgwa.domain.magazine.controller.req.CreateMagazineRequest;
 import com.prography.yakgwa.domain.magazine.controller.req.ModifyMagazineOpenStateRequest;
 import com.prography.yakgwa.domain.magazine.controller.res.CreateMagazineResponse;

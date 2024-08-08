@@ -1,8 +1,7 @@
 package com.prography.yakgwa.domain.magazine.controller;
 
-import com.prography.yakgwa.domain.magazine.controller.res.CreateMagazineResponse;
+import com.prography.yakgwa.domain.magazine.controller.docs.MagazineApi;
 import com.prography.yakgwa.domain.magazine.controller.res.PagingMagazineResponse;
-import com.prography.yakgwa.domain.magazine.entity.Magazine;
 import com.prography.yakgwa.domain.magazine.service.MagazineService;
 import com.prography.yakgwa.domain.magazine.service.res.MagazineInfoResponseDto;
 import com.prography.yakgwa.global.format.success.SuccessResponse;

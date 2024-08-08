@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.vote.service;
+package com.prography.yakgwa.domain.vote.service.place;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
@@ -31,7 +31,6 @@ public class PlaceSlotService {
     private final PlaceSlotJpaRepository placeSlotJpaRepository;
     private final PlaceVoteJpaRepository placeVoteJpaRepository;
     private final MeetStatusJudger meetStatusJudger;
-
     /**
      * Work) Test Code
      * Write-Date) 2024-07-29, 월, 14:20

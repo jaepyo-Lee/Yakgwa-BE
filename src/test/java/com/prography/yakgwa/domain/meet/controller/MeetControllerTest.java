@@ -1,36 +1,27 @@
 package com.prography.yakgwa.domain.meet.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prography.yakgwa.domain.meet.controller.req.CreateMeetRequest;
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.service.MeetService;
+import com.prography.yakgwa.domain.meet.service.MeetCreateService;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
-import com.prography.yakgwa.global.config.SecurityConfig;
 import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.cglib.core.Local;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -43,7 +34,7 @@ class MeetControllerTest {
     @Autowired
     private MockMvc mvc;
     @MockBean
-    private MeetService meetService;
+    private MeetCreateService meetCreateService;
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
@@ -81,7 +72,7 @@ class MeetControllerTest {
         Meet meet = Meet.builder()
                 .id(1L)
                 .build();
-        when(meetService.create(any())).thenReturn(meet);
+        when(meetCreateService.create(any())).thenReturn(meet);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -124,7 +115,7 @@ class MeetControllerTest {
         Meet meet = Meet.builder()
                 .id(1L)
                 .build();
-        when(meetService.create(any())).thenReturn(meet);
+        when(meetCreateService.create(any())).thenReturn(meet);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -166,7 +157,7 @@ class MeetControllerTest {
         Meet meet = Meet.builder()
                 .id(1L)
                 .build();
-        when(meetService.create(any())).thenReturn(meet);
+        when(meetCreateService.create(any())).thenReturn(meet);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -208,7 +199,7 @@ class MeetControllerTest {
         Meet meet = Meet.builder()
                 .id(1L)
                 .build();
-        when(meetService.create(any())).thenReturn(meet);
+        when(meetCreateService.create(any())).thenReturn(meet);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -250,7 +241,7 @@ class MeetControllerTest {
         Meet meet = Meet.builder()
                 .id(1L)
                 .build();
-        when(meetService.create(any())).thenReturn(meet);
+        when(meetCreateService.create(any())).thenReturn(meet);
 
         // when
         System.out.println("=====Logic Start=====");

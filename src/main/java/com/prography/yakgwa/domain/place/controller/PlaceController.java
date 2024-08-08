@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.place.controller;
 
+import com.prography.yakgwa.domain.place.controller.docs.PlaceApi;
 import com.prography.yakgwa.domain.place.controller.req.LikePlaceRequest;
 import com.prography.yakgwa.domain.place.service.PlaceService;
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;

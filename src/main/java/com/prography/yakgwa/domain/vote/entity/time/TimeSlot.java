@@ -42,4 +42,12 @@ public class TimeSlot {
     public int hashCode() {
         return id.intValue();
     }
+
+    public static TimeSlot ofConfirm(Meet meet,LocalDateTime time){
+        return TimeSlot.builder()
+                .meet(meet)
+                .time(time)
+                .confirm(true)
+                .build();
+    }
 }

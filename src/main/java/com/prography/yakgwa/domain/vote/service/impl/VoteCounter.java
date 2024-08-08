@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.vote.service;
+package com.prography.yakgwa.domain.vote.service.impl;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;

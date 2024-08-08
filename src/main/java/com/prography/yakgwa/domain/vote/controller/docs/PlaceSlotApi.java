@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.vote.controller;
+package com.prography.yakgwa.domain.vote.controller.docs;
 
 import com.prography.yakgwa.domain.vote.controller.req.PlaceSlotAppendRequest;
 import com.prography.yakgwa.domain.vote.controller.res.AllPlaceSlotOfMeetResponse;

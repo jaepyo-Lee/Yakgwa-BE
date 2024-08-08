@@ -62,7 +62,4 @@ public class MeetCreateRequestDto {
                 .title(title)
                 .build();
     }
-
-
-
 }

@@ -3,7 +3,6 @@ package com.prography.yakgwa.domain.user.service;
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
-import com.prography.yakgwa.global.format.exception.param.MultipartParamException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

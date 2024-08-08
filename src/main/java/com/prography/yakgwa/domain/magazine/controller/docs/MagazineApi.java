@@ -1,6 +1,5 @@
-package com.prography.yakgwa.domain.magazine.controller;
+package com.prography.yakgwa.domain.magazine.controller.docs;
 
-import com.prography.yakgwa.domain.magazine.controller.res.CreateMagazineResponse;
 import com.prography.yakgwa.domain.magazine.controller.res.PagingMagazineResponse;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import io.swagger.v3.oas.annotations.Operation;

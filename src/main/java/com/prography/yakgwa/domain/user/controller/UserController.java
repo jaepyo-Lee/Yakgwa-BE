@@ -1,12 +1,12 @@
 package com.prography.yakgwa.domain.user.controller;
 
+import com.prography.yakgwa.domain.user.controller.docs.UserApi;
 import com.prography.yakgwa.domain.user.controller.res.UserInfoResponse;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.service.UserService;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${app.api.base}")
-public class UserController implements UserApi{
+public class UserController implements UserApi {
     private final UserService userService;
 
     @ApiResponse(responseCode = "200", description = "성공시 따로 반환값 없습니다! 필요한 반환값 있으면 말씀해주세요!")

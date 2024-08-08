@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.place.controller;
 
+import com.prography.yakgwa.domain.place.controller.docs.SearchApi;
 import com.prography.yakgwa.domain.place.service.SearchService;
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
@@ -13,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${app.api.base}")
-public class SearchController implements SearchApi{
+public class SearchController implements SearchApi {
     private final SearchService service;
 
     @GetMapping("/search")
