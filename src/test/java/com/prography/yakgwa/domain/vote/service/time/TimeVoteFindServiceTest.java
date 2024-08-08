@@ -9,7 +9,7 @@ import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.service.VoteFinder;
-import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
+import com.prography.yakgwa.domain.vote.service.time.res.TimeInfosByMeetStatus;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.junit.jupiter.api.AfterEach;

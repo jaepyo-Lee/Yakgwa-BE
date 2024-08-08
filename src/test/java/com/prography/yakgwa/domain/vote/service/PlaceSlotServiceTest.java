@@ -9,7 +9,7 @@ import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
-import com.prography.yakgwa.domain.vote.service.res.PlaceSlotWithUserResponse;
+import com.prography.yakgwa.domain.vote.service.place.res.PlaceSlotWithUserResponse;
 import com.prography.yakgwa.global.format.exception.slot.AlreadyAppendPlaceException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,8 +33,9 @@ class PlaceSlotServiceTest {
 
     @Autowired
     PlaceSlotService placeSlotService;
+    
     @Autowired
-    private PlaceSlotJpaRepository placeSlotJpaRepository;
+    PlaceSlotJpaRepository placeSlotJpaRepository;
 
     @BeforeEach
     void init() {

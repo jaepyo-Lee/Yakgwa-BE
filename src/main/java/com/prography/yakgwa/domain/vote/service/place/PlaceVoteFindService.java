@@ -12,7 +12,7 @@ import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.impl.VoteCounter;
-import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
+import com.prography.yakgwa.domain.vote.service.place.res.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.param.DataIntegrateException;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
@@ -52,7 +52,7 @@ public class PlaceVoteFindService implements VoteFinder<PlaceInfosByMeetStatus> 
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
                 .orElseThrow(NotFoundParticipantException::new);
 
-        boolean isConfirm = meetStatusJudger.verifyConfirmAndConfirmPlacePossible(meet);
+        boolean isConfirm = meetStatusJudger.checkAndConfirmMeetingStatus(meet);
 
         if (isConfirm) { //장소확정되었을때
             List<PlaceSlot> placeSlots = placeSlotJpaRepository.findConfirmByMeetId(meetId);

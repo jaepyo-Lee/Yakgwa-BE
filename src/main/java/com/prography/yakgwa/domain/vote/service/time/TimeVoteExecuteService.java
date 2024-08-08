@@ -13,7 +13,7 @@ import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.service.VoteExecuter;
-import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
+import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
 import com.prography.yakgwa.global.format.exception.slot.NotFoundTimeSlotException;
@@ -100,7 +100,7 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
         if (isTimeConfirmedFrom(meetId)) {
             throw new AlreadyTimeConfirmVoteException();
         }
-        if (meet.getValidConfirmTime().isBefore(LocalDateTime.now())) {
+        if (meet.getConfirmTime().isBefore(LocalDateTime.now())) {
             throw new NotValidConfirmTimeException();
         }
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)

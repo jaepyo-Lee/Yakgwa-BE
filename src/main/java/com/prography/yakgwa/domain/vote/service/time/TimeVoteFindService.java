@@ -12,7 +12,7 @@ import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.impl.VoteCounter;
-import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
+import com.prography.yakgwa.domain.vote.service.time.res.TimeInfosByMeetStatus;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.param.DataIntegrateException;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;

@@ -8,7 +8,7 @@ import com.prography.yakgwa.domain.vote.controller.res.AllPlaceSlotOfMeetRespons
 import com.prography.yakgwa.domain.vote.controller.res.PlaceSlotOfMeet;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.service.place.PlaceSlotService;
-import com.prography.yakgwa.domain.vote.service.res.PlaceSlotWithUserResponse;
+import com.prography.yakgwa.domain.vote.service.place.res.PlaceSlotWithUserResponse;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

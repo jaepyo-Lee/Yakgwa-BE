@@ -1,13 +1,12 @@
 package com.prography.yakgwa.domain.vote.controller.req;
 
-import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
+import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class EnableTimeRequestTest {
     @Test
