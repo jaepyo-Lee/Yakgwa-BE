@@ -1,7 +1,7 @@
 package com.prography.yakgwa.domain.vote.controller.req;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
+import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;

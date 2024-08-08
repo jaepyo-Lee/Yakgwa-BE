@@ -1,10 +1,9 @@
-package com.prography.yakgwa.domain.vote.service.req;
+package com.prography.yakgwa.domain.vote.service.time.req;
 
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Getter

@@ -115,10 +115,10 @@ public class MeetService {
     }
 
 
-    private boolean shouldSkipMeet(MeetWithVoteAndStatus meet) {
+    private boolean shouldSkipMeet(MeetWithVoteAndStatus meetWithVoteAndStatus) {
         LocalDateTime now = LocalDateTime.now();
-        return (meet.getMeetStatus().equals(MeetStatus.CONFIRM) && meet.getTimeSlot().getTime().plusHours(3L).isAfter(now)) ||
-                (meet.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meet.getMeet().getValidConfirmTime().isBefore(now));
+        return (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.CONFIRM) && meetWithVoteAndStatus.getTimeSlot().getTime().plusHours(3L).isAfter(now)) ||
+                (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meetWithVoteAndStatus.getMeet().getConfirmTime().isBefore(now));
     }
 
     private TimeSlot getConfirmTimeSlot(Meet meet) {

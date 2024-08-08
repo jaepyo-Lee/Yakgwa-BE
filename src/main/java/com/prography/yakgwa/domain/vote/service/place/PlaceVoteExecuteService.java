@@ -85,7 +85,7 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
         if (placeSlotJpaRepository.isConfirmFrom(meetId)) {
             throw new AlreadyPlaceConfirmException();
         }
-        if (meet.getValidConfirmTime().isBefore(LocalDateTime.now())) {
+        if (meet.getConfirmTime().isBefore(LocalDateTime.now())) {
             throw new NotValidConfirmTimeException();
         }
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)

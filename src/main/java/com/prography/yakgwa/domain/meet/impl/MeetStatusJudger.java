@@ -32,9 +32,13 @@ public class MeetStatusJudger {
      * Write-Date) 2024-07-13
      * Finish-Date) 2024-07-13
      */
+    /**
+     * 괴물을 만들어버렸다...
+     * 너무 많은역할을 하고있음
+     */
     public MeetStatus judge(Meet meet, User user) {
         LocalDateTime now = LocalDateTime.now();
-        LocalDateTime validInviteTime = meet.getCreatedDate().plusHours(meet.getValidInviteHour());
+        LocalDateTime validInviteTime = meet.getVoteTime();
 
         if (validInviteTime.isBefore(now) && !isConfirm(meet)) {
             return handleExpiredVoteTime(meet);
@@ -45,9 +49,10 @@ public class MeetStatusJudger {
         }
     }
 
+
     private MeetStatus handleExpiredVoteTime(Meet meet) {
 
-        boolean isConfirmPlace = verifyConfirmAndConfirmPlacePossible(meet);
+        boolean isConfirmPlace = checkAndConfirmMeetingStatus(meet);
 
         boolean isConfirmTime = verifyConfirmAndConfirmTimePossible(meet);
 
@@ -64,7 +69,7 @@ public class MeetStatusJudger {
      * Finish-Date)
      */
     // 최다득표 후보지가 확정 되어있는지 확인하는 메서드
-    public boolean verifyConfirmAndConfirmPlacePossible(Meet meet) {
+    public boolean checkAndConfirmMeetingStatus(Meet meet) {
         List<PlaceSlot> placeSlots = voteCounter.findMaxVotePlaceSlotFrom(meet);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime validInviteTime = meet.getCreatedDate().plusHours(meet.getValidInviteHour());
@@ -92,12 +97,6 @@ public class MeetStatusJudger {
     }
 
 
-    private boolean isPlaceConfirm(Meet meet) {
-        List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meet.getId());
-        return placeSlots.stream().anyMatch(placeSlot -> placeSlot.getConfirm().equals(TRUE));
-    }
-
-
     private MeetStatus handleBeforeVote(Meet meet, User user) {
         boolean isVotePlace = placeVoteJpaRepository.existsByUserIdAndMeetId(user.getId(), meet.getId());
         boolean isVoteTime = timeVoteJpaRepository.existsByUserIdInMeet(user.getId(), meet.getId());
@@ -114,6 +113,10 @@ public class MeetStatusJudger {
         return isTimeConfirm(meet) && isPlaceConfirm(meet);
     }
 
+    private boolean isPlaceConfirm(Meet meet) {
+        List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meet.getId());
+        return placeSlots.stream().anyMatch(placeSlot -> placeSlot.getConfirm().equals(TRUE));
+    }
 
     private boolean isTimeConfirm(Meet meet) {
         List<TimeSlot> timeSlots = timeSlotJpaRepository.findAllByMeetId(meet.getId());

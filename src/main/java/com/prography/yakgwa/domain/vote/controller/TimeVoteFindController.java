@@ -4,7 +4,7 @@ import com.prography.yakgwa.domain.vote.controller.docs.TimeVoteFindApi;
 import com.prography.yakgwa.domain.vote.controller.res.TimeVoteInfoWithStatusResponse;
 import com.prography.yakgwa.domain.vote.service.time.TimeVoteFindService;
 import com.prography.yakgwa.domain.vote.service.VoteFinder;
-import com.prography.yakgwa.domain.vote.service.req.TimeInfosByMeetStatus;
+import com.prography.yakgwa.domain.vote.service.time.res.TimeInfosByMeetStatus;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

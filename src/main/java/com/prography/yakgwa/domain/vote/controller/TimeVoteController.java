@@ -7,7 +7,7 @@ import com.prography.yakgwa.domain.vote.controller.req.EnableTimeRequest;
 import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
 import com.prography.yakgwa.domain.vote.service.time.TimeVoteExecuteService;
 import com.prography.yakgwa.domain.vote.service.VoteExecuter;
-import com.prography.yakgwa.domain.vote.service.req.EnableTimeRequestDto;
+import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import jakarta.validation.Valid;

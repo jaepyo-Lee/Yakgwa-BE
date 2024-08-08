@@ -4,7 +4,7 @@ import com.prography.yakgwa.domain.vote.controller.docs.PlaceVoteFindApi;
 import com.prography.yakgwa.domain.vote.controller.res.PlaceVoteInfoWithStatusResponse;
 import com.prography.yakgwa.domain.vote.service.place.PlaceVoteFindService;
 import com.prography.yakgwa.domain.vote.service.VoteFinder;
-import com.prography.yakgwa.domain.vote.service.req.PlaceInfosByMeetStatus;
+import com.prography.yakgwa.domain.vote.service.place.res.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
