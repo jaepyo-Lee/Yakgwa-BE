@@ -1,7 +1,10 @@
 package com.prography.yakgwa.domain.vote.service.place;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
+import com.prography.yakgwa.domain.meet.impl.ConfirmChecker;
+import com.prography.yakgwa.domain.meet.impl.MeetConfirmChecker;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
+import com.prography.yakgwa.domain.meet.impl.PlaceConfirmChecker;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
@@ -16,6 +19,7 @@ import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.slot.AlreadyAppendPlaceException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,13 +28,28 @@ import java.util.List;
 
 @Transactional
 @Service
-@RequiredArgsConstructor
 public class PlaceSlotService {
     private final MeetJpaRepository meetJpaRepository;
     private final PlaceJpaRepository placeJpaRepository;
     private final PlaceSlotJpaRepository placeSlotJpaRepository;
     private final PlaceVoteJpaRepository placeVoteJpaRepository;
-    private final MeetStatusJudger meetStatusJudger;
+    private final MeetConfirmChecker meetConfirmChecker;
+    private final ConfirmChecker confirmChecker;
+
+    @Autowired
+    public PlaceSlotService(MeetJpaRepository meetJpaRepository,
+                            PlaceJpaRepository placeJpaRepository,
+                            PlaceSlotJpaRepository placeSlotJpaRepository,
+                            PlaceVoteJpaRepository placeVoteJpaRepository,
+                            MeetConfirmChecker meetConfirmChecker,
+                            PlaceConfirmChecker confirmChecker) {
+        this.meetJpaRepository = meetJpaRepository;
+        this.placeJpaRepository = placeJpaRepository;
+        this.placeSlotJpaRepository = placeSlotJpaRepository;
+        this.placeVoteJpaRepository = placeVoteJpaRepository;
+        this.meetConfirmChecker = meetConfirmChecker;
+        this.confirmChecker = confirmChecker;
+    }
 
     /**
      * Work) Test Code
@@ -71,7 +90,7 @@ public class PlaceSlotService {
     }
 
     private void validateMeetingStatus(Meet meet) {
-        if (meetStatusJudger.checkAndConfirmMeetingStatus(meet)) {
+        if (confirmChecker.isConfirm(meet)) {
             throw new AlreadyPlaceConfirmException();
         }
     }

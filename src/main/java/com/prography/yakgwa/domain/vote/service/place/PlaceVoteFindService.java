@@ -1,7 +1,10 @@
 package com.prography.yakgwa.domain.vote.service.place;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
+import com.prography.yakgwa.domain.meet.impl.ConfirmChecker;
+import com.prography.yakgwa.domain.meet.impl.MeetConfirmChecker;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
+import com.prography.yakgwa.domain.meet.impl.PlaceConfirmChecker;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
@@ -18,6 +21,7 @@ import com.prography.yakgwa.global.format.exception.param.DataIntegrateException
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,15 +34,29 @@ import static com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus.VOTE;
 @Slf4j
 @Service
 @Transactional(readOnly = true)
-@RequiredArgsConstructor
 public class PlaceVoteFindService implements VoteFinder<PlaceInfosByMeetStatus> {
 
     private final MeetJpaRepository meetJpaRepository;
     private final PlaceVoteJpaRepository placeVoteJpaRepository;
     private final VoteCounter voteCounter;
     private final PlaceSlotJpaRepository placeSlotJpaRepository;
-    private final MeetStatusJudger meetStatusJudger;
     private final ParticipantJpaRepository participantJpaRepository;
+    private final ConfirmChecker confirmChecker;
+
+    @Autowired
+    public PlaceVoteFindService(MeetJpaRepository meetJpaRepository,
+                                PlaceVoteJpaRepository placeVoteJpaRepository,
+                                VoteCounter voteCounter,
+                                PlaceSlotJpaRepository placeSlotJpaRepository,
+                                ParticipantJpaRepository participantJpaRepository,
+                                PlaceConfirmChecker confirmChecker) {
+        this.meetJpaRepository = meetJpaRepository;
+        this.placeVoteJpaRepository = placeVoteJpaRepository;
+        this.voteCounter = voteCounter;
+        this.placeSlotJpaRepository = placeSlotJpaRepository;
+        this.participantJpaRepository = participantJpaRepository;
+        this.confirmChecker = confirmChecker;
+    }
 
     /**
      * Work) 테스트코드
@@ -52,9 +70,7 @@ public class PlaceVoteFindService implements VoteFinder<PlaceInfosByMeetStatus> 
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
                 .orElseThrow(NotFoundParticipantException::new);
 
-        boolean isConfirm = meetStatusJudger.checkAndConfirmMeetingStatus(meet);
-
-        if (isConfirm) { //장소확정되었을때
+        if (confirmChecker.isConfirm(meet)) { //장소확정되었을때
             List<PlaceSlot> placeSlots = placeSlotJpaRepository.findConfirmByMeetId(meetId);
             if (isCorrectConfirmPlaceSlotSize(placeSlots)) {
                 log.info("{}번 모임의 장소투표 데이터확인", meetId);
@@ -90,7 +106,7 @@ public class PlaceVoteFindService implements VoteFinder<PlaceInfosByMeetStatus> 
     }
 
     private static boolean isOverVotePeriodFrom(Meet meet) {
-        return meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now());
+        return meet.getVoteTime().isBefore(LocalDateTime.now());
     }
 
     private static boolean isCorrectConfirmPlaceSlotSize(List<PlaceSlot> placeSlots) {

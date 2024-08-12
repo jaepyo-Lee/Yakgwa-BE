@@ -1,9 +1,9 @@
 package com.prography.yakgwa.domain.meet.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.prography.yakgwa.domain.common.schedule.AlarmScheduler;
+import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
+import com.prography.yakgwa.domain.meet.impl.MeetConfirmChecker;
 import com.prography.yakgwa.domain.meet.impl.MeetWriter;
 import com.prography.yakgwa.domain.meet.service.req.MeetCreateRequestDto;
 import com.prography.yakgwa.domain.participant.impl.ParticipantWriter;
@@ -16,6 +16,7 @@ import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
+import com.prography.yakgwa.global.format.enumerate.AlarmType;
 import com.prography.yakgwa.global.format.exception.meet.ConfirmPlaceCountException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +29,14 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Service
 public class MeetCreateService {
-    private final AlarmScheduler alarmScheduler;
+    private final TaskScheduleManager alarmScheduler;
     private final MeetWriter meetWriter;
     private final ParticipantWriter participantWriter;
     private final UserJpaRepository userJpaRepository;
-    private final MeetStatusJudger meetStatusJudger;
     private final PlaceJpaRepository placeJpaRepository;
     private final PlaceSlotJpaRepository placeSlotJpaRepository;
     private final TimeSlotJpaRepository timeSlotJpaRepository;
-
+    private final MeetConfirmChecker confirmChecker;
     /**
      * Todo
      * 요청 dto에서 투표확정시간과 투표가능시간을 둘다 받는데 이것을 모임 생성할때
@@ -58,10 +58,17 @@ public class MeetCreateService {
 
         participantWriter.registLeader(meet, user);
 
-        if (meetStatusJudger.isConfirm(meet)) {
-            alarmScheduler.registerAlarm(meet);
-        }
+        registAlarm(meet);
         return meet;
+    }
+
+    private void registAlarm(Meet meet) {
+        if (confirmChecker.isMeetConfirm(meet)) {
+            alarmScheduler.registerAlarm(meet, AlarmType.PROMISE_DAY);
+        }
+        else{
+            alarmScheduler.registerAlarm(meet, AlarmType.END_VOTE);
+        }
     }
 
     private void saveTimeSlotOf(Meet meet, MeetCreateRequestDto requestDto) {

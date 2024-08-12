@@ -1,24 +1,17 @@
 package com.prography.yakgwa.domain.meet.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.prography.yakgwa.domain.common.schedule.AlarmScheduler;
+import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
-import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
-import com.prography.yakgwa.domain.meet.service.req.MeetCreateRequestDto;
 import com.prography.yakgwa.domain.meet.service.req.MeetWithVoteAndStatus;
 import com.prography.yakgwa.domain.meet.service.res.MeetInfoWithParticipant;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
-import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
-import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
-import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
-import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.junit.jupiter.api.AfterEach;
@@ -29,14 +22,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -47,17 +37,11 @@ class MeetServiceInteTest {
 
     @Autowired
     MeetService meetService;
-    @Autowired
-    private PlaceSlotJpaRepository placeSlotJpaRepository;
-    @Autowired
-    private TimeSlotJpaRepository timeSlotJpaRepository;
-    @Autowired
-    private ParticipantJpaRepository participantJpaRepository;
 
     @Autowired
     RepositoryDeleter deleter;
     @MockBean
-    AlarmScheduler scheduler;
+    TaskScheduleManager scheduler;
 
     @AfterEach
     void init() {
@@ -122,13 +106,15 @@ class MeetServiceInteTest {
         // given
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+
         Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
         Place savePlace = dummyCreater.createAndSavePlace(1);
         PlaceSlot savePlaceSlot = dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet, true);
         TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), true);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
 
-        Meet saveMeet2 = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
-        Place savePlace2 = dummyCreater.createAndSavePlace(1);
+        Meet saveMeet2 = dummyCreater.createAndSaveMeet(2, saveMeetTheme, 24);
+        Place savePlace2 = dummyCreater.createAndSavePlace(2);
         PlaceSlot savePlaceSlot2 = dummyCreater.createAndSavePlaceSlot(savePlace2, saveMeet2, false);
         TimeSlot saveTimeSlot2 = dummyCreater.createAndSaveTimeSlot(saveMeet2, LocalDateTime.now(), true);
         dummyCreater.createAndSaveParticipant(saveMeet2, saveUser, MeetRole.LEADER);
@@ -148,10 +134,10 @@ class MeetServiceInteTest {
         // given
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
-        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, -1);
         Place savePlace = dummyCreater.createAndSavePlace(1);
         PlaceSlot savePlaceSlot = dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet, true);
-        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now().plusHours(5L), true);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now().minusHours(4L), true);
         dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
 
 
@@ -164,6 +150,29 @@ class MeetServiceInteTest {
         System.out.println("=====Logic End=====");
         // then
         assertThat(withStatus.size()).isEqualTo(0);
+    }
+
+    @Test
+    void 모임시간이3시간이상지나지않았을때모임상태와정보_조회() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, -1);
+        Place savePlace = dummyCreater.createAndSavePlace(1);
+        PlaceSlot savePlaceSlot = dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet, true);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), true);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+
+
+        List<MeetWithVoteAndStatus> meetWithVoteAndStatuses = List.of(MeetWithVoteAndStatus.of(saveMeet, saveTimeSlot, savePlaceSlot, MeetStatus.CONFIRM));
+        // when
+        System.out.println("=====Logic Start=====");
+
+        List<MeetWithVoteAndStatus> withStatus = meetService.findWithStatus(saveUser.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertThat(withStatus.size()).isEqualTo(1);
     }
 
     @Test
@@ -272,7 +281,7 @@ class MeetServiceInteTest {
      */
 
     @Test
-    void 나의모임확인_확정상태이고_확정시간에서1시간이지난모임들_조회() {
+    void 나의_확정된_모임조회() {
         // given
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);

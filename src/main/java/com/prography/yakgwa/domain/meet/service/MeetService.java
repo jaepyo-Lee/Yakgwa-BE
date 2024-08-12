@@ -53,22 +53,19 @@ public class MeetService {
         return MeetInfoWithParticipant.of(meet, participants);
     }
 
-    /**
-     * Todo
-     * Work) Test Code, 시간에 대한 처리가 필요해서 추후 테스트하기!
-     * Write-Date) 2024-07-29, 월, 1:54
-     * Finish-Date)
-     */
     public List<MeetWithVoteAndStatus> findPostConfirm(Long userId) {
         User user = userJpaRepository.findById(userId)
                 .orElseThrow(NotFoundUserException::new);
-        List<Participant> participants = participantJpaRepository.findAllByUserId(userId);
+        return getAfterVoteMeetOf(user);
+    }
 
+    private List<MeetWithVoteAndStatus> getAfterVoteMeetOf(User user) {
+        List<Participant> participants = participantJpaRepository.findAllByUserId(user.getId());
         List<MeetWithVoteAndStatus> meetsForUser = new ArrayList<>();
         for (Participant participant : participants) {
             Meet meet = participant.getMeet();
-            MeetStatus meetStatus = meetStatusJudger.judge(meet, user);
-            if (isMeetStatusAfterVote(meetStatus)) {
+            MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(meet, user);
+            if (meetStatus.isAfterVoteStatus()) {
                 PlaceSlot placeSlot = getConfirmPlaceSlot(meet);
                 TimeSlot timeSlot = getConfirmTimeSlot(meet);
                 meetsForUser.add(MeetWithVoteAndStatus.of(meet, timeSlot, placeSlot, meetStatus));
@@ -77,14 +74,9 @@ public class MeetService {
         return meetsForUser;
     }
 
-    private static boolean isMeetStatusAfterVote(MeetStatus meetStatus) {
-        return meetStatus.isConfirm() || meetStatus.isBeforeConfirm();
-    }
-
     private MeetWithVoteAndStatus createMeetWithVoteAndStatus(Participant participant, User user) {
         Meet meet = participant.getMeet();
-
-        MeetStatus meetStatus = meetStatusJudger.judge(meet, user);
+        MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(meet, user);
         PlaceSlot placeSlot = getConfirmPlaceSlot(meet);
         TimeSlot timeSlot = getConfirmTimeSlot(meet);
         return MeetWithVoteAndStatus.of(meet, timeSlot, placeSlot, meetStatus);
@@ -117,7 +109,7 @@ public class MeetService {
 
     private boolean shouldSkipMeet(MeetWithVoteAndStatus meetWithVoteAndStatus) {
         LocalDateTime now = LocalDateTime.now();
-        return (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.CONFIRM) && meetWithVoteAndStatus.getTimeSlot().getTime().plusHours(3L).isAfter(now)) ||
+        return (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.CONFIRM) && meetWithVoteAndStatus.getTimeSlot().getTime().plusHours(3L).isBefore(now)) ||
                 (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meetWithVoteAndStatus.getMeet().getConfirmTime().isBefore(now));
     }
 

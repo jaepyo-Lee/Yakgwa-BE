@@ -39,6 +39,9 @@ public class Meet extends BaseTimeEntity {
     public LocalDateTime getConfirmTime(){
         return getVoteTime().plusHours(24);
     }
+    public boolean isVoteTimeEnd(){
+        return getVoteTime().isBefore(LocalDateTime.now());
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

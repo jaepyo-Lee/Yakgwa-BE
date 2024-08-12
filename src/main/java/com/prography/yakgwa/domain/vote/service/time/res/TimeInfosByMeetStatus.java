@@ -14,4 +14,12 @@ public class TimeInfosByMeetStatus {
     private VoteStatus voteStatus;
     private List<TimeSlot> timeSlots;
     private Meet meet;
+
+    public static TimeInfosByMeetStatus of(VoteStatus status,List<TimeSlot>timeSlots,Meet meet){
+        return TimeInfosByMeetStatus.builder()
+                .meet(meet)
+                .voteStatus(status)
+                .timeSlots(timeSlots)
+                .build();
+    }
 }

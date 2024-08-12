@@ -12,6 +12,8 @@ import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
+import static java.lang.Boolean.TRUE;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -71,5 +73,8 @@ public class PlaceSlot extends BaseTimeEntity {
 
     private boolean isTitleCompareTo(String title) {
         return this.getPlace().getTitle().equals(title);
+    }
+    public boolean isConfirm(){
+        return this.confirm.equals(TRUE);
     }
 }
