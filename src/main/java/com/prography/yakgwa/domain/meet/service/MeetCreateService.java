@@ -1,7 +1,7 @@
 package com.prography.yakgwa.domain.meet.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.prography.yakgwa.domain.common.schedule.TaskScheduleExecuter;
+import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.impl.MeetConfirmChecker;
 import com.prography.yakgwa.domain.meet.impl.MeetWriter;
@@ -29,7 +29,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Service
 public class MeetCreateService {
-    private final TaskScheduleExecuter alarmScheduler;
+    private final TaskScheduleManager alarmScheduler;
     private final MeetWriter meetWriter;
     private final ParticipantWriter participantWriter;
     private final UserJpaRepository userJpaRepository;
@@ -58,10 +58,17 @@ public class MeetCreateService {
 
         participantWriter.registLeader(meet, user);
 
+        registAlarm(meet);
+        return meet;
+    }
+
+    private void registAlarm(Meet meet) {
         if (confirmChecker.isMeetConfirm(meet)) {
+            alarmScheduler.registerAlarm(meet, AlarmType.PROMISE_DAY);
+        }
+        else{
             alarmScheduler.registerAlarm(meet, AlarmType.END_VOTE);
         }
-        return meet;
     }
 
     private void saveTimeSlotOf(Meet meet, MeetCreateRequestDto requestDto) {

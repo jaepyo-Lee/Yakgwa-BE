@@ -64,30 +64,6 @@ class MeetStatusJudgerTest {
 
     @Transactional
     @Test
-    void 장소와시간투표두개모두에최다득표가있어서_모임의시간이지나서_확정시키고_CONFIRM_조회() {
-        // given
-        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
-        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, -1);
-        Place place = dummyCreater.createAndSavePlace(1);
-        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), Boolean.FALSE);
-        PlaceSlot andSavePlaceSlot =dummyCreater. createAndSavePlaceSlot(place, saveMeet, Boolean.FALSE);
-        User saveUser = dummyCreater.createAndSaveUser(1);
-
-        TimeVote andSaveTimeVote = dummyCreater.createAndSaveTimeVote(saveTimeSlot, saveUser);
-        PlaceVote andSavePlaceVote =dummyCreater. createAndSavePlaceVote(saveUser, andSavePlaceSlot);
-
-        // when
-        System.out.println("=====Logic Start=====");
-
-        MeetStatus meetStatus = meetStatusJudger.judgeStatusOf(saveMeet, saveUser);
-
-        System.out.println("=====Logic End=====");
-        // then
-        assertThat(meetStatus).isEqualTo(CONFIRM);
-    }
-
-    @Transactional
-    @Test
     void 모임의시간이지나서_장소와시간투표두개모두에최다득표가없어서_BEFORE_CONFIRM_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());

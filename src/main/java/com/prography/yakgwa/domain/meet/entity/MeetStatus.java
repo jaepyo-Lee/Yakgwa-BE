@@ -10,4 +10,8 @@ public enum MeetStatus {
     public boolean isBeforeConfirm() {
         return this == BEFORE_CONFIRM;
     }
+
+    public boolean isAfterVoteStatus() {
+        return isConfirm() || isBeforeConfirm();
+    }
 }

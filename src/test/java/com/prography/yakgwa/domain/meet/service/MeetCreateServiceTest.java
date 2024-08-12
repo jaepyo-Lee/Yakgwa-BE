@@ -1,7 +1,7 @@
 package com.prography.yakgwa.domain.meet.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.prography.yakgwa.domain.common.schedule.TaskScheduleExecuter;
+import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
@@ -52,7 +52,7 @@ class MeetCreateServiceTest {
     @Autowired
     RepositoryDeleter deleter;
     @MockBean
-    TaskScheduleExecuter scheduler;
+    TaskScheduleManager scheduler;
 
     @AfterEach
     void init() {
@@ -70,7 +70,7 @@ class MeetCreateServiceTest {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(confirmTime).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(null).placeInfo(List.of()).confirmPlace(false)
                 .build();
-        doNothing().when(scheduler).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        doNothing().when(scheduler).registerAlarm(any(), any());
 
         // when
         System.out.println("=====Logic Start=====");
@@ -97,7 +97,9 @@ class MeetCreateServiceTest {
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
-        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(scheduler, times(1)).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
+
 
     }
 
@@ -116,7 +118,7 @@ class MeetCreateServiceTest {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(null).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(voteDateDto).placeInfo(List.of(placeInfoDto)).confirmPlace(true)
                 .build();
-        doNothing().when(scheduler).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        doNothing().when(scheduler).registerAlarm(any(), any());
 
         // when
         System.out.println("=====Logic Start=====");
@@ -141,7 +143,8 @@ class MeetCreateServiceTest {
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
-        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(scheduler, times(1)).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
     }
 
     @Test
@@ -192,7 +195,8 @@ class MeetCreateServiceTest {
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
-        verify(scheduler).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(scheduler, times(1)).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
     }
 
     @Test
@@ -236,7 +240,8 @@ class MeetCreateServiceTest {
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
-        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(scheduler, times(1)).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
     }
 
 }

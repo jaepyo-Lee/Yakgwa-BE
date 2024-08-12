@@ -25,7 +25,7 @@ public class TimeConfirm implements VoteConfirm {
         List<TimeSlot> timeSlots = voteCounter.findMaxVoteTimeSlotFrom(meet);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime validInviteTime = meet.getVoteTime();
-        if (validInviteTime.isBefore(now) && timeSlots.size() <= 1) {
+        if (/*validInviteTime.isBefore(now) && */timeSlots.size() <= 1) {//조건 걸리면 스케줄러에서 확정 못걸수 있음
             timeSlots.forEach(TimeSlot::confirm);
             return true;
         }

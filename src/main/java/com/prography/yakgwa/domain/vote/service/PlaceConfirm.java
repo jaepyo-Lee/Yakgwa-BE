@@ -25,7 +25,7 @@ public class PlaceConfirm implements VoteConfirm {
         List<PlaceSlot> placeSlots = voteCounter.findMaxVotePlaceSlotFrom(meet);
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime validInviteTime = meet.getVoteTime();
-        if (validInviteTime.isBefore(now) && placeSlots.size() <= 1) {
+        if (/*validInviteTime.isBefore(now) && */placeSlots.size() <= 1) { // 해당 메서드를 호출하는곳은 스케줄러밖에 없는데, 조건때문에 before걸어놓으면 확정 못시킬수있음
             placeSlots.forEach(PlaceSlot::confirm); //왜 확정하는데..
             return true;
         }

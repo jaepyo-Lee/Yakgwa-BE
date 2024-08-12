@@ -1,6 +1,6 @@
 package com.prography.yakgwa.domain.meet.service;
 
-import com.prography.yakgwa.domain.common.schedule.TaskScheduleExecuter;
+import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
@@ -8,13 +8,10 @@ import com.prography.yakgwa.domain.meet.service.req.MeetWithVoteAndStatus;
 import com.prography.yakgwa.domain.meet.service.res.MeetInfoWithParticipant;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
-import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
-import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
-import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.junit.jupiter.api.AfterEach;
@@ -30,7 +27,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -41,17 +37,11 @@ class MeetServiceInteTest {
 
     @Autowired
     MeetService meetService;
-    @Autowired
-    private PlaceSlotJpaRepository placeSlotJpaRepository;
-    @Autowired
-    private TimeSlotJpaRepository timeSlotJpaRepository;
-    @Autowired
-    private ParticipantJpaRepository participantJpaRepository;
 
     @Autowired
     RepositoryDeleter deleter;
     @MockBean
-    TaskScheduleExecuter scheduler;
+    TaskScheduleManager scheduler;
 
     @AfterEach
     void init() {
@@ -291,7 +281,7 @@ class MeetServiceInteTest {
      */
 
     @Test
-    void 나의모임확인_확정상태이고_확정시간에서1시간이지난모임들_조회() {
+    void 나의_확정된_모임조회() {
         // given
         User saveUser = dummyCreater.createAndSaveUser(1);
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);

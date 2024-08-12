@@ -1,6 +1,6 @@
 package com.prography.yakgwa.domain.vote.service.time;
 
-import com.prography.yakgwa.domain.common.schedule.TaskScheduleExecuter;
+import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.impl.MeetConfirmChecker;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
@@ -36,7 +36,7 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
     private final MeetJpaRepository meetJpaRepository;
     private final ParticipantJpaRepository participantJpaRepository;
     private final TimeSlotJpaRepository timeSlotJpaRepository;
-    private final TaskScheduleExecuter alarmScheduler;
+    private final TaskScheduleManager alarmScheduler;
     private final UserJpaRepository userJpaRepository;
     private final TimeVoteJpaRepository timeVoteJpaRepository;
     private final MeetConfirmChecker confirmChecker;

@@ -6,10 +6,7 @@ import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import com.prography.yakgwa.global.meta.ImplService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDateTime;
 
 @ImplService
 public class MeetStatusJudger {
@@ -33,23 +30,13 @@ public class MeetStatusJudger {
      */
 
     public MeetStatus judgeStatusOf(Meet meet, User user) {
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime validInviteTime = meet.getVoteTime();
-
-        if (validInviteTime.isBefore(now) && !isMeetConfirm(meet)) { //이미 투표가능시간이 지난시점 Before_Confirm, 만약 최다가 있다면 자동으로 Confirm
-            return handleExpiredVoteTime(meet);
+        if (meet.isVoteTimeEnd() && !isMeetConfirm(meet)) { //이미 투표가능시간이 지난시점 Before_Confirm, 만약 최다가 있다면 자동으로 Confirm
+            return MeetStatus.BEFORE_CONFIRM;
         } else if (isMeetConfirm(meet)) { //확정되었으면 Confirm
             return MeetStatus.CONFIRM;
         } else {
             return handleBeforeVote(meet, user);
         }
-    }
-
-    private MeetStatus handleExpiredVoteTime(Meet meet) {
-        if (!isMeetConfirm(meet)) {
-            return MeetStatus.BEFORE_CONFIRM;
-        }
-        return MeetStatus.CONFIRM;
     }
 
 
