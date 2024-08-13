@@ -1,6 +1,6 @@
 package com.prography.yakgwa.domain.meet.service;
 
-import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
@@ -12,14 +12,8 @@ import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
-import com.prography.yakgwa.testHelper.DummyCreater;
-import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -28,27 +22,12 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class MeetServiceInteTest {
-
-    @Autowired
-    DummyCreater dummyCreater;
-
-    @Autowired
-    MeetService meetService;
-
-    @Autowired
-    RepositoryDeleter deleter;
-    @MockBean
-    TaskScheduleManager scheduler;
+class MeetServiceInteTest extends IntegrationTestSupport {
 
     @AfterEach
     void init() {
         deleter.deleteAll();
     }
-
-
 
     /*====================findWithParticipant====================*/
 

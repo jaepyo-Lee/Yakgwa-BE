@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.service;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.vote.service.place.PlaceSlotService;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
@@ -23,19 +24,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class PlaceSlotServiceTest {
-    @Autowired
-    DummyCreater dummyCreater;
-    @Autowired
-    RepositoryDeleter deleter;
+class PlaceSlotServiceTest extends IntegrationTestSupport {
 
-    @Autowired
-    PlaceSlotService placeSlotService;
-    
-    @Autowired
-    PlaceSlotJpaRepository placeSlotJpaRepository;
 
     @BeforeEach
     void init() {

@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.participant.impl;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
@@ -25,19 +26,8 @@ import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class ParticipantReaderTest {
-    @Autowired
-    UserJpaRepository userJpaRepository;
-    @Autowired
-    MeetJpaRepository meetJpaRepository;
-    @Autowired
-    MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    ParticipantJpaRepository participantJpaRepository;
-    @Autowired
-    RepositoryDeleter deleter;
+class ParticipantReaderTest extends IntegrationTestSupport {
+
 
     @AfterEach
     void init() {

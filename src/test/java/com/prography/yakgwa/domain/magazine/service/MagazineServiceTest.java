@@ -1,28 +1,19 @@
 package com.prography.yakgwa.domain.magazine.service;
 
-import com.prography.yakgwa.testHelper.RepositoryDeleter;
-import com.prography.yakgwa.domain.common.impl.AwsS3Util;
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.magazine.entity.Image;
 import com.prography.yakgwa.domain.magazine.entity.Magazine;
-import com.prography.yakgwa.domain.magazine.repository.ImageJpaRepository;
-import com.prography.yakgwa.domain.magazine.repository.MagazineJpaRepository;
 import com.prography.yakgwa.domain.magazine.service.req.CreateMagazineRequestDto;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
-import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
 import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.Role;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.format.exception.user.NotMatchAdminRoleException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -35,24 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class MagazineServiceTest {
-    @Autowired
-    private UserJpaRepository userJpaRepository;
-    @Autowired
-    private PlaceJpaRepository placeJpaRepository;
-    @Autowired
-    private MagazineService magazineService;
-    @Autowired
-    private MagazineJpaRepository magazineJpaRepository;
-    @Autowired
-    private ImageJpaRepository imageJpaRepository;
-    @Mock
-    AwsS3Util awsS3Util;
+class MagazineServiceTest extends IntegrationTestSupport {
 
-    @Autowired
-    RepositoryDeleter deleter;
     @AfterEach
     void init() {
         deleter.deleteAll();
@@ -133,7 +108,7 @@ class MagazineServiceTest {
 
         System.out.println("=====Logic End=====");
         // then
-        assertAll(() -> assertThat(!saveMagazine.isOpen()).isEqualTo(magazine.isOpen()));
+        assertAll(() -> assertThat(magazine.isOpen()).isFalse());
     }
 
     private Magazine createAndSaveMagazine(int id, User saveUser, Place savePlace) {

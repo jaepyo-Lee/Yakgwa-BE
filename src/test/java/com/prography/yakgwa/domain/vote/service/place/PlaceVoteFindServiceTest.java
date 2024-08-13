@@ -1,43 +1,24 @@
 package com.prography.yakgwa.domain.vote.service.place;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
-import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
-import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.place.res.PlaceInfosByMeetStatus;
-import com.prography.yakgwa.testHelper.DummyCreater;
-import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
-@ActiveProfiles("test")
-@SpringBootTest
-class PlaceVoteFindServiceTest {
-    @Autowired
-    DummyCreater dummyCreater;
-
-    @Autowired
-    MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    @Qualifier("placeVoteFindService")
-    VoteFinder<PlaceInfosByMeetStatus> voteFinder;
-    @Autowired
-    RepositoryDeleter deleter;
+class PlaceVoteFindServiceTest extends IntegrationTestSupport {
 
     @AfterEach
     void init() {
@@ -58,7 +39,7 @@ class PlaceVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        PlaceInfosByMeetStatus placeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
+        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -83,7 +64,7 @@ class PlaceVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        PlaceInfosByMeetStatus placeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
+        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -117,7 +98,7 @@ class PlaceVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        PlaceInfosByMeetStatus placeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser2.getId(), saveMeet.getId());
+        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser2.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -153,7 +134,7 @@ class PlaceVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        PlaceInfosByMeetStatus placeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser1.getId(), saveMeet.getId());
+        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser1.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -190,7 +171,7 @@ class PlaceVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        PlaceInfosByMeetStatus placeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser1.getId(), saveMeet.getId());
+        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser1.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -215,7 +196,7 @@ class PlaceVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        PlaceInfosByMeetStatus placeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
+        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then

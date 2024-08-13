@@ -31,11 +31,11 @@ class PlaceServiceTest {
     @Autowired
     RedisRepository redisRepository;
 
-    String key;
     @Autowired
     private PlaceJpaRepository placeJpaRepository;
     @Autowired
     RepositoryDeleter deleter;
+    String key;
     @AfterEach
     void init(){
         redisRepository.removeAllFrom(key);

@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.participant.repository;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.config.DeleterConfig;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
@@ -26,11 +27,7 @@ import java.util.Optional;
 import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(DeleterConfig.class)
-@ActiveProfiles("test")
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class ParticipantJpaRepositoryTest {
+class ParticipantJpaRepositoryTest extends IntegrationTestSupport {
     @Autowired
     MeetJpaRepository meetJpaRepository;
     @Autowired

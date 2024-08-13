@@ -91,14 +91,14 @@ public class MeetService {
         User user = userJpaRepository.findById(userId)
                 .orElseThrow(NotFoundUserException::new);
         List<Participant> participants = readAllParticipantOfUser(userId);
-        return getMeetAndSlotWithStatusList(participants, user);
+        return getCurrentMeetAndSlotWithStatusList(participants, user);
     }
 
-    private List<MeetWithVoteAndStatus> getMeetAndSlotWithStatusList(List<Participant> participants, User user) {
+    private List<MeetWithVoteAndStatus> getCurrentMeetAndSlotWithStatusList(List<Participant> participants, User user) {
         List<MeetWithVoteAndStatus> list = new ArrayList<>();
         for (Participant participant : participants) {
             MeetWithVoteAndStatus meetWithVoteAndStatus = createMeetWithVoteAndStatus(participant, user);
-            if (shouldSkipMeet(meetWithVoteAndStatus)) {
+            if (isAlreadyPassMeet(meetWithVoteAndStatus)) {
                 continue;
             }
             list.add(meetWithVoteAndStatus);
@@ -107,7 +107,7 @@ public class MeetService {
     }
 
 
-    private boolean shouldSkipMeet(MeetWithVoteAndStatus meetWithVoteAndStatus) {
+    private boolean isAlreadyPassMeet(MeetWithVoteAndStatus meetWithVoteAndStatus) {
         LocalDateTime now = LocalDateTime.now();
         return (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.CONFIRM) && meetWithVoteAndStatus.getTimeSlot().getTime().plusHours(3L).isBefore(now)) ||
                 (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meetWithVoteAndStatus.getMeet().getConfirmTime().isBefore(now));

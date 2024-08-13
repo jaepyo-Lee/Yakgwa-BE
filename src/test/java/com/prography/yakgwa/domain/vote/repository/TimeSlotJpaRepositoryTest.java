@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.repository;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.config.DeleterConfig;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
@@ -22,19 +23,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import(DeleterConfig.class)
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@ActiveProfiles("test")
-@DataJpaTest
-class TimeSlotJpaRepositoryTest {
-    @Autowired
-    private TimeSlotJpaRepository timeSlotJpaRepository;
-    @Autowired
-    private MeetJpaRepository meetJpaRepository;
-    @Autowired
-    private MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    RepositoryDeleter deleter;
+class TimeSlotJpaRepositoryTest extends IntegrationTestSupport {
+
     @AfterEach
     void init() {
         deleter.deleteAll();

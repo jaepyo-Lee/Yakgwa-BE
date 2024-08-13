@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.service;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.vote.service.impl.VoteCounter;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
@@ -22,16 +23,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class VoteCounterTest {
-    @Autowired
-    VoteCounter voteCounter;
-    @Autowired
-    DummyCreater dummyCreater;
+class VoteCounterTest extends IntegrationTestSupport {
 
-    @Autowired
-    RepositoryDeleter deleter;
 
     @AfterEach
     void init(){

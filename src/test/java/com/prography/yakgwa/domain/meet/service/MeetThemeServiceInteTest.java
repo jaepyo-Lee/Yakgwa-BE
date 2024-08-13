@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.meet.service;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
@@ -14,17 +15,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class MeetThemeServiceInteTest {
-    @Autowired
-    MeetThemeService meetThemeService;
-    @Autowired
-    MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    DummyCreater dummyCreater;
-    @Autowired
-    RepositoryDeleter deleter;
+class MeetThemeServiceInteTest extends IntegrationTestSupport {
+
     @AfterEach
     void init(){
         deleter.deleteAll();

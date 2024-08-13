@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.meet.entity;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.global.config.AuditingConfig;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
@@ -14,11 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Import({DeleterConfig.class, AuditingConfig.class})
-@ActiveProfiles("test")
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class MeetTest {
+class MeetTest extends IntegrationTestSupport {
     @Autowired
     RepositoryDeleter deleter;
     @Autowired

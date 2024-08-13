@@ -11,7 +11,10 @@ import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -25,7 +28,9 @@ public class MeetController implements MeetApi {
     @GetMapping("/meets/{meetId}")
     public SuccessResponse<MeetInfoWithParticipantResponse> findDetail(@PathVariable("meetId") Long meetId) {
         MeetInfoWithParticipant meetWithParticipant = meetService.findWithParticipant(meetId);
-        return new SuccessResponse<>(MeetInfoWithParticipantResponse.of(meetWithParticipant.getMeet(), meetWithParticipant.getParticipants()));
+        SuccessResponse<MeetInfoWithParticipantResponse> meetInfoWithParticipantResponseSuccessResponse = new SuccessResponse<>(MeetInfoWithParticipantResponse.of(meetWithParticipant.getMeet(), meetWithParticipant.getParticipants()));
+
+        return meetInfoWithParticipantResponseSuccessResponse;
     }
 
     @GetMapping("/meets")

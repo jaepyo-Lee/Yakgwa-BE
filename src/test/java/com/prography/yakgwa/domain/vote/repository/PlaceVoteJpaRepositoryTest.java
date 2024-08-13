@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.repository;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.config.DeleterConfig;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
@@ -29,26 +30,7 @@ import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-@Import(DeleterConfig.class)
-@ActiveProfiles("test")
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class PlaceVoteJpaRepositoryTest {
-
-    @Autowired
-    UserJpaRepository userJpaRepository;
-    @Autowired
-    PlaceVoteJpaRepository placeVoteJpaRepository;
-    @Autowired
-    PlaceSlotJpaRepository placeSlotJpaRepository;
-    @Autowired
-    MeetJpaRepository meetJpaRepository;
-    @Autowired
-    MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    PlaceJpaRepository placeJpaRepository;
-    @Autowired
-    RepositoryDeleter deleter;
+class PlaceVoteJpaRepositoryTest extends IntegrationTestSupport {
 
     @AfterEach
     void init() {
