@@ -18,9 +18,9 @@ bin/
 !**/src/test/**/bin/
 
 ### application
-application.yml
+#application.yml
 application-local.yml
-application-dev.yml
+#application-dev.yml
 application-prod.yml
 application-test.yml
 /src/main/generated/

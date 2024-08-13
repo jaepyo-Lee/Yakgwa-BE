@@ -1,0 +1,32 @@
+server:
+  shutdown: graceful
+
+user:
+  base:
+    image: ${BASE_IMG}
+app:
+  api:
+    base: ${API_BASE}
+    admin: ${API_ADMIN}
+  auth:
+    secret: ${AUTH_SECRET}
+    accessExpired: ${AUTH_ACCESS_PERIOD}
+    refreshExpired: ${AUTH_REFRESH_PERIOD}
+naver:
+  client:
+    id: ${NAVER_CLIENT_ID}
+    secret: ${NAVER_CLIENT_SECRET}
+
+fcm:
+  url: ${FCM_URL}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    stack.auto: false
+    region:
+      static: ${S3_REGION}
+    credentials:
+      access-Key: ${S3_ACCESS}
+      secret-Key: ${S3_SECRET}

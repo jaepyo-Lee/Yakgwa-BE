@@ -9,7 +9,9 @@ name: Java CI with Gradle
 
 on:
   push:
-    branches: ["dev"]
+    branches:
+      - dev
+      - cicd
 
 permissions:
   contents: read
@@ -31,11 +33,11 @@ jobs:
         run: |
           mkdir ./src/main/resources 
           cd ./src/main/resources # resources 폴더로 이동
-          touch ./application.yml # application.yml 생성
-          touch ./application-dev.yml # application-dev.yml 생성
-          echo "${{ secrets.APPLICATION }}" > ./application.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
-          echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
-          
+#          touch ./application.yml # application.yml 생성
+#          touch ./application-dev.yml # application-dev.yml 생성
+#          echo "${{ secrets.APPLICATION }}" > ./application.yml # github actions에서 설정한 값을 application.yml 파일에 쓰기
+#          echo "${{ secrets.APPLICATION_DEV }}" > ./application-dev.yml
+
           mkdir ./firebase
           cd ./firebase
           touch ./firebase-key.json
@@ -71,11 +73,32 @@ jobs:
           script: |
             sudo docker rm -f redis
             sudo docker rm -f yakgwa-dev
-            sudo docker pull redis
+#            sudo docker pull redis
+#            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
+            ## 여러분이 원하는 경로로 이동합니다.
+            cd /home/ubuntu/
+            
+            ## .env 파일을 생성합니다.
+            sudo touch .env
+            echo "${{ secrets.ENV_VARS }}" | sudo tee .env > /dev/null
+            
+            ## docker-compose.yaml 파일을 생성합니다.
+            sudo touch docker-compose.yaml
+            echo "${{ secrets.DOCKER_COMPOSE }}" | sudo tee docker-compose.yaml > /dev/null
+            
+            ## docker-compose를 실행합니다.
+            sudo chmod 666 /var/run/docker.sock
+            sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
-            docker run -d -p 6379:6379 --network yakgwa-network --name redis redis
-            docker run -d -p 8081:8081 --network yakgwa-network --name yakgwa-dev ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
+            sudo docker pull redis
+            docker-compose -f docker-compose.yaml --env-file ./.env up -d
             docker image prune -f
+            
+            
+#            sudo docker-compose up -d
+#            docker run -d -p 6379:6379 --network yakgwa-network --name redis redis
+#            docker run -d -p 8081:8081 --network yakgwa-network --name yakgwa-dev ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
+#            docker image prune -f
 
 
   current-time:
