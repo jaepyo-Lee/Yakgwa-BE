@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prography.yakgwa.domain.meet.controller.res.MeetInfoWithParticipantResponse;
 import com.prography.yakgwa.domain.meet.controller.res.MeetWithStatusInfoResponse;
+import com.prography.yakgwa.domain.meet.controller.res.PostConfirmMeetInfoResponse;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
@@ -20,7 +21,6 @@ import com.prography.yakgwa.global.format.success.SuccessResponse;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +38,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -156,5 +153,52 @@ class MeetControllerTest {
         MeetWithStatusInfoResponse compareResult = MeetWithStatusInfoResponse.of(meetWithVoteAndStatuses);
 
         assertThat(result).usingRecursiveComparison().isEqualTo(compareResult);
+    }
+
+    @WithCustomMockUser
+    @Test
+    void 확정또는이미지난모임들조회컨트롤러테스트() throws Exception {
+        // given
+
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet1 = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        Place savePlace = dummyCreater.createAndSavePlace(1);
+        PlaceSlot savePlaceSlot1 = dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet1, true);
+        TimeSlot saveTimeSlot1 = dummyCreater.createAndSaveTimeSlot(saveMeet1, LocalDateTime.now(), true);
+
+        Meet saveMeet2 = dummyCreater.createAndSaveMeet(2, saveMeetTheme, 24);
+        PlaceSlot savePlaceSlot2 = dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet2, true);
+        TimeSlot saveTimeSlot2 = dummyCreater.createAndSaveTimeSlot(saveMeet2, LocalDateTime.now(), false);
+
+        User saveUser = dummyCreater.createAndSaveUser(1);
+
+        Participant saveParticipant = dummyCreater.createAndSaveParticipant(saveMeet1, saveUser, MeetRole.LEADER);
+        Participant saveParticipant2 = dummyCreater.createAndSaveParticipant(saveMeet2, saveUser, MeetRole.PARTICIPANT);
+
+        MeetWithVoteAndStatus meetWithVoteAndStatus = MeetWithVoteAndStatus.of(saveMeet1, saveTimeSlot1, savePlaceSlot1, MeetStatus.CONFIRM);
+        MeetWithVoteAndStatus meetWithVoteAndStatus1 = MeetWithVoteAndStatus.of(saveMeet2, saveTimeSlot2, savePlaceSlot2, MeetStatus.BEFORE_VOTE);
+        List<MeetWithVoteAndStatus> meetWithVoteAndStatuses = List.of(meetWithVoteAndStatus, meetWithVoteAndStatus1);
+
+        when(meetService.findPostConfirm(anyLong())).thenReturn(meetWithVoteAndStatuses);
+
+        // when
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/api/v1/meets/record")
+                        .header("Authorization", "Bearer validToken"))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        // then
+        SuccessResponse<PostConfirmMeetInfoResponse>  meetInfoWithParticipantResponse =
+                objectMapper.readValue(
+                        mvcResult.getResponse().getContentAsString(), new TypeReference<SuccessResponse<PostConfirmMeetInfoResponse> >() {
+                        });
+
+        PostConfirmMeetInfoResponse result = meetInfoWithParticipantResponse.getResult();
+
+        PostConfirmMeetInfoResponse compareResult = PostConfirmMeetInfoResponse.of(meetWithVoteAndStatuses);
+
+        assertThat(result).usingRecursiveComparison().isEqualTo(compareResult);
+        // then
     }
 }

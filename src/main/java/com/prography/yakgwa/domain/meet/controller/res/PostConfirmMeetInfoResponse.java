@@ -16,6 +16,8 @@ import java.util.List;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostConfirmMeetInfoResponse {
     private List<MeetInfoWithStatus> meetInfosWithStatus;
 

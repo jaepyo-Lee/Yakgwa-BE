@@ -108,7 +108,7 @@ class MagazineServiceTest extends IntegrationTestSupport {
 
         System.out.println("=====Logic End=====");
         // then
-        assertAll(() -> assertThat(!saveMagazine.isOpen()).isEqualTo(magazine.isOpen()));
+        assertAll(() -> assertThat(magazine.isOpen()).isFalse());
     }
 
     private Magazine createAndSaveMagazine(int id, User saveUser, Place savePlace) {

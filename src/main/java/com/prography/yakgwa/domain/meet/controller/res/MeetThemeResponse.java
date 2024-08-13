@@ -2,11 +2,15 @@ package com.prography.yakgwa.domain.meet.controller.res;
 
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MeetThemeResponse {
     @Schema(description = "모임 테마id", example = "1")
     private Long id;
