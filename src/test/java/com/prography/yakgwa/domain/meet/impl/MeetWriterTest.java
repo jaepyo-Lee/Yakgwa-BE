@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.meet.impl;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
@@ -24,19 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class MeetWriterTest {
-    @Autowired
-    MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    MeetJpaRepository meetJpaRepository;
-    @Autowired
-    MeetWriter meetWriter;
-    @Autowired
-    PlaceJpaRepository placeJpaRepository;
-    @Autowired
-    RepositoryDeleter deleter;
+class MeetWriterTest extends IntegrationTestSupport{
 
     @AfterEach
     void init() {

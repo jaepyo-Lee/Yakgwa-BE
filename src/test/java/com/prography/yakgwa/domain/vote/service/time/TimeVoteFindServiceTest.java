@@ -1,43 +1,25 @@
 package com.prography.yakgwa.domain.vote.service.time;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
-import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
-import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.time.res.TimeInfosByMeetStatus;
-import com.prography.yakgwa.testHelper.DummyCreater;
-import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
-@ActiveProfiles("test")
-@SpringBootTest
-class TimeVoteFindServiceTest {
-
-    @Autowired
-    DummyCreater dummyCreater;
-
-    @Autowired
-    MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    VoteFinder<TimeInfosByMeetStatus> voteFinder;
-    @Autowired
-    RepositoryDeleter deleter;
+class TimeVoteFindServiceTest extends IntegrationTestSupport {
 
     @AfterEach
     void init() {
@@ -59,7 +41,7 @@ class TimeVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        TimeInfosByMeetStatus timeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
+        TimeInfosByMeetStatus timeInfoWithMeetStatus = timeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -84,7 +66,7 @@ class TimeVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        TimeInfosByMeetStatus timeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
+        TimeInfosByMeetStatus timeInfoWithMeetStatus = timeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -106,7 +88,7 @@ class TimeVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        TimeInfosByMeetStatus timeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
+        TimeInfosByMeetStatus timeInfoWithMeetStatus = timeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
         // then
@@ -131,7 +113,7 @@ class TimeVoteFindServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        TimeInfosByMeetStatus timeInfoWithMeetStatus = voteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
+        TimeInfosByMeetStatus timeInfoWithMeetStatus = timeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
 
         System.out.println("=====Logic End=====");
 

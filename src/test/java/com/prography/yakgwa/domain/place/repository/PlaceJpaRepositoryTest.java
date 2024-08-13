@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.place.repository;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.config.DeleterConfig;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.place.entity.Place;
@@ -16,11 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@Import(DeleterConfig.class)
-@ActiveProfiles("test")
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class PlaceJpaRepositoryTest {
+class PlaceJpaRepositoryTest extends IntegrationTestSupport {
     @Autowired
     PlaceJpaRepository placeJpaRepository;
     @Autowired

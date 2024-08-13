@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.user.service;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
@@ -22,19 +23,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class UserServiceTest {
-    @MockBean
-    AwsS3Util awsS3Util;
-    @Autowired
-    DummyCreater dummyCreater;
-    @Autowired
-    RepositoryDeleter deleter;
-    @Autowired
-    UserService userService;
-    @Autowired
-    private UserJpaRepository userJpaRepository;
+class UserServiceTest extends IntegrationTestSupport {
+
 
     @Value("${user.base.image}")
     private String baseImg;

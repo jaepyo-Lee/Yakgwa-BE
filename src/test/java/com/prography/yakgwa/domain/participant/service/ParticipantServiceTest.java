@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.participant.service;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
@@ -22,25 +23,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class ParticipantServiceTest {
-    @Autowired
-    DummyCreater dummyCreater;
-    @Autowired
-    ParticipantService participantService;
+class ParticipantServiceTest extends IntegrationTestSupport {
 
-    @Autowired
-    ParticipantJpaRepository participantJpaRepository;
-    @Autowired
-    MeetJpaRepository meetJpaRepository;
-    @Autowired
-    MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    UserJpaRepository userJpaRepository;
-
-    @Autowired
-    RepositoryDeleter deleter;
 
     @AfterEach
     void init(){

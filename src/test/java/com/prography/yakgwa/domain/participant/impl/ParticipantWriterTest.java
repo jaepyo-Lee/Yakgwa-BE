@@ -1,6 +1,6 @@
 package com.prography.yakgwa.domain.participant.impl;
 
-import com.prography.yakgwa.testHelper.RepositoryDeleter;
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
@@ -11,34 +11,20 @@ import com.prography.yakgwa.domain.participant.repository.ParticipantJpaReposito
 import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 
 import static com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole.LEADER;
 import static com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole.PARTICIPANT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class ParticipantWriterTest {
-    @Autowired
-    MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    MeetJpaRepository meetJpaRepository;
-    @Autowired
-    UserJpaRepository userJpaRepository;
-    @Autowired
-    ParticipantJpaRepository participantJpaRepository;
-    @Autowired
-    ParticipantWriter participantWriter;
-    @Autowired
-    RepositoryDeleter deleter;
+class ParticipantWriterTest extends IntegrationTestSupport {
+
 
     @AfterEach
     void init() {

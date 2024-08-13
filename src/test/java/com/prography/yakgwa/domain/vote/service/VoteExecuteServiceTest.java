@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.service;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
@@ -27,19 +28,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class TimeSlotExecuteServiceTest {
-    @Autowired
-    DummyCreater dummyCreater;
-
-    @Autowired
-    @Qualifier("timeVoteExecuteService")
-    VoteExecuter<TimeVote, EnableTimeRequestDto> voteExecuter;
-    @Autowired
-    private TimeSlotJpaRepository timeSlotJpaRepository;
-    @Autowired
-    RepositoryDeleter deleter;
+class TimeSlotExecuteServiceTest extends IntegrationTestSupport {
 
     @AfterEach
     void init() {

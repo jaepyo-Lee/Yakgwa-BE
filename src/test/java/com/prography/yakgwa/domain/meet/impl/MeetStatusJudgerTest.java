@@ -1,11 +1,9 @@
 package com.prography.yakgwa.domain.meet.impl;
 
-import com.prography.yakgwa.testHelper.DummyCreater;
-import com.prography.yakgwa.testHelper.RepositoryDeleter;
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetStatus;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
-import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
@@ -14,9 +12,6 @@ import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -24,21 +19,9 @@ import java.time.LocalDateTime;
 import static com.prography.yakgwa.domain.meet.entity.MeetStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class MeetStatusJudgerTest {
-    @Autowired
-    private MeetThemeJpaRepository meetThemeJpaRepository;
-    @Autowired
-    private MeetStatusJudger meetStatusJudger;
-
-    @Autowired
-    RepositoryDeleter deleter;
-    @Autowired
-    DummyCreater dummyCreater;
-
+class MeetStatusJudgerTest extends IntegrationTestSupport {
     @AfterEach
-    void initial(){
+    void initial() {
         deleter.deleteAll();
     }
 
@@ -50,7 +33,7 @@ class MeetStatusJudgerTest {
         Place place = dummyCreater.createAndSavePlace(1);
         TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), Boolean.TRUE);
         PlaceSlot andSavePlaceSlot = dummyCreater.createAndSavePlaceSlot(place, saveMeet, Boolean.TRUE);
-        User saveUser =dummyCreater. createAndSaveUser(1);
+        User saveUser = dummyCreater.createAndSaveUser(1);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -78,7 +61,7 @@ class MeetStatusJudgerTest {
         User saveUser2 = dummyCreater.createAndSaveUser(2);
 
         TimeVote andSaveTimeVote1 = dummyCreater.createAndSaveTimeVote(saveTimeSlot1, saveUser1);
-        TimeVote andSaveTimeVote2 =dummyCreater. createAndSaveTimeVote(saveTimeSlot2, saveUser2);
+        TimeVote andSaveTimeVote2 = dummyCreater.createAndSaveTimeVote(saveTimeSlot2, saveUser2);
 
         PlaceVote andSavePlaceVote1 = dummyCreater.createAndSavePlaceVote(saveUser1, andSavePlaceSlot1);
         PlaceVote andSavePlaceVote2 = dummyCreater.createAndSavePlaceVote(saveUser2, andSavePlaceSlot2);
@@ -98,8 +81,8 @@ class MeetStatusJudgerTest {
     void 모임의시간이지나기전_확정되지않은상태_하나라도투표를해서_VOTE_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
-        Meet saveMeet =dummyCreater. createAndSaveMeet(1, theme, 24);
-        Place place1 =dummyCreater. createAndSavePlace(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 24);
+        Place place1 = dummyCreater.createAndSavePlace(1);
         Place place2 = dummyCreater.createAndSavePlace(2);
         TimeSlot saveTimeSlot1 = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), Boolean.FALSE);
         TimeSlot saveTimeSlot2 = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now().plusDays(1L), Boolean.FALSE);
@@ -108,7 +91,7 @@ class MeetStatusJudgerTest {
         User saveUser1 = dummyCreater.createAndSaveUser(1);
         User saveUser2 = dummyCreater.createAndSaveUser(2);
 
-        PlaceVote andSavePlaceVote1 =dummyCreater. createAndSavePlaceVote(saveUser1, andSavePlaceSlot1);
+        PlaceVote andSavePlaceVote1 = dummyCreater.createAndSavePlaceVote(saveUser1, andSavePlaceSlot1);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -132,7 +115,7 @@ class MeetStatusJudgerTest {
         TimeSlot saveTimeSlot2 = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now().plusDays(1L), Boolean.FALSE);
         PlaceSlot andSavePlaceSlot1 = dummyCreater.createAndSavePlaceSlot(place1, saveMeet, Boolean.FALSE);
         PlaceSlot andSavePlaceSlot2 = dummyCreater.createAndSavePlaceSlot(place1, saveMeet, Boolean.FALSE);
-        User saveUser1 =dummyCreater. createAndSaveUser(1);
+        User saveUser1 = dummyCreater.createAndSaveUser(1);
         User saveUser2 = dummyCreater.createAndSaveUser(2);
 
         // when
@@ -153,7 +136,6 @@ class MeetStatusJudgerTest {
 
         // when
         System.out.println("=====Logic Start=====");
-
 
 
         System.out.println("=====Logic End=====");

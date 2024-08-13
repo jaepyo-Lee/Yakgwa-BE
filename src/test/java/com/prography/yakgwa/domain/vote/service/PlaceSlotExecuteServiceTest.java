@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.vote.service;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
@@ -7,7 +8,6 @@ import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
-import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
 import com.prography.yakgwa.global.format.exception.vote.NotValidVotePlaceException;
@@ -17,8 +17,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Set;
@@ -27,22 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class PlaceSlotExecuteServiceTest {
-    @Autowired
-    DummyCreater dummyCreater;
-
-    @Autowired
-    private TimeSlotJpaRepository timeSlotJpaRepository;
-
-    @Autowired
-    @Qualifier("placeVoteExecuteService")
-    VoteExecuter<PlaceVote, Set<Long>> executer;
-
-    @Autowired
-    RepositoryDeleter deleter;
-
+class PlaceSlotExecuteServiceTest extends IntegrationTestSupport {
     @AfterEach
     void init() {
         deleter.deleteAll();
@@ -61,7 +44,7 @@ class PlaceSlotExecuteServiceTest {
         // when
         // then
         System.out.println("=====Logic Start=====");
-        assertThrows(AlreadyPlaceConfirmException.class, () -> executer.vote(saveUser.getId(), saveMeet.getId(), Set.of(1L)));
+        assertThrows(AlreadyPlaceConfirmException.class, () -> placeVoteExecuter.vote(saveUser.getId(), saveMeet.getId(), Set.of(1L)));
         System.out.println("=====Logic End=====");
     }
 
@@ -77,7 +60,7 @@ class PlaceSlotExecuteServiceTest {
         // when
         // then
         System.out.println("=====Logic Start=====");
-        assertThrows(NotValidVotePlaceException.class, () -> executer.vote(saveUser.getId(), saveMeet.getId(), Set.of(savePlaceSlot.getId() + 1L)));
+        assertThrows(NotValidVotePlaceException.class, () -> placeVoteExecuter.vote(saveUser.getId(), saveMeet.getId(), Set.of(savePlaceSlot.getId() + 1L)));
         System.out.println("=====Logic End=====");
     }
 
@@ -96,7 +79,7 @@ class PlaceSlotExecuteServiceTest {
         // when
         System.out.println("=====Logic Start=====");
 
-        List<PlaceVote> placeVotes = executer.vote(saveUser.getId(), saveMeet.getId(), Set.of(savePlaceSlot1.getId(), savePlaceSlot2.getId()));
+        List<PlaceVote> placeVotes = placeVoteExecuter.vote(saveUser.getId(), saveMeet.getId(), Set.of(savePlaceSlot1.getId(), savePlaceSlot2.getId()));
 
         System.out.println("=====Logic End=====");
         // then
@@ -118,7 +101,7 @@ class PlaceSlotExecuteServiceTest {
         // when
         // then
         System.out.println("=====Logic Start=====");
-        assertThrows(NotFoundParticipantException.class, () -> executer.vote(saveUser.getId(), saveMeet.getId(), Set.of(savePlaceSlot1.getId(), savePlaceSlot2.getId())));
+        assertThrows(NotFoundParticipantException.class, () -> placeVoteExecuter.vote(saveUser.getId(), saveMeet.getId(), Set.of(savePlaceSlot1.getId(), savePlaceSlot2.getId())));
         System.out.println("=====Logic End=====");
     }
 }

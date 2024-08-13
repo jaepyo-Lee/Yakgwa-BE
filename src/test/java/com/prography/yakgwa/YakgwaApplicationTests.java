@@ -1,15 +1,14 @@
 package com.prography.yakgwa;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class YakgwaApplicationTests {
+class YakgwaApplicationTests extends IntegrationTestSupport {
 
-	@Test
-	void contextLoads() {
-	}
+    @Test
+    void contextLoads() {
+    }
 
 }

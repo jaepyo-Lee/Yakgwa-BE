@@ -4,7 +4,6 @@ import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,9 +26,9 @@ public class MeetInfoWithParticipantResponse {
     @Builder
     @Getter
     @Schema(name = "MeetInfoWithParticipantResponse-meetInfo")
-    private static class MeetInfo {
+    public static class MeetInfo {
         @Schema(description = "모임 테마명", example = "데이트")
-        private String ThemeName;
+        private String themeName;
         @Schema(description = "모임명", example = "다음 세션 모임")
         private String meetTitle;
         @Schema(description = "모임설명", example = "설명")
@@ -41,7 +40,7 @@ public class MeetInfoWithParticipantResponse {
     @Builder
     @Getter
     @Schema(name = "MeetInfoWithParticipantResponse-participantInfo")
-    private static class ParticipantInfo {
+    public static class ParticipantInfo {
         @Schema(description = "모임에서의 역할", example = "LEADER(약과장) 또는 PARTICIPANT(약과원)")
         private MeetRole meetRole;
         @Schema(description = "이미지 url")
@@ -60,7 +59,7 @@ public class MeetInfoWithParticipantResponse {
                                 .build())
                         .toList())
                 .meetInfo(MeetInfo.builder()
-                        .ThemeName(meet.getMeetTheme().getName())
+                        .themeName(meet.getMeetTheme().getName())
                         .meetTitle(meet.getTitle())
                         .description(meet.getDescription())
                         .build())

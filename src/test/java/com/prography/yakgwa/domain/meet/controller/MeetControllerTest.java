@@ -1,28 +1,46 @@
 package com.prography.yakgwa.domain.meet.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prography.yakgwa.domain.meet.controller.req.CreateMeetRequest;
+import com.prography.yakgwa.domain.meet.controller.res.MeetInfoWithParticipantResponse;
+import com.prography.yakgwa.domain.meet.controller.res.MeetWithStatusInfoResponse;
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.service.MeetCreateService;
-import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
+import com.prography.yakgwa.domain.meet.entity.MeetStatus;
+import com.prography.yakgwa.domain.meet.entity.MeetTheme;
+import com.prography.yakgwa.domain.meet.service.MeetService;
+import com.prography.yakgwa.domain.meet.service.req.MeetWithVoteAndStatus;
+import com.prography.yakgwa.domain.meet.service.res.MeetInfoWithParticipant;
+import com.prography.yakgwa.domain.participant.entity.Participant;
+import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
+import com.prography.yakgwa.domain.place.entity.Place;
+import com.prography.yakgwa.domain.user.entity.User;
+import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
+import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
+import com.prography.yakgwa.global.format.success.SuccessResponse;
+import com.prography.yakgwa.testHelper.DummyCreater;
+import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,266 +52,109 @@ class MeetControllerTest {
     @Autowired
     private MockMvc mvc;
     @MockBean
-    private MeetCreateService meetCreateService;
+    private MeetService meetService;
     @Autowired
     ObjectMapper objectMapper;
     @Autowired
     WebApplicationContext wac;
-   /* @BeforeEach
-    public void setUpMOckMvc(){
-        mvc = MockMvcBuilders
-                .webAppContextSetup(wac)
-                .apply(SecurityMockMvcConfigurers.springSecurity())
-                .build();
-    }*/
+    @Autowired
+    DummyCreater dummyCreater;
+    @Autowired
+    RepositoryDeleter deleter;
 
-    @WithCustomMockUser
-    @Test
-    void 모임생성컨트롤러테스트() throws Exception {
-        // given
-        String dateString = "2024-08-03 15:30:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
-        CreateMeetRequest build = CreateMeetRequest.builder()
-                .meetInfo(CreateMeetRequest.MeetInfo.builder()
-                        .meetTitle("title")
-                        .meetThemeId(1L)
-                        .meetTime(dateTime)
-                        .confirmPlace(true)
-                        .placeInfo(List.of(
-                                PlaceInfoDto.builder()
-                                        .title("title").mapy("mapy").mapx("mapx").link("link").roadAddress("roadAddress").category("category").address("address").telephone("telephone").description("description")
-                                        .build())
-                        )
-                        .description("description")
-                        .voteDate(null)
-                        .build())
-                .build();
-        Meet meet = Meet.builder()
-                .id(1L)
-                .build();
-        when(meetCreateService.create(any())).thenReturn(meet);
-
-        // when
-        System.out.println("=====Logic Start=====");
-
-        mvc.perform(MockMvcRequestBuilders.post("/api/v1/meets")
-                        .content(objectMapper.writeValueAsString(build))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer validToken")  // Adjust this if needed
-                )
-                .andDo(print())
-                .andExpect(jsonPath("$.result.meetId").value(meet.getId()))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-        System.out.println("=====Logic End=====");
-        // then
+    @AfterEach
+    void init() {
+        deleter.deleteAll();
     }
 
     @WithCustomMockUser
     @Test
-    void 모임제목없을떄유효성테스트() throws Exception {
+    void 모임세부정보조회컨트롤러() throws Exception {
         // given
-        String dateString = "2024-08-03 15:30:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
-        CreateMeetRequest build = CreateMeetRequest.builder()
-                .meetInfo(CreateMeetRequest.MeetInfo.builder()
-                        .meetTitle("")
-                        .meetThemeId(1L)
-                        .meetTime(dateTime)
-                        .confirmPlace(true)
-                        .placeInfo(List.of(
-                                PlaceInfoDto.builder()
-                                        .title("title").mapy("mapy").mapx("mapx").link("link").roadAddress("roadAddress").category("category").address("address").telephone("telephone").description("description")
-                                        .build())
-                        )
-                        .description("description")
-                        .voteDate(null)
-                        .build())
-                .build();
-        Meet meet = Meet.builder()
-                .id(1L)
-                .build();
-        when(meetCreateService.create(any())).thenReturn(meet);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        User saveUser2 = dummyCreater.createAndSaveUser(2);
+        User saveUser3 = dummyCreater.createAndSaveUser(3);
+
+        Participant saveParticipant = dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+        Participant saveParticipant1 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser2, MeetRole.PARTICIPANT);
+        Participant saveParticipant2 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser3, MeetRole.PARTICIPANT);
+
+        List<Participant> saveParticipants = List.of(saveParticipant, saveParticipant1, saveParticipant2);
+        MeetInfoWithParticipant serviceMockReturnValue = MeetInfoWithParticipant.of(saveMeet, saveParticipants);
+
+        when(meetService.findWithParticipant(anyLong())).thenReturn(serviceMockReturnValue);
 
         // when
-        System.out.println("=====Logic Start=====");
-
-        mvc.perform(MockMvcRequestBuilders.post("/api/v1/meets")
-                        .content(objectMapper.writeValueAsString(build))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer validToken")  // Adjust this if needed
-                )
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/api/v1/meets/{meetId}", saveMeet.getId())
+                        .header("Authorization", "Bearer validToken"))
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
 
-        System.out.println("=====Logic End=====");
         // then
+        SuccessResponse<MeetInfoWithParticipantResponse> meetInfoWithParticipantResponse =
+                objectMapper.readValue(
+                        mvcResult.getResponse().getContentAsString(), new TypeReference<SuccessResponse<MeetInfoWithParticipantResponse>>() {
+                        });
+
+        MeetInfoWithParticipantResponse result = meetInfoWithParticipantResponse.getResult();
+        MeetInfoWithParticipantResponse compareResult = MeetInfoWithParticipantResponse.of(saveMeet, saveParticipants);
+
+        assertThat(result).usingRecursiveComparison().isEqualTo(compareResult);
     }
 
+
+    /**
+     * @GetMapping("/meets") public SuccessResponse<MeetWithStatusInfoResponse> findCurrentMeetsForUser(@AuthenticationPrincipal CustomUserDetail user) {
+     * List<MeetWithVoteAndStatus> meetWithVoteAndStatuses = meetService.findWithStatus(user.getUserId());
+     * return new SuccessResponse<>(MeetWithStatusInfoResponse.of(meetWithVoteAndStatuses));
+     * }
+     */
     @WithCustomMockUser
     @Test
-    void 모임제목null일때유효성테스트() throws Exception {
+    void 현재참여중인모임조회컨트롤러() throws Exception {
         // given
-        String dateString = "2024-08-03 15:30:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
-        CreateMeetRequest build = CreateMeetRequest.builder()
-                .meetInfo(CreateMeetRequest.MeetInfo.builder()
-                        .meetTitle(null)
-                        .meetThemeId(1L)
-                        .meetTime(dateTime)
-                        .confirmPlace(true)
-                        .placeInfo(List.of(
-                                PlaceInfoDto.builder()
-                                        .title("title").mapy("mapy").mapx("mapx").link("link").roadAddress("roadAddress").category("category").address("address").telephone("telephone").description("description")
-                                        .build())
-                        )
-                        .description("description")
-                        .voteDate(null)
-                        .build())
-                .build();
-        Meet meet = Meet.builder()
-                .id(1L)
-                .build();
-        when(meetCreateService.create(any())).thenReturn(meet);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet1 = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        Place savePlace = dummyCreater.createAndSavePlace(1);
+        PlaceSlot savePlaceSlot1 = dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet1, true);
+        TimeSlot saveTimeSlot1 = dummyCreater.createAndSaveTimeSlot(saveMeet1, LocalDateTime.now(), true);
+
+        Meet saveMeet2 = dummyCreater.createAndSaveMeet(2, saveMeetTheme, 24);
+        PlaceSlot savePlaceSlot2 = dummyCreater.createAndSavePlaceSlot(savePlace, saveMeet2, true);
+        TimeSlot saveTimeSlot2 = dummyCreater.createAndSaveTimeSlot(saveMeet2, LocalDateTime.now(), false);
+
+        User saveUser = dummyCreater.createAndSaveUser(1);
+
+        Participant saveParticipant = dummyCreater.createAndSaveParticipant(saveMeet1, saveUser, MeetRole.LEADER);
+        Participant saveParticipant2 = dummyCreater.createAndSaveParticipant(saveMeet2, saveUser, MeetRole.PARTICIPANT);
+
+        MeetWithVoteAndStatus meetWithVoteAndStatus = MeetWithVoteAndStatus.of(saveMeet1, saveTimeSlot1, savePlaceSlot1, MeetStatus.CONFIRM);
+        MeetWithVoteAndStatus meetWithVoteAndStatus1 = MeetWithVoteAndStatus.of(saveMeet2, saveTimeSlot2, savePlaceSlot2, MeetStatus.BEFORE_VOTE);
+        List<MeetWithVoteAndStatus> meetWithVoteAndStatuses = List.of(meetWithVoteAndStatus, meetWithVoteAndStatus1);
+
+        when(meetService.findWithStatus(anyLong())).thenReturn(meetWithVoteAndStatuses);
 
         // when
-        System.out.println("=====Logic Start=====");
-
-        mvc.perform(MockMvcRequestBuilders.post("/api/v1/meets")
-                        .content(objectMapper.writeValueAsString(build))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer validToken")  // Adjust this if needed
-                )
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.get("/api/v1/meets")
+                        .header("Authorization", "Bearer validToken"))
                 .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
 
-        System.out.println("=====Logic End=====");
         // then
+        SuccessResponse<MeetWithStatusInfoResponse>  meetInfoWithParticipantResponse =
+                objectMapper.readValue(
+                        mvcResult.getResponse().getContentAsString(), new TypeReference<SuccessResponse<MeetWithStatusInfoResponse> >() {
+                        });
+
+        MeetWithStatusInfoResponse result = meetInfoWithParticipantResponse.getResult();
+
+        MeetWithStatusInfoResponse compareResult = MeetWithStatusInfoResponse.of(meetWithVoteAndStatuses);
+
+        assertThat(result).usingRecursiveComparison().isEqualTo(compareResult);
     }
-
-    @WithCustomMockUser
-    @Test
-    void 모임테마null일때유효성테스트() throws Exception {
-        // given
-        String dateString = "2024-08-03 15:30:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
-        CreateMeetRequest build = CreateMeetRequest.builder()
-                .meetInfo(CreateMeetRequest.MeetInfo.builder()
-                        .meetTitle("title")
-                        .meetThemeId(null)
-                        .meetTime(dateTime)
-                        .confirmPlace(true)
-                        .placeInfo(List.of(
-                                PlaceInfoDto.builder()
-                                        .title("title").mapy("mapy").mapx("mapx").link("link").roadAddress("roadAddress").category("category").address("address").telephone("telephone").description("description")
-                                        .build())
-                        )
-                        .description("description")
-                        .voteDate(null)
-                        .build())
-                .build();
-        Meet meet = Meet.builder()
-                .id(1L)
-                .build();
-        when(meetCreateService.create(any())).thenReturn(meet);
-
-        // when
-        System.out.println("=====Logic Start=====");
-
-        mvc.perform(MockMvcRequestBuilders.post("/api/v1/meets")
-                        .content(objectMapper.writeValueAsString(build))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer validToken")  // Adjust this if needed
-                )
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-
-        System.out.println("=====Logic End=====");
-        // then
-    }
-
-    @WithCustomMockUser
-    @Test
-    void 모임장소확정여부가null일때유효성테스트() throws Exception {
-        // given
-        String dateString = "2024-08-03 15:30:00";
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime dateTime = LocalDateTime.parse(dateString, formatter);
-        CreateMeetRequest build = CreateMeetRequest.builder()
-                .meetInfo(CreateMeetRequest.MeetInfo.builder()
-                        .meetTitle("title")
-                        .meetThemeId(1L)
-                        .meetTime(dateTime)
-                        .confirmPlace(null)
-                        .placeInfo(List.of(
-                                PlaceInfoDto.builder()
-                                        .title("title").mapy("mapy").mapx("mapx").link("link").roadAddress("roadAddress").category("category").address("address").telephone("telephone").description("description")
-                                        .build())
-                        )
-                        .description("description")
-                        .voteDate(null)
-                        .build())
-                .build();
-        Meet meet = Meet.builder()
-                .id(1L)
-                .build();
-        when(meetCreateService.create(any())).thenReturn(meet);
-
-        // when
-        System.out.println("=====Logic Start=====");
-
-        mvc.perform(MockMvcRequestBuilders.post("/api/v1/meets")
-                        .content(objectMapper.writeValueAsString(build))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer validToken")  // Adjust this if needed
-                )
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-
-        System.out.println("=====Logic End=====");
-        // then
-    }
-
-  /*  @WithCustomMockUser
-    @Test
-    void 날짜포맷유효성테스트() throws Exception {
-        // given
-        CreateMeetRequest build = CreateMeetRequest.builder()
-                .meetInfo(CreateMeetRequest.MeetInfo.builder()
-                        .meetTitle("title")
-                        .meetThemeId(1L)
-                        .meetTime(LocalDateTime.parse("2022-12-01T12:12:12"))
-                        .confirmPlace(true)
-                        .placeInfo(List.of(
-                                PlaceInfoDto.builder()
-                                        .title("title").mapy("mapy").mapx("mapx").link("link").roadAddress("roadAddress").category("category").address("address").telephone("telephone").description("description")
-                                        .build())
-                        )
-                        .description("description")
-                        .voteDate(null)
-                        .build())
-                .build();
-        Meet meet = Meet.builder()
-                .id(1L)
-                .build();
-        when(meetService.create(any())).thenReturn(meet);
-
-        // when
-        System.out.println("=====Logic Start=====");
-
-        mvc.perform(MockMvcRequestBuilders.post("/api/v1/meets")
-                        .content(objectMapper.writeValueAsString(build))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer validToken")  // Adjust this if needed
-                )
-                .andDo(print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
-
-        System.out.println("=====Logic End=====");
-        // then
-    }*/
 }
