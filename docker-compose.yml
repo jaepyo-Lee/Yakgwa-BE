@@ -1,4 +1,7 @@
 version: '3'
+networks:
+  redis-connection:
+    driver: bridge
 services:
   redis:
     container_name: redis
@@ -8,40 +11,19 @@ services:
     labels:
       - "mode=standalone"
     restart: always
-  green:
-    container_name: green
+    networks:
+      - redis-connection
+  web:
+    container_name: web
     image: jaepyo99/yakgwa
+    env_file: # 이부분 추가 바랍니다
+      - .env
+    networks:
+      - redis-connection
+    expose:
+      - 8081
     ports:
-      - "8080:8080"
+      - 8081:8081
+    tty: true
     environment:
-      MY_SERVER: ${MY_SERVER}
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
-      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      ACTIVE_PROFILE: ${ACTIVE_PROFILE}
-
-  blue:
-    container_name: blue
-    image: jaepyo99/yakgwa
-    ports:
-      - "8081:8080"
-    environment:
-      MY_SERVER: ${MY_SERVER}
-      AWS_ACCESS_KEY: ${AWS_ACCESS_KEY}
-      AWS_SECRET_KEY: ${AWS_SECRET_KEY}
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
-      KAKAO_CLIENT_ID: ${KAKAO_CLIENT_ID}
-      KAKAO_CLIENT_SECRET: ${KAKAO_CLIENT_SECRET}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT}
-      ACTIVE_PROFILE: ${ACTIVE_PROFILE}
+      - TZ=Asia/Seoul
