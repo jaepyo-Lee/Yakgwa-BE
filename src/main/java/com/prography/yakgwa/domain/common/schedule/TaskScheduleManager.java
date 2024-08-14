@@ -58,7 +58,7 @@ public class TaskScheduleManager {
                 }
                 alarmProcessor.process(meet.getId(), type); // 알람을 보내는 메서드
             };
-            taskSchedulerManager.scheduleTask(meet, runnable, meet.getVoteTime());
+            taskSchedulerManager.scheduleTask(meet, type,runnable, meet.getVoteTime());
             alarmJpaRepository.save(Alarm.builder()
                     .alarmType(END_VOTE)
                     .send(false)
@@ -70,7 +70,7 @@ public class TaskScheduleManager {
             Optional<TimeSlot> confirmedTimeSlot = getConfirmedTimeSlot(meet);
             confirmedTimeSlot.ifPresent(timeSlot -> {
                 LocalDateTime time = timeSlot.getTime();
-                taskSchedulerManager.scheduleTask(meet, runnable, time);
+                taskSchedulerManager.scheduleTask(meet, type, runnable, time);
                 alarmJpaRepository.save(Alarm.builder()
                         .alarmType(PROMISE_DAY).meet(meet).send(time.isBefore(now()))
                         .build());
@@ -84,9 +84,9 @@ public class TaskScheduleManager {
                 .findFirst();
     }
 
-    @Transactional
+    /*@Transactional
     public void changeAlarm(Meet meet, LocalDateTime newTime) {
         log.info("알람 시간 변경 요청: {}", meet.getId());
         taskSchedulerManager.changeAlarm(meet, newTime);
-    }
+    }*/
 }
