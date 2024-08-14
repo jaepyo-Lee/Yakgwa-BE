@@ -2,6 +2,7 @@ package com.prography.yakgwa.domain.meet.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prography.yakgwa.domain.common.ControllerUnitTestEnvironment;
 import com.prography.yakgwa.domain.meet.controller.res.MeetThemeResponse;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.service.MeetThemeService;
@@ -27,25 +28,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@WithCustomMockUser
-class MeetThemeControllerTest {
-    @Autowired
-    MockMvc mvc;
-    @MockBean
-    MeetThemeService meetThemeService;
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    WebApplicationContext wac;
-    @Autowired
-    DummyCreater dummyCreater;
-    @Autowired
-    RepositoryDeleter deleter;
+class MeetThemeControllerTest extends ControllerUnitTestEnvironment {
 
-    @Test
     void 테마조회컨트롤러테스트() throws Exception {
         // given
         MeetTheme theme = MeetTheme.builder().name("데이트").id(1L).build();

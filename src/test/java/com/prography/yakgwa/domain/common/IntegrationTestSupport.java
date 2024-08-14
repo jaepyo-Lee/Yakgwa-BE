@@ -1,5 +1,7 @@
 package com.prography.yakgwa.domain.common;
 
+import com.prography.yakgwa.domain.auth.service.AuthService;
+import com.prography.yakgwa.domain.common.alarm.repository.AlarmJpaRepository;
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
 import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
 import com.prography.yakgwa.domain.magazine.repository.ImageJpaRepository;
@@ -30,6 +32,8 @@ import com.prography.yakgwa.domain.vote.service.place.PlaceSlotService;
 import com.prography.yakgwa.domain.vote.service.place.res.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
 import com.prography.yakgwa.domain.vote.service.time.res.TimeInfosByMeetStatus;
+import com.prography.yakgwa.global.repository.RedisRepository;
+import com.prography.yakgwa.global.util.jwt.TokenProvider;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,4 +120,15 @@ public class IntegrationTestSupport {
     protected TaskScheduleManager scheduler;
     @MockBean
     protected AwsS3Util awsS3Util;
+
+    @Autowired
+    protected AuthService authService;
+
+    @MockBean
+    protected TokenProvider tokenProvider;
+
+    @MockBean
+    protected RedisRepository redisRepository;
+    @Autowired
+    protected AlarmJpaRepository alarmJpaRepository;
 }

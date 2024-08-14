@@ -1,24 +1,17 @@
 package com.prography.yakgwa.domain.user.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prography.yakgwa.domain.common.ControllerUnitTestEnvironment;
 import com.prography.yakgwa.domain.user.controller.res.UserInfoResponse;
 import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.Role;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.user.service.UserService;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
 import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -29,16 +22,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-class UserControllerTest {
-    @Autowired
-    private MockMvc mvc;
-    @MockBean
-    UserService userService;
-    @Autowired
-    ObjectMapper objectMapper;
+class UserControllerTest extends ControllerUnitTestEnvironment {
 
     @WithCustomMockUser
     @Test
