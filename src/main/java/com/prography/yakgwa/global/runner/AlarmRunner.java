@@ -20,12 +20,13 @@ public class AlarmRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("조회중");
+        log.info("AlarmRunner: 알람조회");
         List<Alarm> all = alarmJpaRepository.findAll();
+        log.info("AlarmRunner: 알람등록진행");
         all.stream()
                 .filter(alarm -> !alarm.isSend())
                 .forEach(alarm ->
                         alarmScheduler.registerAlarm(alarm.getMeet(), alarm.getAlarmType()));
-        log.info("등록");
+        log.info("AlarmRunner: 알람등록완료");
     }
 }
