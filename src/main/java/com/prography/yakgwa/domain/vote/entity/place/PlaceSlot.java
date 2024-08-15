@@ -31,7 +31,24 @@ public class PlaceSlot extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
     private Place place;
+    public boolean isSamePlace(String title, String mapx, String mapy) {
+        boolean titleCompareTo = isTitleCompareTo(title);
+        boolean xCompareTo = isXCompareTo(mapx);
+        boolean yCompareTo = isYCompareTo(mapy);
+        return titleCompareTo && xCompareTo && yCompareTo;
+    }
 
+    private boolean isYCompareTo(String mapy) {
+        return this.getPlace().getMapy().equals(mapy);
+    }
+
+    private boolean isXCompareTo(String mapx) {
+        return this.getPlace().getMapx().equals(mapx);
+    }
+
+    private boolean isTitleCompareTo(String title) {
+        return this.getPlace().getTitle().equals(title);
+    }
     public void confirm() {
         confirm = true;
     }
@@ -59,22 +76,9 @@ public class PlaceSlot extends BaseTimeEntity {
         return id.intValue();
     }
 
-    public boolean isSamePlace(String title, String mapx, String mapy) {
-        return isTitleCompareTo(title) && isXCompareTo(mapx) && isYCompareTo(mapy);
-    }
 
-    private boolean isYCompareTo(String mapy) {
-        return this.getPlace().getMapy().equals(mapy);
-    }
 
-    private boolean isXCompareTo(String mapx) {
-        return this.getPlace().getMapx().equals(mapx);
-    }
-
-    private boolean isTitleCompareTo(String title) {
-        return this.getPlace().getTitle().equals(title);
-    }
-    public boolean isConfirm(){
+    public boolean isConfirm() {
         return this.confirm.equals(TRUE);
     }
 }

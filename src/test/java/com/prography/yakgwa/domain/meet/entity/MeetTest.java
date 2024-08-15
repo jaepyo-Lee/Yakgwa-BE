@@ -13,7 +13,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class MeetTest extends IntegrationTestSupport {
     @Autowired
@@ -22,7 +24,7 @@ class MeetTest extends IntegrationTestSupport {
     MeetJpaRepository meetJpaRepository;
 
     @AfterEach
-    void init(){
+    void init() {
         deleter.deleteAll();
     }
 
@@ -52,6 +54,7 @@ class MeetTest extends IntegrationTestSupport {
         // then
         assertThat(saveMeet.getConfirmTime()).isEqualTo(saveMeet.getCreatedDate().plusHours(24).plusHours(24));
     }
+
     @Test
     void 투표가능시간이안지났울떄() {
         // given
@@ -80,4 +83,34 @@ class MeetTest extends IntegrationTestSupport {
         assertThat(saveMeet.isVoteTimeEnd()).isTrue();
     }
 
+    @Test
+    void id로동등성비교() {
+        // given
+        Meet meet = Meet.builder().id(1L).build();
+        Meet compare = Meet.builder().id(1L).build();
+        Meet compare2 = Meet.builder().id(2L).build();
+        // when
+        System.out.println("=====Logic Start=====");
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertAll(() -> assertThat(meet.equals(compare)).isTrue(),
+                () -> assertThat(meet.equals(compare2)).isFalse());
+    }
+
+    @Test
+    void id값해시코드() {
+        // given
+        Meet meet = Meet.builder().id(1L).build();
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        int i = meet.hashCode();
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertThat(i).isEqualTo(1);
+
+    }
 }

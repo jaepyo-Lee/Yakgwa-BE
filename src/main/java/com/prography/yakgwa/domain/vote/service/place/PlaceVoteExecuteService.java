@@ -40,6 +40,12 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
     private final PlaceVoteJpaRepository placeVoteJpaRepository;
     private final MeetConfirmChecker confirmChecker;
 
+    /**
+     * Todo
+     * Work) 동시성체크해야할듯
+     * Write-Date)
+     * Finish-Date)
+     */
     @Override
     public List<PlaceVote> vote(Long userId, Long meetId, Set<Long> placeSlotIds) {
         Meet meet = meetJpaRepository.findById(meetId).orElseThrow(NotFoundMeetException::new);
@@ -54,16 +60,12 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
         }
         List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meetId);
 
-//        boolean isContainSlot = placeSlots.stream().allMatch(placeSlot -> placeSlotIds.contains(placeSlot.getId()));
         for(Long choosePlaceSlotId:placeSlotIds){
             List<Long> list = placeSlots.stream().map(PlaceSlot::getId).toList();
             if(!list.contains(choosePlaceSlotId)){
                 throw new NotValidVotePlaceException();
             }
         }
-        /*if (!isContainSlot) {
-            throw new NotValidVotePlaceException();
-        }*/
         User user = userJpaRepository.findById(userId).orElseThrow(NotFoundUserException::new);
         placeVoteJpaRepository.deleteAllByUserIdAndMeetId(user, meetId);
         List<PlaceSlot> choosePlaceSlot = placeSlotJpaRepository.findAllById(placeSlotIds);
@@ -85,6 +87,12 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
     /**
      * Todo
      * Work) 확정가능시간에대한 테스트코드
+     * Write-Date)
+     * Finish-Date)
+     */
+    /**
+     * Todo
+     * Work) 동시성체크해야할듯
      * Write-Date)
      * Finish-Date)
      */

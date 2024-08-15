@@ -35,7 +35,7 @@ public class SearchService {
         List<PlaceInfoDto> items = naverResponse.getItems();
         List<PlaceInfoWithUserLike> placeInfoWithUserLikes = new ArrayList<>();
         for (PlaceInfoDto item : items) {
-            placeWriter.writeNotExist(item.toEntity());
+            placeWriter.writeIfNotExist(item.toEntity());
             placeInfoWithUserLikes.add(createPlaceInfoWithUserLike(item, user));
         }
         return placeInfoWithUserLikes;
