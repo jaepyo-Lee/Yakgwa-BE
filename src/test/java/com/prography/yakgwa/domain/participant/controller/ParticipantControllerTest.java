@@ -1,17 +1,9 @@
 package com.prography.yakgwa.domain.participant.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prography.yakgwa.domain.common.ControllerUnitTestEnvironment;
 import com.prography.yakgwa.domain.participant.entity.Participant;
-import com.prography.yakgwa.domain.participant.service.ParticipantService;
-import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
@@ -20,19 +12,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-class ParticipantControllerTest {
+class ParticipantControllerTest extends ControllerUnitTestEnvironment {
 
-    @Autowired
-    private MockMvc mvc;
-    @MockBean
-    ParticipantService participantService;
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @WithCustomMockUser
     @Test
     void 모임참가컨트롤러테스트() throws Exception {
         // given

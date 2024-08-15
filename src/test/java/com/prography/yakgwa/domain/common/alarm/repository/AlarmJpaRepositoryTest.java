@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.common.alarm.repository;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.common.alarm.entity.Alarm;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
@@ -16,16 +17,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class AlarmJpaRepositoryTest {
-
-    @Autowired
-    AlarmJpaRepository alarmJpaRepository;
-    @Autowired
-    DummyCreater dummyCreater;
-    @Autowired
-    RepositoryDeleter deleter;
+class AlarmJpaRepositoryTest extends IntegrationTestSupport {
 
     @AfterEach
     void init() {

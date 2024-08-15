@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.auth.service;
 
+import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.global.repository.RedisRepository;
 import com.prography.yakgwa.global.util.HeaderUtil;
@@ -28,22 +29,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ActiveProfiles("test")
-@SpringBootTest
-class AuthServiceTest {
-    @Autowired
-    DummyCreater dummyCreater;
-    @Autowired
-    RepositoryDeleter deleter;
-
-    @InjectMocks
-    private AuthService authService;
-
-    @Mock
-    private TokenProvider tokenProvider;
-
-    @Mock
-    private RedisRepository redisRepository;
+class AuthServiceTest extends IntegrationTestSupport {
 
     @AfterEach
     void init() {

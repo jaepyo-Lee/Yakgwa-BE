@@ -21,7 +21,7 @@ import com.prography.yakgwa.global.format.exception.slot.NotFoundTimeSlotExcepti
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
 import com.prography.yakgwa.global.format.exception.vote.NotValidConfirmTimeException;
-import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
+import com.prography.yakgwa.global.format.exception.vote.NotValidMeetVoteDateException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +56,7 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
         }
         for (LocalDateTime enableTime : requestDto.getEnableTimes()) {
             if (isWithinVotePeriodFrom(meet, enableTime)) {
-                throw new NotValidVoteTimeException();
+                throw new NotValidMeetVoteDateException();
             }
         }
         User user = userJpaRepository.findById(userId).orElseThrow(NotFoundUserException::new);

@@ -1,22 +1,14 @@
 package com.prography.yakgwa.domain.meet.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prography.yakgwa.domain.common.ControllerUnitTestEnvironment;
 import com.prography.yakgwa.domain.meet.controller.req.CreateMeetRequest;
 import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.meet.service.MeetCreateService;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -27,16 +19,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-class MeetCreateControllerTest {
-    @Autowired
-    private MockMvc mvc;
-    @MockBean
-    private MeetCreateService meetCreateService;
-    @Autowired
-    ObjectMapper objectMapper;
+class MeetCreateControllerTest extends ControllerUnitTestEnvironment {
+
 
 
     @WithCustomMockUser

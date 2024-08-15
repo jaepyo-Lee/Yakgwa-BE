@@ -2,19 +2,25 @@ package com.prography.yakgwa.domain.vote.controller.res;
 
 import com.prography.yakgwa.domain.place.entity.Place;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class NewPlaceSlotResponse {
     @Schema(description = "추가한 장소에 대한 정보")
     private PlaceSlotInMeet placeInfoDto;
 
     @Getter
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     @Schema(name = "NewPlaceSlotResponse-PlaceSlotInMeet")
-    private static class PlaceSlotInMeet {
+    public static class PlaceSlotInMeet {
         @Schema(description = "장소명")
         private String title;
         @Schema(description = "장소 주소")

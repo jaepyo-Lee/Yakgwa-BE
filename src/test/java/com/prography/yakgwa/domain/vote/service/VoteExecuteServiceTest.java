@@ -1,24 +1,17 @@
 package com.prography.yakgwa.domain.vote.service;
 
 import com.prography.yakgwa.domain.common.IntegrationTestSupport;
-import com.prography.yakgwa.testHelper.DummyCreater;
-import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
-import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
-import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
+import com.prography.yakgwa.global.format.exception.vote.NotValidMeetVoteDateException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -173,7 +166,7 @@ class TimeSlotExecuteServiceTest extends IntegrationTestSupport {
         // when
         // then
         System.out.println("=====Logic Start=====");
-        assertThrows(NotValidVoteTimeException.class, () -> voteExecuter.vote(saveUser.getId(), saveMeet.getId(), request));
+        assertThrows(NotValidMeetVoteDateException.class, () -> voteExecuter.vote(saveUser.getId(), saveMeet.getId(), request));
     }
 
 

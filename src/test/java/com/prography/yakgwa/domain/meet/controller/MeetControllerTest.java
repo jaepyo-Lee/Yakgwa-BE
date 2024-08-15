@@ -2,6 +2,7 @@ package com.prography.yakgwa.domain.meet.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prography.yakgwa.domain.common.ControllerUnitTestEnvironment;
 import com.prography.yakgwa.domain.meet.controller.res.MeetInfoWithParticipantResponse;
 import com.prography.yakgwa.domain.meet.controller.res.MeetWithStatusInfoResponse;
 import com.prography.yakgwa.domain.meet.controller.res.PostConfirmMeetInfoResponse;
@@ -42,29 +43,12 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-class MeetControllerTest {
-    @Autowired
-    private MockMvc mvc;
-    @MockBean
-    private MeetService meetService;
-    @Autowired
-    ObjectMapper objectMapper;
-    @Autowired
-    WebApplicationContext wac;
-    @Autowired
-    DummyCreater dummyCreater;
-    @Autowired
-    RepositoryDeleter deleter;
-
+class MeetControllerTest extends ControllerUnitTestEnvironment {
     @AfterEach
     void init() {
         deleter.deleteAll();
     }
 
-    @WithCustomMockUser
     @Test
     void 모임세부정보조회컨트롤러() throws Exception {
         // given
@@ -110,7 +94,6 @@ class MeetControllerTest {
      * return new SuccessResponse<>(MeetWithStatusInfoResponse.of(meetWithVoteAndStatuses));
      * }
      */
-    @WithCustomMockUser
     @Test
     void 현재참여중인모임조회컨트롤러() throws Exception {
         // given
@@ -155,7 +138,6 @@ class MeetControllerTest {
         assertThat(result).usingRecursiveComparison().isEqualTo(compareResult);
     }
 
-    @WithCustomMockUser
     @Test
     void 확정또는이미지난모임들조회컨트롤러테스트() throws Exception {
         // given
