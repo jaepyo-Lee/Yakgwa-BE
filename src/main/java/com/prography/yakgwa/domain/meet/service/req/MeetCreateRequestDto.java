@@ -35,17 +35,6 @@ public class MeetCreateRequestDto {
     @Schema(example = "2024-07-13T14:00")
     private LocalDateTime meetTime;
 
-    public ConfirmPlaceDto toConfirmPlaceDto(){
-        return ConfirmPlaceDto.builder()
-                .confirmPlace(confirmPlace)
-                .placeInfo(placeInfo)
-                .build();
-    }
-    public ConfirmTimeDto toConfirmTimeDto(){
-        return ConfirmTimeDto.builder()
-                .meetTime(meetTime)
-                .build();
-    }
     public MeetWriteDto toMeetWriteDto(){
         VotePeriod votePeriod = null;
         if (voteDateDto != null) {

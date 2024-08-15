@@ -25,14 +25,15 @@ public class Alarm extends BaseTimeEntity {
     private Long id;
 
     @Builder.Default
-    private boolean send=false;
+    private boolean send = false;
 
     @Enumerated(STRING)
     private AlarmType alarmType;
     @ManyToOne
     @JoinColumn(name = "meet_id")
     private Meet meet;
-    public void send(){
-        this.send=true;
+
+    public void send() {
+        this.send = true;
     }
 }

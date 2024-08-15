@@ -4,7 +4,6 @@ import com.prography.yakgwa.global.format.exception.ApplicationRunException;
 import com.prography.yakgwa.global.format.exception.ErrorEnumCode;
 
 import static com.prography.yakgwa.global.format.exception.vote.errorCode.VoteErrorCode.NOT_VALID_CONFIRM_TIME_EXCEPTION;
-import static com.prography.yakgwa.global.format.exception.vote.errorCode.VoteErrorCode.NOT_VALID_VOTE_TIME_EXCEPTION;
 
 
 public class NotValidConfirmTimeException extends ApplicationRunException {

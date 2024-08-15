@@ -18,8 +18,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Object processValidationError(MethodArgumentNotValidException e) {
-        log.error(e.getMessage());
+    public ResponseEntity<ErrorResponse> processValidationError(MethodArgumentNotValidException e) {
         return ResponseEntity.badRequest().body(ErrorResponse.of(e));
     }
 

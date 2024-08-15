@@ -19,9 +19,7 @@ import com.prography.yakgwa.global.format.exception.participant.NotFoundParticip
 import com.prography.yakgwa.global.format.exception.slot.NotFoundPlaceSlotException;
 import com.prography.yakgwa.global.format.exception.slot.NotMatchSlotInMeetException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
-import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
-import com.prography.yakgwa.global.format.exception.vote.NotValidConfirmTimeException;
-import com.prography.yakgwa.global.format.exception.vote.NotValidVotePlaceException;
+import com.prography.yakgwa.global.format.exception.vote.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +42,10 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
 
     @Override
     public List<PlaceVote> vote(Long userId, Long meetId, Set<Long> placeSlotIds) {
+        Meet meet = meetJpaRepository.findById(meetId).orElseThrow(NotFoundMeetException::new);
+        if (meet.isVoteTimeEnd()) {
+            throw new NotValidVoteTimeException();
+        }
         if (placeSlotJpaRepository.isConfirmFrom(meetId)) {
             throw new AlreadyPlaceConfirmException();
         }
@@ -51,10 +53,17 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
             throw new NotFoundParticipantException();
         }
         List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meetId);
-        boolean isContainSlot = placeSlots.stream().allMatch(placeSlot -> placeSlotIds.contains(placeSlot.getId()));
-        if (!isContainSlot) {
-            throw new NotValidVotePlaceException();
+
+//        boolean isContainSlot = placeSlots.stream().allMatch(placeSlot -> placeSlotIds.contains(placeSlot.getId()));
+        for(Long choosePlaceSlotId:placeSlotIds){
+            List<Long> list = placeSlots.stream().map(PlaceSlot::getId).toList();
+            if(!list.contains(choosePlaceSlotId)){
+                throw new NotValidVotePlaceException();
+            }
         }
+        /*if (!isContainSlot) {
+            throw new NotValidVotePlaceException();
+        }*/
         User user = userJpaRepository.findById(userId).orElseThrow(NotFoundUserException::new);
         placeVoteJpaRepository.deleteAllByUserIdAndMeetId(user, meetId);
         List<PlaceSlot> choosePlaceSlot = placeSlotJpaRepository.findAllById(placeSlotIds);

@@ -29,6 +29,7 @@ import com.prography.yakgwa.domain.vote.service.VoteExecuter;
 import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.impl.VoteCounter;
 import com.prography.yakgwa.domain.vote.service.place.PlaceSlotService;
+import com.prography.yakgwa.domain.vote.service.place.PlaceVoteExecuteService;
 import com.prography.yakgwa.domain.vote.service.place.res.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
 import com.prography.yakgwa.domain.vote.service.time.res.TimeInfosByMeetStatus;
@@ -131,4 +132,6 @@ public class IntegrationTestSupport {
     protected RedisRepository redisRepository;
     @Autowired
     protected AlarmJpaRepository alarmJpaRepository;
+    @Autowired
+    protected PlaceVoteExecuteService placeVoteExecuteService;
 }

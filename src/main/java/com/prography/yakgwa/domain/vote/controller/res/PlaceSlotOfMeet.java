@@ -4,13 +4,17 @@ import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Builder
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlaceSlotOfMeet {
     @Schema(description = "장소 후보지 id")
     private Long placeSlotId;
@@ -23,8 +27,10 @@ public class PlaceSlotOfMeet {
 
     @Builder
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Schema(name = "PlaceSlotOfMeet-UserInfo")
-    private static class UserInfo {
+    public static class UserInfo {
         @Schema(description = "사용자이름")
         private String username;
         @Schema(description = "사용자 이미지")
