@@ -53,7 +53,7 @@ class SearchServiceTest {
         when(userJpaRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(naverClient.searchNaverAPIClient(anyString())).thenReturn(build);
         when(redisRepository.isUserGoodPlace(any(), any(), any(), any())).thenReturn(true);
-        doNothing().when(placeWriter).writeNotExist(any());
+        doNothing().when(placeWriter).writeIfNotExist(any());
 
         // when
         String searchString = "testSearch";

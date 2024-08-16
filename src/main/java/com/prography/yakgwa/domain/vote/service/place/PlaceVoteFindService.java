@@ -72,10 +72,6 @@ public class PlaceVoteFindService implements VoteFinder<PlaceInfosByMeetStatus> 
 
         if (confirmChecker.isConfirm(meet)) { //장소확정되었을때
             List<PlaceSlot> placeSlots = placeSlotJpaRepository.findConfirmByMeetId(meetId);
-            if (isCorrectConfirmPlaceSlotSize(placeSlots)) {
-                log.info("{}번 모임의 장소투표 데이터확인", meetId);
-                throw new DataIntegrateException();
-            }
             return PlaceInfosByMeetStatus.of(VoteStatus.CONFIRM, placeSlots);
         } else {
             if (isOverVotePeriodFrom(meet)) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
@@ -107,9 +103,5 @@ public class PlaceVoteFindService implements VoteFinder<PlaceInfosByMeetStatus> 
 
     private static boolean isOverVotePeriodFrom(Meet meet) {
         return meet.getVoteTime().isBefore(LocalDateTime.now());
-    }
-
-    private static boolean isCorrectConfirmPlaceSlotSize(List<PlaceSlot> placeSlots) {
-        return placeSlots.size() > 1;
     }
 }

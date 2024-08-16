@@ -1,4 +1,4 @@
-package com.prography.yakgwa.domain.vote.service;
+package com.prography.yakgwa.domain.vote.service.time;
 
 import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.meet.entity.Meet;
@@ -21,7 +21,7 @@ import java.util.Set;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class TimeSlotExecuteServiceTest extends IntegrationTestSupport {
+class TimeVoteExecuteServiceTest extends IntegrationTestSupport {
 
     @AfterEach
     void init() {
@@ -168,6 +168,5 @@ class TimeSlotExecuteServiceTest extends IntegrationTestSupport {
         System.out.println("=====Logic Start=====");
         assertThrows(NotValidMeetVoteDateException.class, () -> voteExecuter.vote(saveUser.getId(), saveMeet.getId(), request));
     }
-
 
 }

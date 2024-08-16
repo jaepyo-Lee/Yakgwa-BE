@@ -41,6 +41,12 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
     private final TimeVoteJpaRepository timeVoteJpaRepository;
     private final MeetConfirmChecker confirmChecker;
 
+    /**
+     * Todo
+     * Work) 동시성체크해야할듯
+     * Write-Date)
+     * Finish-Date)
+     */
     @Override
     public List<TimeVote> vote(Long userId, Long meetId, EnableTimeRequestDto requestDto) {
         if (isNotExistParticipant(userId, meetId)) {
@@ -92,6 +98,12 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
     /**
      * Todo
      * Work) 확정가능시간에대한 테스트코드
+     * Write-Date)
+     * Finish-Date)
+     */
+    /**
+     * Todo
+     * Work) 동시성체크해야할듯
      * Write-Date)
      * Finish-Date)
      */

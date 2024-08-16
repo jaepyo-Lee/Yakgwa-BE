@@ -17,6 +17,7 @@ import com.prography.yakgwa.domain.meet.service.MeetThemeService;
 import com.prography.yakgwa.domain.participant.impl.ParticipantWriter;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
 import com.prography.yakgwa.domain.participant.service.ParticipantService;
+import com.prography.yakgwa.domain.place.impl.PlaceWriter;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.user.service.UserService;
@@ -25,6 +26,8 @@ import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
+import com.prography.yakgwa.domain.vote.service.PlaceConfirm;
+import com.prography.yakgwa.domain.vote.service.TimeConfirm;
 import com.prography.yakgwa.domain.vote.service.VoteExecuter;
 import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.impl.VoteCounter;
@@ -37,6 +40,7 @@ import com.prography.yakgwa.global.repository.RedisRepository;
 import com.prography.yakgwa.global.util.jwt.TokenProvider;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -134,4 +138,10 @@ public class IntegrationTestSupport {
     protected AlarmJpaRepository alarmJpaRepository;
     @Autowired
     protected PlaceVoteExecuteService placeVoteExecuteService;
+    @Autowired
+    protected PlaceWriter placeWriter;
+    @Autowired
+    protected PlaceConfirm placeConfirm;
+    @Autowired
+    protected TimeConfirm timeConfirm;
 }

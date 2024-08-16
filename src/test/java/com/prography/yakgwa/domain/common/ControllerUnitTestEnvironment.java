@@ -6,7 +6,9 @@ import com.prography.yakgwa.domain.meet.service.MeetService;
 import com.prography.yakgwa.domain.meet.service.MeetThemeService;
 import com.prography.yakgwa.domain.participant.service.ParticipantService;
 import com.prography.yakgwa.domain.user.service.UserService;
+import com.prography.yakgwa.domain.vote.service.VoteExecuter;
 import com.prography.yakgwa.domain.vote.service.place.PlaceSlotService;
+import com.prography.yakgwa.domain.vote.service.place.PlaceVoteExecuteService;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
@@ -42,4 +44,6 @@ public class ControllerUnitTestEnvironment {
     protected UserService userService;
     @MockBean
     protected PlaceSlotService placeSlotService;
+    @MockBean
+    protected PlaceVoteExecuteService placeVoteExecuteService;
 }
