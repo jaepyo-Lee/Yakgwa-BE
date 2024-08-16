@@ -15,5 +15,4 @@ public class VotePlaceRequest {
     @Schema(description = "투표한 장소값 리스트")
     @NotNull(message = "투표하기위한 장소를 보내주세요.")
     private Set<Long> currentVotePlaceSlotIds;
-
 }

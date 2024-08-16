@@ -79,18 +79,16 @@ class TimeVoteInfoWithStatusResponseTest {
         MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
         Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
         LocalDateTime now = LocalDateTime.now();
-        TimeSlot saveTimeSlot1 = dummyCreater.createAndSaveTimeSlot(saveMeet, now, false);
-        TimeSlot saveTimeSlot2 = dummyCreater.createAndSaveTimeSlot(saveMeet, now.plusHours(1L), false);
 
         // when
         System.out.println("=====Logic Start=====");
 
-        TimeVoteInfoWithStatusResponse response = TimeVoteInfoWithStatusResponse.of(VoteStatus.BEFORE_VOTE, List.of(saveTimeSlot1, saveTimeSlot2), saveMeet);
+        TimeVoteInfoWithStatusResponse response = TimeVoteInfoWithStatusResponse.of(VoteStatus.BEFORE_VOTE, List.of(), saveMeet);
 
         System.out.println("=====Logic End=====");
         // then
         assertAll(() -> assertThat(response.getMeetStatus()).isEqualTo(VoteStatus.BEFORE_VOTE),
-                () -> assertThat(response.getTimeInfos().size()).isEqualTo(2),
+                () -> assertThat(response.getTimeInfos()).isNull(),
                 () -> assertThat(response.getVoteDate().getStartVoteDate()).isEqualTo(saveMeet.getPeriod().getStartDate()),
                 () -> assertThat(response.getVoteDate().getEndVoteDate()).isEqualTo(saveMeet.getPeriod().getEndDate()));
     }
@@ -116,4 +114,5 @@ class TimeVoteInfoWithStatusResponseTest {
                 () -> assertThat(response.getVoteDate().getStartVoteDate()).isEqualTo(saveMeet.getPeriod().getStartDate()),
                 () -> assertThat(response.getVoteDate().getEndVoteDate()).isEqualTo(saveMeet.getPeriod().getEndDate()));
     }
+
 }

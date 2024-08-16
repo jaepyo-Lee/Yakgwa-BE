@@ -29,7 +29,7 @@ public class PlaceVoteInfoWithStatusResponse {
     @Getter
     @Builder
     @Schema(name = "PlaceVoteInfoWithStatusResponse-VotePlaceInfo")
-    private static class VotePlaceInfo {
+    public static class VotePlaceInfo {
         private Long placeSlotId;
         private String title;
         private String roadAddress;

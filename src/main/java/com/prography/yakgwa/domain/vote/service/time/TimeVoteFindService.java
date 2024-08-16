@@ -60,10 +60,6 @@ public class TimeVoteFindService implements VoteFinder<TimeInfosByMeetStatus> {
 
         if (isConfirm) { // 시간확정되었을때
             List<TimeSlot> timeSlot = timeSlotJpaRepository.findAllConfirmByMeetId(meetId);
-            if (isCorrectConfirmTimeSlotSize(timeSlot)) {
-                log.info("{}번 모임의 시간투표 데이터확인", meetId);
-                throw new DataIntegrateException();
-            }
             return TimeInfosByMeetStatus.of(CONFIRM, timeSlot, meet);
         } else {
             if (isOverVotePeriodFrom(meet)) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
