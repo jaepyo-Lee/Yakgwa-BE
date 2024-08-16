@@ -51,6 +51,7 @@ public class TaskScheduleManager {
         if (type.equals(END_VOTE)) { // 확정 안되었을 때
             Runnable runnable = () -> {
                 Meet callMeet = meetJpaRepository.findById(meet.getId()).orElseThrow(NotFoundMeetException::new);
+
                 placeConfirm.confirmMaxOf(callMeet);
                 timeConfirm.confirmMaxOf(callMeet);
                 if (meetConfirmChecker.isMeetConfirm(callMeet)) {

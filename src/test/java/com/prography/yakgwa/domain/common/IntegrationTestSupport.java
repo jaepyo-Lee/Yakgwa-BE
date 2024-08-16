@@ -26,6 +26,7 @@ import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
+import com.prography.yakgwa.domain.vote.service.PlaceConfirm;
 import com.prography.yakgwa.domain.vote.service.VoteExecuter;
 import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.impl.VoteCounter;
@@ -138,4 +139,6 @@ public class IntegrationTestSupport {
     protected PlaceVoteExecuteService placeVoteExecuteService;
     @Autowired
     protected PlaceWriter placeWriter;
+    @Autowired
+    protected PlaceConfirm placeConfirm;
 }
