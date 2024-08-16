@@ -33,15 +33,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class PlaceSlotControllerTest extends ControllerUnitTestEnvironment {
 
-    @GetMapping("/meets/{meetId}/placeslots")
-    public SuccessResponse<AllPlaceSlotOfMeetResponse> findPlaceSlotFrom(@PathVariable("meetId") Long meetId) {
-        List<PlaceSlotWithUserResponse> slotInMeet = placeSlotService.findPlaceSlotFrom(meetId);
-        List<PlaceSlotOfMeet> placeSlotOfMeets = slotInMeet.stream()
-                .map(placeSlotWithUserResponse -> PlaceSlotOfMeet.of(placeSlotWithUserResponse.getPlaceSlot(), placeSlotWithUserResponse.getUsers()))
-                .toList();
-        return new SuccessResponse<>(AllPlaceSlotOfMeetResponse.of(placeSlotOfMeets));
-    }
-
     @Test
     void 모임의후보장소조회() throws Exception {
         // given

@@ -1,26 +1,14 @@
 package com.prography.yakgwa.domain.meet.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prography.yakgwa.domain.common.ControllerUnitTestEnvironment;
 import com.prography.yakgwa.domain.meet.controller.res.MeetThemeResponse;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
-import com.prography.yakgwa.domain.meet.service.MeetThemeService;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
-import com.prography.yakgwa.testHelper.DummyCreater;
-import com.prography.yakgwa.testHelper.RepositoryDeleter;
-import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
@@ -30,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 
 class MeetThemeControllerTest extends ControllerUnitTestEnvironment {
 
+    @Test
     void 테마조회컨트롤러테스트() throws Exception {
         // given
         MeetTheme theme = MeetTheme.builder().name("데이트").id(1L).build();
