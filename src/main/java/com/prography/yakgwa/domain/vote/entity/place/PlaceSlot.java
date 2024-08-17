@@ -32,10 +32,7 @@ public class PlaceSlot extends BaseTimeEntity {
     @JoinColumn(name = "place_id")
     private Place place;
     public boolean isSamePlace(String title, String mapx, String mapy) {
-        boolean titleCompareTo = isTitleCompareTo(title);
-        boolean xCompareTo = isXCompareTo(mapx);
-        boolean yCompareTo = isYCompareTo(mapy);
-        return titleCompareTo && xCompareTo && yCompareTo;
+        return isTitleCompareTo(title) && isXCompareTo(mapx) && isYCompareTo(mapy);
     }
 
     private boolean isYCompareTo(String mapy) {

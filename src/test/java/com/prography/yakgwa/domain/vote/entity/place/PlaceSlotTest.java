@@ -52,4 +52,28 @@ class PlaceSlotTest {
         // then
         assertThat(samePlace).isTrue();
     }
+
+    @Test
+    void id값이같으면같은객체() {
+        // given
+        PlaceSlot placeSlot = PlaceSlot.builder().id(1L).build();
+        PlaceSlot compare = PlaceSlot.builder().id(1L).build();
+
+        // when
+        System.out.println("=====Logic Start=====");
+        System.out.println("=====Logic End=====");
+        // then
+        assertThat(placeSlot.equals(compare)).isTrue();
+    }
+    @Test
+    void 같은참조객체라면같은객체() {
+        // given
+        PlaceSlot placeSlot = PlaceSlot.builder().id(1L).build();
+
+        // when
+        System.out.println("=====Logic Start=====");
+        System.out.println("=====Logic End=====");
+        // then
+        assertThat(placeSlot.equals(placeSlot)).isTrue();
+    }
 }
