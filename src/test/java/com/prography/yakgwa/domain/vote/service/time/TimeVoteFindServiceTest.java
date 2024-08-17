@@ -27,7 +27,7 @@ class TimeVoteFindServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    void 약과원_투표안했는데모임시간확정되었을때_조회() {
+    void 투표안했는데모임시간확정되었을때_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
         Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 24);
@@ -50,7 +50,7 @@ class TimeVoteFindServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    void 약과원_투표했는데모임시간확정되었을때_조회() {
+    void 투표했는데모임시간확정되었을때_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
         Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 24);
@@ -75,7 +75,29 @@ class TimeVoteFindServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    void 약과원_모임시간이지나지않았을때_확정안되었을때_투표안했을떄_조회() {
+    void 투표끝남_확정안되었을때() {
+        // given
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, -25);
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        Participant saveParticipant = dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.PARTICIPANT);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), false);
+        dummyCreater.createAndSaveTimeVote(saveTimeSlot, saveUser);
+        TimeSlot saveTimeSlot2 = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), false);
+        dummyCreater.createAndSaveTimeVote(saveTimeSlot2, saveUser);
+        // when
+        System.out.println("=====Logic Start=====");
+
+        TimeInfosByMeetStatus timeInfoWithMeetStatus = timeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertAll(() -> assertThat(timeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.BEFORE_CONFIRM),
+                () -> assertThat(timeInfoWithMeetStatus.getTimeSlots().size()).isEqualTo(2));
+    }
+
+    @Test
+    void 투표안끝남_투표안했을떄_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
         Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 24);
@@ -97,7 +119,7 @@ class TimeVoteFindServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    void 약과원_모임시간이지나지않았을때_확정안되었을때_투표했을떄_조회() {
+    void 투표안끝남_투표했을떄_조회() {
         // given
         MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
         Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 24);
@@ -121,5 +143,6 @@ class TimeVoteFindServiceTest extends IntegrationTestSupport {
         assertAll(() -> assertThat(timeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.VOTE),
                 () -> assertThat(timeInfoWithMeetStatus.getTimeSlots().size()).isEqualTo(2));
     }
+
 
 }

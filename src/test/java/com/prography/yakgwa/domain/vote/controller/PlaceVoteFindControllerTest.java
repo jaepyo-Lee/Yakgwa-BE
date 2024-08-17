@@ -6,7 +6,6 @@ import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.vote.controller.res.PlaceVoteInfoWithStatusResponse;
-import com.prography.yakgwa.domain.vote.controller.res.TimeVoteInfoWithStatusResponse;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.service.place.res.PlaceInfosByMeetStatus;

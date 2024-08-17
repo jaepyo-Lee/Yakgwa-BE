@@ -37,7 +37,46 @@ class AuthServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    void 회원탈퇴() {
+    void 회원가입() {
+        // given
+
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+
+        System.out.println("=====Logic End=====");
+        // then
+    }
+
+    @Test
+    void() {
+        // given
+
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+
+        System.out.println("=====Logic End=====");
+        // then
+    }
+
+    @Test
+    void 토큰재발급() {
+        // given
+
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+
+        System.out.println("=====Logic End=====");
+        // then
+    }
+
+    @Test
+    void 로그아웃() {
         String accessToken = "Bearer validAccessToken";
         String parsedToken = "validAccessToken";
 
