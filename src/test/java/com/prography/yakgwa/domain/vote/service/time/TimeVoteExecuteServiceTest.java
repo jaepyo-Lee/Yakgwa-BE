@@ -9,6 +9,9 @@ import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import com.prography.yakgwa.domain.vote.entity.time.TimeVote;
 import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
+import com.prography.yakgwa.global.format.exception.slot.NotFoundTimeSlotException;
+import com.prography.yakgwa.global.format.exception.vote.AlreadyTimeConfirmVoteException;
+import com.prography.yakgwa.global.format.exception.vote.NotValidConfirmTimeException;
 import com.prography.yakgwa.global.format.exception.vote.NotValidMeetVoteDateException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +22,8 @@ import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class TimeVoteExecuteServiceTest extends IntegrationTestSupport {
 
@@ -51,7 +55,7 @@ class TimeVoteExecuteServiceTest extends IntegrationTestSupport {
         // when
         System.out.println("=====Logic Start=====");
 
-        List<TimeVote> timeVotes = voteExecuter.vote(saveUser.getId(), saveMeet.getId(), request);
+        List<TimeVote> timeVotes = timeVoteExecuter.vote(saveUser.getId(), saveMeet.getId(), request);
 
         System.out.println("=====Logic End=====");
         // then
@@ -85,7 +89,7 @@ class TimeVoteExecuteServiceTest extends IntegrationTestSupport {
         // when
         System.out.println("=====Logic Start=====");
 
-        List<TimeVote> timeVotes = voteExecuter.vote(saveUser.getId(), saveMeet.getId(), request);
+        List<TimeVote> timeVotes = timeVoteExecuter.vote(saveUser.getId(), saveMeet.getId(), request);
 
         System.out.println("=====Logic End=====");
         // then
@@ -115,7 +119,7 @@ class TimeVoteExecuteServiceTest extends IntegrationTestSupport {
         // when
         System.out.println("=====Logic Start=====");
 
-        List<TimeVote> timeVotes = voteExecuter.vote(saveUser.getId(), saveMeet.getId(), request);
+        List<TimeVote> timeVotes = timeVoteExecuter.vote(saveUser.getId(), saveMeet.getId(), request);
 
         System.out.println("=====Logic End=====");
         // then
@@ -144,7 +148,7 @@ class TimeVoteExecuteServiceTest extends IntegrationTestSupport {
         // when
         // then
         System.out.println("=====Logic Start=====");
-        assertThrows(NotFoundParticipantException.class, () -> voteExecuter.vote(saveUser.getId(), saveMeet.getId(), request));
+        assertThrows(NotFoundParticipantException.class, () -> timeVoteExecuter.vote(saveUser.getId(), saveMeet.getId(), request));
     }
 
     @Test
@@ -166,7 +170,95 @@ class TimeVoteExecuteServiceTest extends IntegrationTestSupport {
         // when
         // then
         System.out.println("=====Logic Start=====");
-        assertThrows(NotValidMeetVoteDateException.class, () -> voteExecuter.vote(saveUser.getId(), saveMeet.getId(), request));
+        assertThrows(NotValidMeetVoteDateException.class, () -> timeVoteExecuter.vote(saveUser.getId(), saveMeet.getId(), request));
     }
 
+
+    /*==========confirm=============*/
+
+
+    @Test
+    void 확정짓기() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), false);
+
+        // when
+        System.out.println("=====Logic Start=====");
+        timeVoteExecuter.confirm(saveMeet.getId(), saveUser.getId(), saveTimeSlot.getId());
+        System.out.println("=====Logic End=====");
+
+        // then
+        assertThat(saveTimeSlot.isConfirm()).isTrue();
+    }
+
+    @Test
+    void 확정가능시간이지나서확정안될때_예외() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, -50);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), false);
+
+        // when
+        System.out.println("=====Logic Start=====");
+        assertThrows(NotValidConfirmTimeException.class,()->timeVoteExecuter.confirm(saveMeet.getId(), saveUser.getId(), saveTimeSlot.getId()));
+        System.out.println("=====Logic End=====");
+
+        // then
+    }
+
+    @Test
+    void 이미확정되어서확정안될떄_예외() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), true);
+
+        // when
+        System.out.println("=====Logic Start=====");
+        assertThrows(AlreadyTimeConfirmVoteException.class,()->timeVoteExecuter.confirm(saveMeet.getId(), saveUser.getId(), saveTimeSlot.getId()));
+        System.out.println("=====Logic End=====");
+
+        // then
+    }
+
+    @Test
+    void 참가중인아닌사람이확정할떄() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), false);
+
+        // when
+        System.out.println("=====Logic Start=====");
+        assertThrows(NotFoundParticipantException.class,()->timeVoteExecuter.confirm(saveMeet.getId(), saveUser.getId(), saveTimeSlot.getId()));
+        System.out.println("=====Logic End=====");
+
+        // then
+    }
+
+    @Test
+    void 없는후보지일때() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+        TimeSlot saveTimeSlot = dummyCreater.createAndSaveTimeSlot(saveMeet, LocalDateTime.now(), false);
+
+        // when
+        System.out.println("=====Logic Start=====");
+        assertThrows(NotFoundTimeSlotException.class,()->timeVoteExecuter.confirm(saveMeet.getId(), saveUser.getId(), saveTimeSlot.getId()+1));
+        System.out.println("=====Logic End=====");
+
+        // then
+    }
 }

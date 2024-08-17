@@ -40,7 +40,6 @@ import com.prography.yakgwa.global.repository.RedisRepository;
 import com.prography.yakgwa.global.util.jwt.TokenProvider;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
-import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -76,7 +75,7 @@ public class IntegrationTestSupport {
     protected ImageJpaRepository imageJpaRepository;
     @Autowired
     @Qualifier("timeVoteExecuteService")
-    protected VoteExecuter<TimeVote, EnableTimeRequestDto> voteExecuter;
+    protected VoteExecuter<TimeVote, EnableTimeRequestDto> timeVoteExecuter;
     @Autowired
     protected TimeSlotJpaRepository timeSlotJpaRepository;
     @Autowired

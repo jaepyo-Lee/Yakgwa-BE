@@ -25,6 +25,73 @@ class PlaceVoteFindServiceTest extends IntegrationTestSupport {
         deleter.deleteAll();
     }
 
+    // 시간과 장소는 나뉘어져있기 때문에 나눠서 생각하면됌
+    // 1. 확정되었을때 Confirm
+    // 2. 투표는끝났지만 확정이 안되었을떄 Before_Confirm
+    // 3. 마감전 투표를 아직 안했을때
+    // 4. 마감전 투표를 했을때
+    @Test
+    void 약과원_모임장소확정되었을때_조회() {
+        // given
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 24);
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        Participant saveParticipant = dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.PARTICIPANT);
+
+        Place place = dummyCreater.createAndSavePlace(1);
+        PlaceSlot savePlaceSlot = dummyCreater.createAndSavePlaceSlot(place, saveMeet, true);
+
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+
+        assertAll(() -> assertThat(placeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.CONFIRM),
+                () -> assertThat(placeInfoWithMeetStatus.getPlaces().size()).isEqualTo(1));
+
+    }
+
+
+    @Test
+    void 약과원_모임장소확정안되었을때_투표시간지났을때_최다득표가없을때_조회() {
+        // given
+        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, -1);
+        User saveUser1 = dummyCreater.createAndSaveUser(1);
+        User saveUser2 = dummyCreater.createAndSaveUser(1);
+        Participant saveParticipant1 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser1, MeetRole.LEADER);
+        Participant saveParticipant2 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser2, MeetRole.PARTICIPANT);
+
+        Place place1 = dummyCreater.createAndSavePlace(1);
+        Place place2 = dummyCreater.createAndSavePlace(2);
+        Place place3 = dummyCreater.createAndSavePlace(3);
+        PlaceSlot savePlaceSlot1 = dummyCreater.createAndSavePlaceSlot(place1, saveMeet, false);
+        PlaceSlot savePlaceSlot2 = dummyCreater.createAndSavePlaceSlot(place2, saveMeet, false);
+        PlaceSlot savePlaceSlot3 = dummyCreater.createAndSavePlaceSlot(place3, saveMeet, false);
+
+        dummyCreater.createAndSavePlaceVote(saveUser1, savePlaceSlot1);
+        dummyCreater.createAndSavePlaceVote(saveUser1, savePlaceSlot2);
+        dummyCreater.createAndSavePlaceVote(saveUser1, savePlaceSlot3);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser2.getId(), saveMeet.getId());
+
+        System.out.println("=====Logic End=====");
+        // then
+
+        assertAll(() -> assertThat(placeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.BEFORE_CONFIRM),
+                () -> assertThat(placeInfoWithMeetStatus.getPlaces().size()).isEqualTo(3));
+
+    }
+
+
+
     @Test
     void 약과원_모임장소확정되지않았을때_투표안했을때_조회() {
         // given
@@ -74,39 +141,6 @@ class PlaceVoteFindServiceTest extends IntegrationTestSupport {
 
     }
 
-    @Test
-    void 약과원_모임장소확정안되었을때_투표시간지났을때_최다득표가없을때_조회() {
-        // given
-        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
-        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, -1);
-        User saveUser1 = dummyCreater.createAndSaveUser(1);
-        User saveUser2 = dummyCreater.createAndSaveUser(1);
-        Participant saveParticipant1 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser1, MeetRole.LEADER);
-        Participant saveParticipant2 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser2, MeetRole.PARTICIPANT);
-
-        Place place1 = dummyCreater.createAndSavePlace(1);
-        Place place2 = dummyCreater.createAndSavePlace(2);
-        Place place3 = dummyCreater.createAndSavePlace(3);
-        PlaceSlot savePlaceSlot1 = dummyCreater.createAndSavePlaceSlot(place1, saveMeet, false);
-        PlaceSlot savePlaceSlot2 = dummyCreater.createAndSavePlaceSlot(place2, saveMeet, false);
-        PlaceSlot savePlaceSlot3 = dummyCreater.createAndSavePlaceSlot(place3, saveMeet, false);
-
-        dummyCreater.createAndSavePlaceVote(saveUser1, savePlaceSlot1);
-        dummyCreater.createAndSavePlaceVote(saveUser1, savePlaceSlot2);
-        dummyCreater.createAndSavePlaceVote(saveUser1, savePlaceSlot3);
-
-        // when
-        System.out.println("=====Logic Start=====");
-
-        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser2.getId(), saveMeet.getId());
-
-        System.out.println("=====Logic End=====");
-        // then
-
-        assertAll(() -> assertThat(placeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.BEFORE_CONFIRM),
-                () -> assertThat(placeInfoWithMeetStatus.getPlaces().size()).isEqualTo(3));
-
-    }
 
     @Test
     void 약과장_모임장소확정안되었을때_투표시간지났을때_최다득표가있을때_조회() {
@@ -181,28 +215,5 @@ class PlaceVoteFindServiceTest extends IntegrationTestSupport {
 
     }
 
-    @Test
-    void 약과원_모임장소확정되었을때_조회() {
-        // given
-        MeetTheme theme = meetThemeJpaRepository.save(MeetTheme.builder().name("theme").build());
-        Meet saveMeet = dummyCreater.createAndSaveMeet(1, theme, 24);
-        User saveUser = dummyCreater.createAndSaveUser(1);
-        Participant saveParticipant = dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.PARTICIPANT);
 
-        Place place = dummyCreater.createAndSavePlace(1);
-        PlaceSlot savePlaceSlot = dummyCreater.createAndSavePlaceSlot(place, saveMeet, true);
-
-
-        // when
-        System.out.println("=====Logic Start=====");
-
-        PlaceInfosByMeetStatus placeInfoWithMeetStatus = placeVoteFinder.findVoteInfoWithStatusOf(saveUser.getId(), saveMeet.getId());
-
-        System.out.println("=====Logic End=====");
-        // then
-
-        assertAll(() -> assertThat(placeInfoWithMeetStatus.getVoteStatus()).isEqualTo(VoteStatus.CONFIRM),
-                () -> assertThat(placeInfoWithMeetStatus.getPlaces().size()).isEqualTo(1));
-
-    }
 }
