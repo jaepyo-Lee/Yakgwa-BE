@@ -42,7 +42,7 @@ public class PlaceVoteController implements PlaceVoteApi {
     public SuccessResponse<String> confirmPlaceInMeet(@AuthenticationPrincipal CustomUserDetail user,
                                                       @PathVariable("meetId") Long meetId,
                                                       @RequestBody @Valid ConfirmPlaceVoteInMeetRequest request) throws JsonProcessingException {
-        executer.confirm(user.getUserId(), meetId, request.getConfirmPlaceSlotId());
+        executer.confirm(meetId, user.getUserId(), request.getConfirmPlaceSlotId());
         return SuccessResponse.ok("장소가 확정되었습니다");
     }
 }
