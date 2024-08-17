@@ -113,7 +113,7 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
         if (isTimeConfirmedFrom(meetId)) {
             throw new AlreadyTimeConfirmVoteException();
         }
-        if (meet.getConfirmTime().isBefore(LocalDateTime.now())) {
+        if (meet.isConfirmTimeEnd()) {
             throw new NotValidConfirmTimeException();
         }
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
