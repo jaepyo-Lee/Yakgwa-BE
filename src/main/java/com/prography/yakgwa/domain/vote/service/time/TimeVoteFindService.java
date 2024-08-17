@@ -15,7 +15,6 @@ import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.impl.VoteCounter;
 import com.prography.yakgwa.domain.vote.service.time.res.TimeInfosByMeetStatus;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
-import com.prography.yakgwa.global.format.exception.param.DataIntegrateException;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -62,10 +61,9 @@ public class TimeVoteFindService implements VoteFinder<TimeInfosByMeetStatus> {
             List<TimeSlot> timeSlot = timeSlotJpaRepository.findAllConfirmByMeetId(meetId);
             return TimeInfosByMeetStatus.of(CONFIRM, timeSlot, meet);
         } else {
-            if (isOverVotePeriodFrom(meet)) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
+            if (meet.isVoteTimeEnd()) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
                 List<TimeVote> allInMeet = timeVoteJpaRepository.findAllByMeetId(meet.getId());
                 List<TimeSlot> collect = voteCounter.findMaxVoteTimeSlotFrom(meet);
-
                 return TimeInfosByMeetStatus.of(BEFORE_CONFIRM, collect, meet);
             } else {
                 List<TimeVote> timeVoteOfUserInMeet = timeVoteJpaRepository.findAllByTimeSlotOfUser(userId, meet.getId());
@@ -86,17 +84,8 @@ public class TimeVoteFindService implements VoteFinder<TimeInfosByMeetStatus> {
         return !timeVoteOfUserInMeet.isEmpty();
     }
 
-    private static boolean isCorrectConfirmTimeSlotSize(List<TimeSlot> timeSlot) {
-        return timeSlot.size() > 1;
-    }
-
     private Meet findMeetById(Long meetId) {
         return meetJpaRepository.findById(meetId)
                 .orElseThrow(NotFoundMeetException::new);
-    }
-
-
-    private static boolean isOverVotePeriodFrom(Meet meet) {
-        return meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now());
     }
 }

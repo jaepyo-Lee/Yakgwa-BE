@@ -5,8 +5,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -18,6 +20,8 @@ import java.util.List;
         "meetStatus : BEFORE_VOTE , placeInfo : 아무값 안나감")
 @Getter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PlaceVoteInfoWithStatusResponse {
     @Schema(description = "투표 상태")
@@ -26,6 +30,8 @@ public class PlaceVoteInfoWithStatusResponse {
     private List<VotePlaceInfo> placeInfos;
 
 
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Getter
     @Builder
     @Schema(name = "PlaceVoteInfoWithStatusResponse-VotePlaceInfo")

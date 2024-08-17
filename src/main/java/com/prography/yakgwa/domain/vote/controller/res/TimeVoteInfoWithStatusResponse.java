@@ -8,8 +8,10 @@ import com.prography.yakgwa.domain.meet.service.dto.VoteDateDto;
 import com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus;
 import com.prography.yakgwa.domain.vote.entity.time.TimeSlot;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TimeVoteInfoWithStatusResponse {
     @Schema(description = "투표 상태")
     private VoteStatus meetStatus;
@@ -32,6 +36,8 @@ public class TimeVoteInfoWithStatusResponse {
 
     @Getter
     @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     @Schema(name = "TimeVoteInfoWithStatusResponse-VoteTimeInfo")
     private static class VoteTimeInfo {
         private Long timeId;

@@ -2,8 +2,6 @@ package com.prography.yakgwa.domain.vote.service.place;
 
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.impl.ConfirmChecker;
-import com.prography.yakgwa.domain.meet.impl.MeetConfirmChecker;
-import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
 import com.prography.yakgwa.domain.meet.impl.PlaceConfirmChecker;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
@@ -17,9 +15,7 @@ import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.impl.VoteCounter;
 import com.prography.yakgwa.domain.vote.service.place.res.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
-import com.prography.yakgwa.global.format.exception.param.DataIntegrateException;
 import com.prography.yakgwa.global.format.exception.participant.NotFoundParticipantException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,7 +37,7 @@ public class PlaceVoteFindService implements VoteFinder<PlaceInfosByMeetStatus> 
     private final VoteCounter voteCounter;
     private final PlaceSlotJpaRepository placeSlotJpaRepository;
     private final ParticipantJpaRepository participantJpaRepository;
-    private final ConfirmChecker confirmChecker;
+    private final ConfirmChecker SlotConfirmChecker;
 
     @Autowired
     public PlaceVoteFindService(MeetJpaRepository meetJpaRepository,
@@ -55,7 +51,7 @@ public class PlaceVoteFindService implements VoteFinder<PlaceInfosByMeetStatus> 
         this.voteCounter = voteCounter;
         this.placeSlotJpaRepository = placeSlotJpaRepository;
         this.participantJpaRepository = participantJpaRepository;
-        this.confirmChecker = confirmChecker;
+        this.SlotConfirmChecker = confirmChecker;
     }
 
     /**
@@ -70,7 +66,7 @@ public class PlaceVoteFindService implements VoteFinder<PlaceInfosByMeetStatus> 
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)
                 .orElseThrow(NotFoundParticipantException::new);
 
-        if (confirmChecker.isConfirm(meet)) { //장소확정되었을때
+        if (SlotConfirmChecker.isConfirm(meet)) { //장소확정되었을때
             List<PlaceSlot> placeSlots = placeSlotJpaRepository.findConfirmByMeetId(meetId);
             return PlaceInfosByMeetStatus.of(VoteStatus.CONFIRM, placeSlots);
         } else {

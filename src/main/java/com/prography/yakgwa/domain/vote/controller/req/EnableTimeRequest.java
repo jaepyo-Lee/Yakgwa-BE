@@ -27,7 +27,7 @@ public class EnableTimeRequest {
     @Schema(description = "가능한 시간<br>" +
             "범위가 아닌 각 시간을 리스트로 보내주세요!")
     @NotNull(message = "참여가능한 시간을 보내주세요.")
-    private List<EnableTImeVote> enableTImes;
+    private List<EnableTImeVote> enableTimes;
 
     @Builder
     @NoArgsConstructor
@@ -41,12 +41,12 @@ public class EnableTimeRequest {
     }
 
     public EnableTimeRequestDto toRequestDto() {
-        Set<LocalDateTime> enableTimes = this.enableTImes.stream().map(EnableTImeVote::getEnableTime).collect(Collectors.toSet());
+        Set<LocalDateTime> enableTimes = this.enableTimes.stream().map(EnableTImeVote::getEnableTime).collect(Collectors.toSet());
         return EnableTimeRequestDto.builder().enableTimes(enableTimes).build();
     }
 
     public static EnableTimeRequest of(List<LocalDateTime> times) {
-        return EnableTimeRequest.builder().enableTImes(times.stream()
+        return EnableTimeRequest.builder().enableTimes(times.stream()
                         .map(time -> EnableTImeVote.builder().enableTime(time).build())
                         .collect(toList()))
                 .build();

@@ -21,6 +21,9 @@ import com.prography.yakgwa.global.format.exception.slot.NotMatchSlotInMeetExcep
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import com.prography.yakgwa.global.format.exception.vote.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,7 @@ import java.util.Set;
 @Transactional
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long>> {
     private final MeetJpaRepository meetJpaRepository;
     private final PlaceSlotJpaRepository placeSlotJpaRepository;
@@ -102,7 +106,8 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
         if (placeSlotJpaRepository.isConfirmFrom(meetId)) {
             throw new AlreadyPlaceConfirmException();
         }
-        if (meet.getConfirmTime().isBefore(LocalDateTime.now())) {
+        if (meet.isConfirmTimeEnd()) {
+            log.info("meetId:{},userId:{},placeSlotId:{} 확정가능시간지남", meetId, userId, placeSlotId);
             throw new NotValidConfirmTimeException();
         }
         Participant participant = participantJpaRepository.findByUserIdAndMeetId(userId, meetId)

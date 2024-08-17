@@ -7,8 +7,13 @@ import com.prography.yakgwa.domain.meet.service.MeetThemeService;
 import com.prography.yakgwa.domain.participant.service.ParticipantService;
 import com.prography.yakgwa.domain.user.service.UserService;
 import com.prography.yakgwa.domain.vote.service.VoteExecuter;
+import com.prography.yakgwa.domain.vote.service.VoteFinder;
 import com.prography.yakgwa.domain.vote.service.place.PlaceSlotService;
 import com.prography.yakgwa.domain.vote.service.place.PlaceVoteExecuteService;
+import com.prography.yakgwa.domain.vote.service.place.PlaceVoteFindService;
+import com.prography.yakgwa.domain.vote.service.time.TimeVoteExecuteService;
+import com.prography.yakgwa.domain.vote.service.time.TimeVoteFindService;
+import com.prography.yakgwa.domain.vote.service.time.res.TimeInfosByMeetStatus;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
@@ -46,4 +51,10 @@ public class ControllerUnitTestEnvironment {
     protected PlaceSlotService placeSlotService;
     @MockBean
     protected PlaceVoteExecuteService placeVoteExecuteService;
+    @MockBean
+    protected TimeVoteExecuteService timeVoteExecuteService;
+    @MockBean
+    protected PlaceVoteFindService placeVoteFindService;
+    @MockBean
+    protected TimeVoteFindService timeVoteFindService;
 }
