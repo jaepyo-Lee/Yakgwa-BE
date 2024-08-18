@@ -54,9 +54,9 @@ public class RedisRepository {
     }
 
 
-    public void refreshSave(String authId, String refreshToken, Duration duration) {
+    public void refreshSave(String refreshRegisterIdId, String refreshToken, Duration duration) {
         ValueOperations valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(authId, refreshToken, duration);
+        valueOperations.set(refreshRegisterIdId, refreshToken, duration);
     }
 
     public String getRefreshToken(String authId) {

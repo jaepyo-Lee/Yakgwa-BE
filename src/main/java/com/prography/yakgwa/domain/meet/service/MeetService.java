@@ -110,7 +110,7 @@ public class MeetService {
     private boolean isAlreadyPassMeet(MeetWithVoteAndStatus meetWithVoteAndStatus) {
         LocalDateTime now = LocalDateTime.now();
         return (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.CONFIRM) && meetWithVoteAndStatus.getTimeSlot().getTime().plusHours(3L).isBefore(now)) ||
-                (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meetWithVoteAndStatus.getMeet().getConfirmTime().isBefore(now));
+                (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meetWithVoteAndStatus.getMeet().isConfirmTimeEnd());
     }
 
     private TimeSlot getConfirmTimeSlot(Meet meet) {

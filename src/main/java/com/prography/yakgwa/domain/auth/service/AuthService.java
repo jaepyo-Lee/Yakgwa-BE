@@ -5,11 +5,11 @@ import com.prography.yakgwa.domain.auth.service.response.KakaoUserResponseDto;
 import com.prography.yakgwa.domain.auth.service.response.LoginResponseDto;
 import com.prography.yakgwa.domain.auth.service.response.ReissueTokenSetResponseDto;
 import com.prography.yakgwa.domain.user.entity.SignoutUser;
-import com.prography.yakgwa.domain.user.entity.AuthType;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.SignoutUserJpaRepository;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.client.auth.KakaoClient;
+import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.exception.auth.NotSupportLoginTypeException;
 import com.prography.yakgwa.global.format.exception.auth.jwt.InvalidRefreshTokenException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
@@ -19,10 +19,13 @@ import com.prography.yakgwa.global.util.jwt.TokenProvider;
 import com.prography.yakgwa.global.util.jwt.TokenSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.time.Duration;
 import java.util.Date;
 import java.util.Objects;
@@ -33,6 +36,7 @@ import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
 @RequiredArgsConstructor
 @Service
 public class AuthService {
+    public static final String REFRESH_ID = "REFRESHID:";
     private final KakaoClient kakaoClient;
     private final UserJpaRepository userJpaRepository;
     private final TokenProvider tokenProvider;
@@ -61,7 +65,7 @@ public class AuthService {
 
     private void registerRefreshToken(User user, TokenSet tokenSet) {
         Duration duration = getExpireDuration(tokenSet);
-        redisRepository.refreshSave(user.getAuthId(), tokenSet.getRefreshToken(), duration);
+        redisRepository.refreshSave(REFRESH_ID + user.getId(), tokenSet.getRefreshToken(), duration);
     }
 
     private Duration getExpireDuration(TokenSet tokenSet) {
@@ -89,15 +93,15 @@ public class AuthService {
     public ReissueTokenSetResponseDto reissue(String refreshToken) {
         String parseToken = HeaderUtil.parseBearer(refreshToken);
 
-        String authId = (String) tokenProvider.convertAuthToken(parseToken).getTokenClaims().get("authId");
-        String loginType = (String) tokenProvider.convertAuthToken(parseToken).getTokenClaims().get("loginType");
+        String userId = String.valueOf(tokenProvider.convertAuthToken(parseToken).getTokenClaims().get("userId"));
+        String loginType = String.valueOf(tokenProvider.convertAuthToken(parseToken).getTokenClaims().get("loginType"));
 
-        verifyAndRemoveOriginRefreshToken(refreshToken, authId);
+        verifyAndRemoveOriginRefreshToken(parseToken, userId);
 
-        User findUserByAuthId = userJpaRepository.findByAuthIdAndAuthType(authId, AuthType.valueOf(loginType))
+        User findUser = userJpaRepository.findById(Long.valueOf(userId))
                 .orElseThrow(NotFoundUserException::new);
 
-        TokenSet tokenSet = tokenProvider.createTokenSet(findUserByAuthId.getAuthId(), findUserByAuthId.getName(), loginType);
+        TokenSet tokenSet = tokenProvider.createTokenSet(String.valueOf(findUser.getId()), findUser.getName(), loginType);
 
         return ReissueTokenSetResponseDto.builder()
                 .reissueAccessToken(tokenSet.getAccessToken())
@@ -105,13 +109,13 @@ public class AuthService {
                 .build();
     }
 
-    private void verifyAndRemoveOriginRefreshToken(String refreshToken, String authId) {
-        String redisRT = redisRepository.getRefreshToken(authId);
+    private void verifyAndRemoveOriginRefreshToken(String refreshToken, String userId) {
+        String redisRT = redisRepository.getRefreshToken(REFRESH_ID + userId);
 
         if (Objects.isNull(redisRT) || !redisRT.equals(refreshToken) || refreshToken.equals("logout")) {
             throw new InvalidRefreshTokenException();
         }
-        redisRepository.removeRefreshToken(authId);
+        redisRepository.removeRefreshToken(REFRESH_ID + userId);
     }
 
     public void logout(String accessToken) {
@@ -127,15 +131,18 @@ public class AuthService {
     }
 
     private void removeRefreshTokenForBlockingReissue() {
-        String authId = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (redisRepository.getRefreshToken(authId) != null) {
-            redisRepository.removeRefreshToken(authId);
+        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail details = (CustomUserDetail)authentication.getPrincipal();
+        Long userId = details.getUserId();
+        if (redisRepository.getRefreshToken(REFRESH_ID + userId) != null) {
+            redisRepository.removeRefreshToken(REFRESH_ID + userId);
         }
     }
 
     @Transactional
     public void signout(Long userId, String accessToken) {
-        User user = userJpaRepository.findById(userId).orElseThrow(NotFoundUserException::new);
+        User user = userJpaRepository.findById(userId)
+                .orElseThrow(NotFoundUserException::new);
 
         SignoutUser signoutUser = SignoutUser.builder()
                 .name(user.getName()).authType(KAKAO).imageUrl(user.getImageUrl()).authId(user.getAuthId()).userId(user.getId()).modifiedDate(user.getModifiedDate()).createdDate(user.getCreatedDate())

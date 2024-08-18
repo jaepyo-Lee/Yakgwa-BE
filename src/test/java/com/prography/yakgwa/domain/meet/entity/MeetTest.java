@@ -42,20 +42,6 @@ class MeetTest extends IntegrationTestSupport {
     }
 
     @Test
-    void 확정안되었을때투표가능시간조회() {
-        // given
-        Meet meet = Meet.builder().validInviteHour(24).build();
-        Meet saveMeet = meetJpaRepository.save(meet);
-        // when
-        System.out.println("=====Logic Start=====");
-
-
-        System.out.println("=====Logic End=====");
-        // then
-        assertThat(saveMeet.getConfirmTime()).isEqualTo(saveMeet.getCreatedDate().plusHours(24).plusHours(24));
-    }
-
-    @Test
     void 투표가능시간이안지났울떄() {
         // given
         Meet meet = Meet.builder().validInviteHour(24).build();

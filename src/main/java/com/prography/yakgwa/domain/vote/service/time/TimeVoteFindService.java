@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.prography.yakgwa.domain.vote.entity.enumerate.VoteStatus.*;
@@ -62,7 +61,6 @@ public class TimeVoteFindService implements VoteFinder<TimeInfosByMeetStatus> {
             return TimeInfosByMeetStatus.of(CONFIRM, timeSlot, meet);
         } else {
             if (meet.isVoteTimeEnd()) { //시간은 지났지만 확정은 안됌 BEFROE_CONFIRM
-                List<TimeVote> allInMeet = timeVoteJpaRepository.findAllByMeetId(meet.getId());
                 List<TimeSlot> collect = voteCounter.findMaxVoteTimeSlotFrom(meet);
                 return TimeInfosByMeetStatus.of(BEFORE_CONFIRM, collect, meet);
             } else {

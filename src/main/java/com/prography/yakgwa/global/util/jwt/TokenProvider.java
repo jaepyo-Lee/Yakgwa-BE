@@ -30,16 +30,13 @@ public class TokenProvider {
     @Value("${app.auth.refreshExpired}")
     private long REFRESH_TOKEN_VALIDATiON_SECOND = ACCESS_TOKEN_VALIDATiON_SECOND;
     private Key key;
-    private final RedisRepository redisRepository;
 
     @Autowired
-    public TokenProvider(@Value("${app.auth.secret}") String secret,
-                         RedisRepository redisRepository) {
+    public TokenProvider(@Value("${app.auth.secret}") String secret) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
-        this.redisRepository = redisRepository;
     }
 
-    public TokenSet createTokenSet(String userId, String username, String loginType) {
+    public TokenSet createTokenSet(String  userId, String username, String loginType) {
         String accessJwt = createJwt(userId, username, ACCESS_TOKEN_VALIDATiON_SECOND, loginType);
         String refreshJwt = createJwt(userId, username, REFRESH_TOKEN_VALIDATiON_SECOND, loginType);
         return TokenSet.ofBearer(accessJwt, refreshJwt);

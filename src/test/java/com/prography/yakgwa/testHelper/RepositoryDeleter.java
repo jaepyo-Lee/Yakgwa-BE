@@ -1,8 +1,6 @@
 package com.prography.yakgwa.testHelper;
 
 import com.prography.yakgwa.domain.common.alarm.repository.AlarmJpaRepository;
-import com.prography.yakgwa.domain.magazine.repository.ImageJpaRepository;
-import com.prography.yakgwa.domain.magazine.repository.MagazineJpaRepository;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
@@ -41,16 +39,10 @@ public class RepositoryDeleter {
     @Autowired
     PlaceJpaRepository placeJpaRepository;
     @Autowired
-    MagazineJpaRepository magazineJpaRepository;
-    @Autowired
-    ImageJpaRepository imageJpaRepository;
-    @Autowired
     SignoutUserJpaRepository signoutUserJpaRepository;
     public void deleteAll() {
         alarmJpaRepository.deleteAll();
         signoutUserJpaRepository.deleteAll();
-        imageJpaRepository.deleteAll();
-        magazineJpaRepository.deleteAll();
         placeVoteJpaRepository.deleteAll();
         placeSlotJpaRepository.deleteAll();
         placeJpaRepository.deleteAll();

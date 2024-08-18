@@ -4,9 +4,6 @@ import com.prography.yakgwa.domain.auth.service.AuthService;
 import com.prography.yakgwa.domain.common.alarm.repository.AlarmJpaRepository;
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
 import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
-import com.prography.yakgwa.domain.magazine.repository.ImageJpaRepository;
-import com.prography.yakgwa.domain.magazine.repository.MagazineJpaRepository;
-import com.prography.yakgwa.domain.magazine.service.MagazineService;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
 import com.prography.yakgwa.domain.meet.impl.MeetWriter;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
@@ -67,12 +64,6 @@ public class IntegrationTestSupport {
     protected UserJpaRepository userJpaRepository;
     @Autowired
     protected PlaceJpaRepository placeJpaRepository;
-    @Autowired
-    protected MagazineService magazineService;
-    @Autowired
-    protected MagazineJpaRepository magazineJpaRepository;
-    @Autowired
-    protected ImageJpaRepository imageJpaRepository;
     @Autowired
     @Qualifier("timeVoteExecuteService")
     protected VoteExecuter<TimeVote, EnableTimeRequestDto> timeVoteExecuter;
