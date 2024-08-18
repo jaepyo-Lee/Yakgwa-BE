@@ -42,7 +42,7 @@ class UserTest {
 
         System.out.println("=====Logic End=====");
         // then
-        assertAll(()-> assertThat(user.getName()).isNull(),
+        assertAll(()-> assertThat(user.getAuthId()).isNull(),
                 ()-> assertThat(user.getImageUrl()).isEqualTo(baseImage));
     }
 }

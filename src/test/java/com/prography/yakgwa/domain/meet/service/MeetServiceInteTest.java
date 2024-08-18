@@ -60,10 +60,13 @@ class MeetServiceInteTest extends IntegrationTestSupport {
         Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
         User saveUser1 = dummyCreater.createAndSaveUser(1);
         User saveUser2 = dummyCreater.createAndSaveUser(2);
-        String baseImage = "baseImage";
-        saveUser2.signout(baseImage);
         Participant saveParticipant1 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser1, MeetRole.LEADER);
         Participant saveParticipant2 = dummyCreater.createAndSaveParticipant(saveMeet, saveUser2, MeetRole.PARTICIPANT);
+
+        String baseImage = "baseImage";
+        saveUser2.signout(baseImage);
+
+
 
         // when
         System.out.println("=====Logic Start=====");
@@ -73,7 +76,7 @@ class MeetServiceInteTest extends IntegrationTestSupport {
         System.out.println("=====Logic End=====");
         // then
         assertAll(() -> assertThat(meetInfoWithParticipant.getMeet().getId()).isEqualTo(saveMeet.getId()),
-                () -> assertThat(meetInfoWithParticipant.getParticipants()).hasSize(2).extracting(participant -> participant.getUser().getName())
+                () -> assertThat(meetInfoWithParticipant.getParticipants()).hasSize(2).extracting(participant -> participant.getUser().getAuthId())
                         .containsNull());
     }
 

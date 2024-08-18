@@ -34,7 +34,6 @@ public class User extends BaseTimeEntity {
     public void signout(String baseImage){
         this.authType = null;
         this.authId = null;
-        this.name = null;
         this.isNew = null;
         this.imageUrl = baseImage;
         this.fcmToken = null;
