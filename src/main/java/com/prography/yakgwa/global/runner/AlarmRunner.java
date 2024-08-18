@@ -25,8 +25,7 @@ public class AlarmRunner implements ApplicationRunner {
         log.info("AlarmRunner: 알람등록진행");
         all.stream()
                 .filter(alarm -> !alarm.isSend())
-                .forEach(alarm ->
-                        alarmScheduler.registerAlarm(alarm.getMeet(), alarm.getAlarmType()));
+                .forEach(alarm -> alarmScheduler.regist(alarm.getMeet(), alarm.getAlarmType()));
         log.info("AlarmRunner: 알람등록완료");
     }
 }

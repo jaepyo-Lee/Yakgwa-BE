@@ -19,7 +19,6 @@ import java.util.concurrent.ScheduledFuture;
 public class ScheduleRegister {
     private final TaskScheduler taskScheduler;
     private final ConcurrentHashMap<String, ScheduledFuture<?>> scheduleMap = new ConcurrentHashMap<>();
-//    private final ConcurrentHashMap<ScheduledFuture<?>, Runnable> taskMap = new ConcurrentHashMap<>();
     public static final String MEET_ALARM_FORMAT = "MeetAlarm_%s: %d";
 
     public void scheduleTask(Meet meet, AlarmType type, Runnable task, LocalDateTime time) {

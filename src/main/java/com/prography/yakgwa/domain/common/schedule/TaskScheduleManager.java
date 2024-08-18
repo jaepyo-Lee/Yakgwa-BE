@@ -26,6 +26,7 @@ import static java.time.LocalDateTime.now;
 @Slf4j
 @RequiredArgsConstructor
 @ImplService
+@Transactional
 public class TaskScheduleManager {
     private final ScheduleRegister taskSchedulerManager;
     private final TimeSlotJpaRepository timeSlotJpaRepository;
@@ -45,11 +46,34 @@ public class TaskScheduleManager {
      * 모임확정생성시 약속당일에 알림보내기
      * 모임미확정생성시 24시간뒤 확정여부 계산과 확정되었다면 약속당일알람, 확정안되었다면  아무것도 없음
      */
-    @Transactional
+
     public void registerAlarm(Meet meet, AlarmType type) {
         log.info("알람 등록 중: {}", meet.getId());
+        boolean isSend = regist(meet, type);
+        alarmJpaRepository.save(Alarm.builder()
+                .alarmType(type)
+                .send(isSend)
+                .meet(meet)
+                .build());
+    }
+
+    public boolean regist(Meet meet, AlarmType type) {
         if (type.equals(END_VOTE)) { // 확정 안되었을 때
-            Runnable runnable = () -> {
+            Runnable runnable = getRunnable(meet, type);
+            taskSchedulerManager.scheduleTask(meet, type, runnable, meet.getVoteTime());
+            return false;
+        }
+        Runnable runnable = getRunnable(meet, type);
+        TimeSlot timeSlot = getConfirmedTimeSlot(meet).get();
+        LocalDateTime time = timeSlot.getTime();
+        taskSchedulerManager.scheduleTask(meet, type, runnable, time);
+        return time.isBefore(now());
+    }
+
+    private Runnable getRunnable(Meet meet, AlarmType type) {
+        Runnable runnable = null;
+        if (type.equals(END_VOTE)) { // 확정 안되었을 때
+            runnable = () -> {
                 Meet callMeet = meetJpaRepository.findById(meet.getId()).orElseThrow(NotFoundMeetException::new);
 
                 placeConfirm.confirmMaxOf(callMeet);
@@ -59,24 +83,10 @@ public class TaskScheduleManager {
                 }
                 alarmProcessor.process(meet.getId(), type); // 알람을 보내는 메서드
             };
-            taskSchedulerManager.scheduleTask(meet, type,runnable, meet.getVoteTime());
-            alarmJpaRepository.save(Alarm.builder()
-                    .alarmType(END_VOTE)
-                    .send(false)
-                    .meet(meet)
-                    .build());
+        } else if (type.equals(PROMISE_DAY)) {
+            runnable = () -> alarmProcessor.process(meet.getId(), type);
         }
-        if (type.equals(PROMISE_DAY)) { // 확정되었을 때
-            Runnable runnable = () -> alarmProcessor.process(meet.getId(), type);
-            Optional<TimeSlot> confirmedTimeSlot = getConfirmedTimeSlot(meet);
-            confirmedTimeSlot.ifPresent(timeSlot -> {
-                LocalDateTime time = timeSlot.getTime();
-                taskSchedulerManager.scheduleTask(meet, type, runnable, time);
-                alarmJpaRepository.save(Alarm.builder()
-                        .alarmType(PROMISE_DAY).meet(meet).send(time.isBefore(now()))
-                        .build());
-            });
-        }
+        return runnable;
     }
 
     private Optional<TimeSlot> getConfirmedTimeSlot(Meet meet) {
@@ -84,10 +94,4 @@ public class TaskScheduleManager {
                 .filter(TimeSlot::getConfirm)
                 .findFirst();
     }
-
-    /*@Transactional
-    public void changeAlarm(Meet meet, LocalDateTime newTime) {
-        log.info("알람 시간 변경 요청: {}", meet.getId());
-        taskSchedulerManager.changeAlarm(meet, newTime);
-    }*/
 }
