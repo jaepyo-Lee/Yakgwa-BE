@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -75,8 +76,15 @@ class MeetServiceInteTest extends IntegrationTestSupport {
 
         System.out.println("=====Logic End=====");
         // then
+        List<Participant> participants = meetInfoWithParticipant.getParticipants();
         assertAll(() -> assertThat(meetInfoWithParticipant.getMeet().getId()).isEqualTo(saveMeet.getId()),
-                () -> assertThat(meetInfoWithParticipant.getParticipants()).hasSize(2).extracting(participant -> participant.getUser().getAuthId())
+                () -> assertThat(participants).hasSize(2).extracting(participant -> participant.getUser().getAuthId())
+                        .containsNull(),
+        () -> assertThat(participants).hasSize(2).extracting(participant -> participant.getUser().getName())
+                .contains(saveUser2.getName()),
+                () -> assertThat(participants).hasSize(2).extracting(participant -> participant.getUser().getFcmToken())
+                        .containsNull(),
+                () -> assertThat(participants).hasSize(2).extracting(participant -> participant.getUser().getAuthType())
                         .containsNull());
     }
 

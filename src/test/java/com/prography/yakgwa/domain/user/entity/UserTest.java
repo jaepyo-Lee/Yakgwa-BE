@@ -43,6 +43,10 @@ class UserTest {
         System.out.println("=====Logic End=====");
         // then
         assertAll(()-> assertThat(user.getAuthId()).isNull(),
-                ()-> assertThat(user.getImageUrl()).isEqualTo(baseImage));
+                ()-> assertThat(user.getFcmToken()).isNull(),
+                ()-> assertThat(user.getName()).isEqualTo(user.getName()),
+                ()-> assertThat(user.getAuthType()).isNull(),
+                ()-> assertThat(user.getImageUrl()).isEqualTo(baseImage)
+                );
     }
 }
