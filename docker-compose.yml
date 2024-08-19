@@ -4,6 +4,8 @@ networks:
     driver: bridge
   nginx-connection:
     driver: bridge
+  ssh-connection:
+    driver: bridge
 services:
   redis:
     container_name: redis
@@ -36,9 +38,26 @@ services:
     image: nginx
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./data/nginx.conf:/etc/nginx/nginx.conf
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
     depends_on: # 빌드 시작 순서를 정해주는 옵션
       - spring
+      - certbot
     networks:
       - nginx-connection
+      - ssh-connection
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot:arm32v6-latest
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    networks:
+      - ssh-connection
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
