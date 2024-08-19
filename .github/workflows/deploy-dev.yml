@@ -46,8 +46,8 @@ jobs:
         run: |
           docker build -f Dockerfile.dev -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }} .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
-          docker build -f Dockerfile.nginx -t nginx/yakgwa .
-          docker push nginx/yakgwa
+          docker build -f Dockerfile.nginx -t ${{ secrets.DOCKER_USERNAME }}/yakgwa-nginx:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/yakgwa-nginx:latest
 
       - name: Deploy to dev
         uses: appleboy/ssh-action@master
@@ -71,7 +71,7 @@ jobs:
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
             sudo docker pull redis
-            sudo docker pull yakgwa/nginx
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/yakgwa-nginx:latest
             docker-compose -f docker-compose.yaml --env-file ./.env up -d
             docker image prune -f
 
