@@ -72,7 +72,7 @@ jobs:
             sudo docker rm -f $(docker ps -qa)
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}
             sudo docker pull redis
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/yakgwa-nginx:latest
+            sudo docker pull nginx
             docker-compose -f docker-compose.yaml --env-file ./.env up -d
             docker image prune -f
 
