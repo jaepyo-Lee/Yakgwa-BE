@@ -64,6 +64,12 @@ jobs:
             sudo touch .env
             echo "${{ secrets.ENV_VARS }}" | sudo tee .env > /dev/null
             
+            sudo touch default.conf
+            echo "${{ secrets.NGINX_DEFAULT }}" | sudo tee default.conf > /dev/null
+            
+            sudo touch nginx.conf
+            echo "${{ secrets.NGINX_NGINX }}" | sudo tee nginx.conf > /dev/null
+            
             sudo touch docker-compose.yaml
             echo "${{ secrets.DOCKER_COMPOSE }}" | sudo tee docker-compose.yaml > /dev/null
             

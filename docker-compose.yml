@@ -32,9 +32,12 @@ services:
       - TZ=Asia/Seoul
   nginx:
     container_name: nginx
-    image: jaepyo99/yakgwa-nginx
+    image: nginx
     ports:
       - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./default.conf:/etc/nginx/conf.d/default.conf
     depends_on: # 빌드 시작 순서를 정해주는 옵션
       - server
     networks:
