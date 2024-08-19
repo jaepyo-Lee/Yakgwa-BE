@@ -15,7 +15,7 @@ public class FcmMessageConverter {
     @Value("${user.base.image}")
     private String imageUrl;
 
-    public String makeMessage(String targetToken, String title, String body) throws JsonParseException, JsonProcessingException {
+    public String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
         FcmMessage fcmMessage = FcmMessage.builder()
                 .message(FcmMessage.Message.builder()
                         .token(targetToken)

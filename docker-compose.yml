@@ -2,6 +2,8 @@ version: '3'
 networks:
   redis-connection:
     driver: bridge
+  nginx-connection:
+    driver: bridge
 services:
   redis:
     container_name: redis
@@ -13,8 +15,9 @@ services:
     restart: always
     networks:
       - redis-connection
-  web:
-    container_name: web
+      - nginx-connection
+  server:
+    container_name: server
     image: jaepyo99/yakgwa
     env_file: # 이부분 추가 바랍니다
       - .env
@@ -27,3 +30,12 @@ services:
     tty: true
     environment:
       - TZ=Asia/Seoul
+  nginx:
+    container_name: nginx
+    image: nginx/yakgwa
+    ports:
+      - 80:80
+    depends_on: # 빌드 시작 순서를 정해주는 옵션
+      - web
+    networks:
+      - nginx-connection
