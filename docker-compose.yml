@@ -17,7 +17,7 @@ services:
       - redis-connection
       - nginx-connection
   server:
-    container_name: server
+    container_name: yakgwa-dev
     image: jaepyo99/yakgwa
     env_file: # 이부분 추가 바랍니다
       - .env
@@ -32,10 +32,10 @@ services:
       - TZ=Asia/Seoul
   nginx:
     container_name: nginx
-    image: nginx/yakgwa
+    image: jaepyo99/yakgwa-nginx
     ports:
       - 80:80
     depends_on: # 빌드 시작 순서를 정해주는 옵션
-      - web
+      - server
     networks:
       - nginx-connection
