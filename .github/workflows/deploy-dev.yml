@@ -22,6 +22,18 @@ jobs:
           java-version: '17'
           distribution: 'adopt'
 
+
+      # Gradle 캐싱
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
       - name: make firebase key
         run: |
           mkdir -p ./src/main/resources/firebase
