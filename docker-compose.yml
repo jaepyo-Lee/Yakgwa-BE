@@ -37,7 +37,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx.conf:/etc/nginx/nginx.conf
     depends_on: # 빌드 시작 순서를 정해주는 옵션
       - spring
     networks:
