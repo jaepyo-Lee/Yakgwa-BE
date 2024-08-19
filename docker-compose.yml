@@ -16,9 +16,8 @@ services:
     networks:
       - redis-connection
       - nginx-connection
-  server:
+  spring:
     container_name: yakgwa-dev
-    hostname: yakgwa-dev
     image: jaepyo99/yakgwa
     env_file: # 이부분 추가 바랍니다
       - .env
