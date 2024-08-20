@@ -59,8 +59,8 @@ jobs:
         uses: appleboy/scp-action@master
         with:
           username: ubuntu
-          host: ${{ secrets.EC2_HOST }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          host: ${{ secrets.AWS_HOST }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: 22
           source: |
             ./deploy.sh
