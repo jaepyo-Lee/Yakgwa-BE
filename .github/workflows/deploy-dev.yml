@@ -46,8 +46,8 @@ jobs:
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: 22
           source: |
-            ./deploy.sh
-            ./docker-compose.yaml
+            deploy.sh
+            docker-compose.yaml
           target: "/home/ubuntu/"
 
       - name: make firebase key
