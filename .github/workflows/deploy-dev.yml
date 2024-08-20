@@ -77,9 +77,6 @@ jobs:
           
           docker build -f Dockerfile.blue -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }} .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue
-          
-#          docker build -f Dockerfile.nginx -t ${{ secrets.DOCKER_USERNAME }}/yakgwa-nginx:latest .
-#          docker push ${{ secrets.DOCKER_USERNAME }}/yakgwa-nginx:latest
 
       - name: Deploy to dev
         uses: appleboy/ssh-action@master
@@ -88,30 +85,19 @@ jobs:
           username: ${{ secrets.AWS_USERNAME }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           script: |
-#            sudo docker rm -f redis
-#            sudo docker rm -f yakgwa-dev
-            
-#            sudo touch docker-compose.yaml
-#            echo "${{ secrets.DOCKER_COMPOSE }}" | sudo tee docker-compose.yaml > /dev/null
-
             cd /home/ubuntu/
             
             sudo touch .env
             echo "${{ secrets.ENV_VARS }}" | sudo tee .env > /dev/null
                     
             sudo chmod 666 /var/run/docker.sock
-
-#            sudo docker rm -f $(docker ps -qa)
-            
+  
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:green
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue
-#            sudo docker pull redis
-#            sudo docker pull nginx
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}-blue
             
             chmod 777 ./deploy.sh
             ./deploy.sh
             
-#            docker-compose -f docker-compose.yaml --env-file ./.env up -d
             docker image prune -f
 
   current-time:
