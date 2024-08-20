@@ -31,7 +31,8 @@ public class SecurityConfig {
             "/swagger-resources/**",
             "/v3/api-docs/**",
             "/h2-console/**",
-            "/actuator/**"
+            "/actuator/**",
+            "/health-check"
     };
 
     @Bean
@@ -67,8 +68,7 @@ public class SecurityConfig {
                                 .requestMatchers(new MvcRequestMatcher[]{
                                         new MvcRequestMatcher(introspector, "/api/v1/auth/**"),
                                         new MvcRequestMatcher(introspector, "/actuator/**"),
-                                        new MvcRequestMatcher(introspector, "/test/**"),
-                                        new MvcRequestMatcher(introspector, "/health-check")})
+                                        new MvcRequestMatcher(introspector, "/test/**")})
                                 .permitAll()
                                 .anyRequest().authenticated()
                 )
