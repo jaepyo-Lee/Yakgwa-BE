@@ -97,14 +97,16 @@ jobs:
           script: |
             cd /home/ubuntu/
             
+            docker-compose -f docker-compose.yaml up -d redis certbot 
+            
             sudo touch .env
             echo "${{ secrets.ENV_VARS }}" | sudo tee .env > /dev/null
                     
             sudo chmod 666 /var/run/docker.sock
   
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:green
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}-blue
-            
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue
+                        
             chmod 777 ./deploy.sh
             ./deploy.sh
             
