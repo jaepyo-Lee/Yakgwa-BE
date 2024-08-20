@@ -34,6 +34,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Print working directory
+        run: pwd
+
       # deploy.sh 파일 서버로 전달하기(복사 후 붙여넣기)
       - name: Send deploy.sh
         uses: appleboy/scp-action@master
