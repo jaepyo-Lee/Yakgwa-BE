@@ -63,8 +63,8 @@ jobs:
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: 22
           source: |
-            ./deploy.sh
-            ./docker-compose.yaml
+            /github/workspace/deploy.sh
+            /github/workspace/docker-compose.yaml
           target: "/home/ubuntu/"
 
       - name: Docker build & push
