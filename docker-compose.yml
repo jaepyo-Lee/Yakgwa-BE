@@ -21,7 +21,7 @@ services:
 
   blue:
     container_name: blue
-    image: jaepyo99/yakgwa
+    image: jaepyo99/yakgwa:blue
     env_file:
       - .env
     networks:
@@ -37,7 +37,7 @@ services:
 
   green:
     container_name: green
-    image: jaepyo99/yakgwa
+    image: jaepyo99/yakgwa:green
     env_file:
       - .env
     networks:
