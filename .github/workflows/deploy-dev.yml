@@ -37,7 +37,6 @@ jobs:
       - name: Print working directory
         run: pwd
 
-      # deploy.sh 파일 서버로 전달하기(복사 후 붙여넣기)
       - name: Send deploy.sh
         uses: appleboy/scp-action@master
         with:
@@ -45,9 +44,17 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: 22
-          source: |
-            deploy.sh
-            docker-compose.yaml
+          source: deploy.sh
+          target: "/home/ubuntu/"
+
+      - name: Send docker-compose.yaml
+        uses: appleboy/scp-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.AWS_HOST }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: 22
+          source: docker-compose.yaml
           target: "/home/ubuntu/"
 
       - name: make firebase key
