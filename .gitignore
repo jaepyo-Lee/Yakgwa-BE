@@ -47,3 +47,4 @@ out/
 .vscode/
 /src/main/resources/firebase/firebase-key.json
 /.env
+/src/main/resources/junit-platform.properties
