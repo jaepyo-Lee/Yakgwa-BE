@@ -99,14 +99,13 @@ jobs:
         with:
           file: Dockerfile.green
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:green
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
           push: true
           
       - name: Docker build & push (blue)
         uses: docker/build-push-action@v2
         with:
           file: Dockerfile.blue
+          context: .
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue
           cache-from: type=gha
           cache-to: type=gha,mode=max
