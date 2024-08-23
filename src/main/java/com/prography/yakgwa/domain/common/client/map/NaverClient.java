@@ -1,4 +1,4 @@
-package com.prography.yakgwa.global.client.map;
+package com.prography.yakgwa.domain.common.client.map;
 
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.place.service.dto.NaverMapResponseDto;

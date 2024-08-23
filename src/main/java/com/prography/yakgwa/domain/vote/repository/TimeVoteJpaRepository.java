@@ -17,7 +17,7 @@ public interface TimeVoteJpaRepository extends JpaRepository<TimeVote, Long> {
     boolean existsByUserIdInMeet(@Param("userId") Long userId, @Param("meetId") Long meetId);
 
     @Query("SELECT TV FROM TIME_VOTE_TABLE TV WHERE TV.user.id = :userId AND TV.timeSlot.meet.id=:meetId")
-    List<TimeVote> findAllByTimeSlotOfUser(@Param("userId") Long userId, @Param("meetId")Long meetId);
+    List<TimeVote> findAllByTimeSlotOfUser(@Param("userId") Long userId, @Param("meetId") Long meetId);
 
     @Modifying
     @Query("DELETE FROM TIME_VOTE_TABLE TV WHERE TV.user = :user AND TV.timeSlot.meet.id=:meetId")

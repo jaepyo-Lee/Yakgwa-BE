@@ -1,9 +1,8 @@
-package com.prography.yakgwa.global.util.jwt;
+package com.prography.yakgwa.domain.common.util.jwt;
 
 import com.prography.yakgwa.global.entity.AuthToken;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.exception.auth.TokenValidFailedException;
-import com.prography.yakgwa.global.repository.RedisRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -14,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;

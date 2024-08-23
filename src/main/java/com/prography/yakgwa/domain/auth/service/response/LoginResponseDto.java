@@ -1,7 +1,7 @@
 package com.prography.yakgwa.domain.auth.service.response;
 
 import com.prography.yakgwa.domain.user.entity.Role;
-import com.prography.yakgwa.global.util.jwt.TokenSet;
+import com.prography.yakgwa.domain.common.util.jwt.TokenSet;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Builder;
 import lombok.Getter;
