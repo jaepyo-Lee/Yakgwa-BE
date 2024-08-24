@@ -1,48 +1,56 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
-    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
-    <conversionRule conversionWord="wex"
-                    converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
-    <conversionRule conversionWord="wEx"
-                    converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
-    <property name="LOG_PATTERN"
-              value="${LOG_PATTERN:-%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){blue} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}}"/>
-
-    <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.credentials.access_key"/>
-    <springProperty name="AWS_SECRET_KEY" source="cloud.aws.credentials.secret_key"/>
-
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <layout class="ch.qos.logback.classic.PatternLayout">
-            <Pattern>${LOG_PATTERN}</Pattern>
-        </layout>
-    </appender>
-
-    <appender name="aws_cloud_watch_log" class="ca.pjer.logback.AwsLogsAppender">
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
-        <layout>
-            <pattern>[%thread] [%date] [%level] [%file:%line] - %msg%n</pattern>
-        </layout>
-        <logGroupName>yakgwa-log</logGroupName>
-        <logStreamUuidPrefix>yakgwa-log-</logStreamUuidPrefix>
-        <logRegion>ap-northeast-2</logRegion>
-        <maxBatchLogEvents>50</maxBatchLogEvents>
-        <maxFlushTimeMillis>30000</maxFlushTimeMillis>
-        <maxBlockTimeMillis>5000</maxBlockTimeMillis>
-        <retentionTimeDays>0</retentionTimeDays>
-        <accessKeyId>${AWS_ACCESS_KEY}</accessKeyId>
-        <secretAccessKey>${AWS_SECRET_KEY}</secretAccessKey>
-    </appender>
-
+    <!-- Combined Blue and Green Profiles Configuration -->
     <springProfile name="blue,green">
-        <root level="info">
-            <appender-ref ref="CONSOLE"/>
-        </root>
+        <include resource="org/springframework/boot/logging/logback/base.xml"/>
+        <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.credentials.access_key"/>
+        <springProperty name="AWS_SECRET_KEY" source="cloud.aws.credentials.secret_key"/>
+        <!-- Rolling File Appender (for both blue and green) -->
+        <appender name="rollingFileAppender"
+                  class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <prudent>true</prudent>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- Log files will be stored in different folders based on the profile -->
+                <fileNamePattern>./logs/${spring.profiles.active}/application.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>7</maxHistory>
+            </rollingPolicy>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] [%5level] %logger{35}[%method:%line] %m%n</pattern>
+            </encoder>
+        </appender>
 
-        <logger name="mashup.spring.jsmr" level="error" additivity="false">
-            <appender-ref ref="CONSOLE"/>
-            <appender-ref ref="aws_cloud_watch_log"/>
-        </logger>
+        <!-- Cloudwatch Appender (for both blue and green) -->
+        <appender name="cloudwatchAppender"
+                  class="ca.pjer.logback.AwsLogsAppender">
+            <layout>
+                <pattern>[%thread] [%date] [%level] [%file:%line] - %msg%n</pattern>
+            </layout>
+            <!-- Log group will be the same, but stream will differ based on profile -->
+            <logGroupName>/aws/ec2/instance/cloudwatch-log-example/application-log</logGroupName>
+            <logStreamUuidPrefix>${spring.profiles.active}-cloudwatch-log-example-</logStreamUuidPrefix>
+            <logRegion>ap-northeast-2</logRegion>
+            <maxBatchLogEvents>50</maxBatchLogEvents>
+            <maxFlushTimeMillis>30000</maxFlushTimeMillis>
+            <maxBlockTimeMillis>5000</maxBlockTimeMillis>
+            <retentionTimeDays>0</retentionTimeDays>
+            <accessKeyId>${AWS_ACCESS_KEY}</accessKeyId>
+            <secretAccessKey>${AWS_SECRET_KEY}</secretAccessKey>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] [%5level] %logger{35}[%method:%line] %m%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- Root Logger Configuration -->
+        <root level="INFO">
+            <appender-ref ref="rollingFileAppender"/>
+            <appender-ref ref="cloudwatchAppender"/>
+        </root>
     </springProfile>
 </configuration>
