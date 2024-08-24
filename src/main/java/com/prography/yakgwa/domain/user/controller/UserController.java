@@ -34,4 +34,10 @@ public class UserController implements UserApi {
         User user = userService.find(userDetail.getUserId());
         return new SuccessResponse<>(UserInfoResponse.of(user));
     }
+    @PatchMapping("/user/fcm")
+    public SuccessResponse updateFcm(@AuthenticationPrincipal CustomUserDetail userDetail,
+                                     @RequestParam(value = "newFcmToken") String newFcmToken) {
+        userService.updateFcm(userDetail.getUserId(), newFcmToken);
+        return SuccessResponse.ok("토큰갱신성공");
+    }
 }

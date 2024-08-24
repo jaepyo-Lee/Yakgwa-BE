@@ -26,6 +26,26 @@ class UserControllerTest extends ControllerUnitTestEnvironment {
 
     @WithCustomMockUser
     @Test
+    void FCM토큰갱신컨트롤러테스트() throws Exception {
+        // given
+        when(userService.updateFcm(anyLong(), anyString())).thenReturn(true);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.patch("/api/v1/user/fcm")
+                        .header("Authorization", "Bearer validToken")
+                        .param("newFcmToken", "newHeader"))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        System.out.println("=====Logic End=====");
+        // then
+    }
+
+    @WithCustomMockUser
+    @Test
     void 사용자정보조회컨트롤러() throws Exception {
         // given
 

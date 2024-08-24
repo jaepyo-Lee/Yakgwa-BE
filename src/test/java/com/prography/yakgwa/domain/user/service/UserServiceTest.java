@@ -7,6 +7,7 @@ import com.prography.yakgwa.domain.common.impl.AwsS3Util;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
+import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,5 +98,24 @@ class UserServiceTest extends IntegrationTestSupport {
         // then
         User user = userJpaRepository.findById(saveUser.getId()).orElse(saveUser);
         assertThat(user.getImageUrl()).isEqualTo(uploadimage);
+    }
+    @WithCustomMockUser
+    @Test
+    void FCM갱신() {
+        // given
+        User saveUser = dummyCreater.createAndSaveUser(1);
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        String newFcmToken = "newFcmToken";
+        boolean b = userService.updateFcm(saveUser.getId(), newFcmToken);
+
+        System.out.println("=====Logic End=====");
+        // then
+        User user = userJpaRepository.findById(saveUser.getId()).get();
+
+        assertAll(() -> assertThat(user.getFcmToken()).isEqualTo(newFcmToken),
+                () -> assertThat(b).isTrue());
     }
 }

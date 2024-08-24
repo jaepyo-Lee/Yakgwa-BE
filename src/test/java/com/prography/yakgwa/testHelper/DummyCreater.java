@@ -59,7 +59,7 @@ public class DummyCreater {
 
     public User createAndSaveUser(int id) {
         User user = User.builder()
-                .name("user" + id).isNew(true).authId(""+id).authType(KAKAO)
+                .name("user" + id).isNew(true).authId("" + id).authType(KAKAO).fcmToken("fcmToken" + id)
                 .build();
         return userJpaRepository.save(user);
     }

@@ -36,6 +36,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static com.prography.yakgwa.domain.user.entity.AuthType.KAKAO;
 import static org.assertj.core.api.Assertions.*;
@@ -295,14 +296,14 @@ class AuthServiceTest {
         List<SignoutUser> allSignoutUsers = signoutUserJpaRepository.findAll();
         User user = userJpaRepository.findById(saveUser.getId()).get();
 
-        assertAll(()-> assertThat(allSignoutUsers.size()).isOne(),
-                ()-> assertThat(user.getAuthId()).isNull(),
-                ()-> assertThat(user.getAuthType()).isNull(),
-                ()-> assertThat(user.getFcmToken()).isNull(),
-                ()-> assertThat(user.getName()).isEqualTo(name));
-        verify(redisRepository,times(1)).logoutTokenSave(anyString(), any(Duration.class));
+        assertAll(() -> assertThat(allSignoutUsers.size()).isOne(),
+                () -> assertThat(user.getAuthId()).isNull(),
+                () -> assertThat(user.getAuthType()).isNull(),
+                () -> assertThat(user.getFcmToken()).isNull(),
+                () -> assertThat(user.getName()).isEqualTo(name));
+        verify(redisRepository, times(1)).logoutTokenSave(anyString(), any(Duration.class));
         verify(redisRepository, times(1)).getRefreshToken(anyString());
-        verify(redisRepository,never()).removeRefreshToken(anyString());
+        verify(redisRepository, never()).removeRefreshToken(anyString());
     }
 
 
@@ -319,9 +320,9 @@ class AuthServiceTest {
         authService.logout(accessToken);
 
         //then
-        verify(redisRepository,times(1)).logoutTokenSave(anyString(), any(Duration.class));
+        verify(redisRepository, times(1)).logoutTokenSave(anyString(), any(Duration.class));
         verify(redisRepository, times(1)).getRefreshToken(anyString());
-        verify(redisRepository,never()).removeRefreshToken(anyString());
+        verify(redisRepository, never()).removeRefreshToken(anyString());
     }
 
     @WithCustomMockUser
@@ -339,8 +340,8 @@ class AuthServiceTest {
         authService.logout(accessToken);
 
         //then
-        verify(redisRepository,times(1)).logoutTokenSave(anyString(), any(Duration.class));
+        verify(redisRepository, times(1)).logoutTokenSave(anyString(), any(Duration.class));
         verify(redisRepository, times(1)).getRefreshToken(anyString());
-        verify(redisRepository,times(1)).removeRefreshToken(anyString());
+        verify(redisRepository, times(1)).removeRefreshToken(anyString());
     }
 }
