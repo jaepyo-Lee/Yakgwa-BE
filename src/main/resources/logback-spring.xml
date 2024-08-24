@@ -1,10 +1,15 @@
 <configuration>
-    <!-- Combined Blue and Green Profiles Configuration -->
+    <!-- Common Properties for all profiles -->
+    <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.credentials.access_key"/>
+    <springProperty name="AWS_SECRET_KEY" source="cloud.aws.credentials.secret_key"/>
+
+    <!-- Profile-Specific Configurations -->
+
+    <!-- Configuration for blue and green profiles only -->
     <springProfile name="blue,green">
         <include resource="org/springframework/boot/logging/logback/base.xml"/>
-        <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.credentials.access_key"/>
-        <springProperty name="AWS_SECRET_KEY" source="cloud.aws.credentials.secret_key"/>
-        <!-- Rolling File Appender (for both blue and green) -->
+
+        <!-- Rolling File Appender -->
         <appender name="rollingFileAppender"
                   class="ch.qos.logback.core.rolling.RollingFileAppender">
             <prudent>true</prudent>
@@ -22,7 +27,7 @@
             </encoder>
         </appender>
 
-        <!-- Cloudwatch Appender (for both blue and green) -->
+        <!-- Cloudwatch Appender -->
         <appender name="cloudwatchAppender"
                   class="ca.pjer.logback.AwsLogsAppender">
             <layout>
@@ -51,6 +56,22 @@
         <root level="INFO">
             <appender-ref ref="rollingFileAppender"/>
             <appender-ref ref="cloudwatchAppender"/>
+        </root>
+    </springProfile>
+
+    <!-- Configuration for local profile only -->
+    <springProfile name="local">
+        <!-- Only use console appender or any other simple configuration -->
+        <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] [%5level] %logger{35}[%method:%line] %m%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- Root Logger Configuration for local -->
+        <root level="INFO">
+            <appender-ref ref="console"/>
         </root>
     </springProfile>
 </configuration>

@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.prography.yakgwa.domain.auth.service.AuthService;
 import com.prography.yakgwa.domain.meet.service.MeetCreateService;
 import com.prography.yakgwa.domain.meet.service.MeetService;
 import com.prography.yakgwa.domain.meet.service.MeetThemeService;
@@ -21,7 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-//@Execution(ExecutionMode.SAME_THREAD)
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -55,4 +55,6 @@ public class ControllerUnitTestEnvironment {
     protected PlaceVoteFindService placeVoteFindService;
     @MockBean
     protected TimeVoteFindService timeVoteFindService;
+    @MockBean
+    protected AuthService authService;
 }
