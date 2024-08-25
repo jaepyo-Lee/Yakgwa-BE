@@ -60,7 +60,7 @@ public class TaskScheduleManager {
     public boolean regist(Meet meet, AlarmType type) {
         if (type.equals(END_VOTE)) { // 확정 안되었을 때
             Runnable runnable = getRunnable(meet, type);
-            taskSchedulerManager.scheduleTask(meet, type, runnable, meet.getVoteTime());
+            taskSchedulerManager.scheduleTask(meet, type, runnable,/* meet.getVoteTime()*/now().plusMinutes(1L));
             return false;
         }
         Runnable runnable = getRunnable(meet, type);
@@ -75,7 +75,6 @@ public class TaskScheduleManager {
         if (type.equals(END_VOTE)) { // 확정 안되었을 때
             runnable = () -> {
                 Meet callMeet = meetJpaRepository.findById(meet.getId()).orElseThrow(NotFoundMeetException::new);
-
                 placeConfirm.confirmMaxOf(callMeet);
                 timeConfirm.confirmMaxOf(callMeet);
                 if (meetConfirmChecker.isMeetConfirm(callMeet)) {

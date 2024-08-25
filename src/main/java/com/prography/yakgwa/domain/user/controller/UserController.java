@@ -21,7 +21,6 @@ import java.io.IOException;
 public class UserController implements UserApi {
     private final UserService userService;
 
-    @ApiResponse(responseCode = "200", description = "성공시 따로 반환값 없습니다! 필요한 반환값 있으면 말씀해주세요!")
     @PatchMapping(value = "/user/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public SuccessResponse modifyImage(@RequestPart("userImage") MultipartFile userImage,
                                        @AuthenticationPrincipal CustomUserDetail userDetail) throws IOException {
@@ -34,6 +33,7 @@ public class UserController implements UserApi {
         User user = userService.find(userDetail.getUserId());
         return new SuccessResponse<>(UserInfoResponse.of(user));
     }
+
     @PatchMapping("/user/fcm")
     public SuccessResponse updateFcm(@AuthenticationPrincipal CustomUserDetail userDetail,
                                      @RequestParam(value = "newFcmToken") String newFcmToken) {
