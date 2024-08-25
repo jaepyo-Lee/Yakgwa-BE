@@ -36,7 +36,8 @@ public class Meet extends BaseTimeEntity {
     public LocalDateTime getVoteTime() {
         return this.getCreatedDate().plusHours(this.validInviteHour);
     }
-    public boolean isConfirmTimeEnd(){
+
+    public boolean isConfirmTimeEnd() {
         return getConfirmTime().isBefore(LocalDateTime.now());
     }
 
@@ -44,9 +45,10 @@ public class Meet extends BaseTimeEntity {
         return getVoteTime().plusHours(24);
     }
 
-    public boolean isVoteTimeEnd(){
+    public boolean isVoteTimeEnd() {
         return getVoteTime().isBefore(LocalDateTime.now());
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -54,10 +56,5 @@ public class Meet extends BaseTimeEntity {
             return false;
         Meet meet = (Meet) o;
         return Objects.equals(id, meet.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return id.intValue();
     }
 }

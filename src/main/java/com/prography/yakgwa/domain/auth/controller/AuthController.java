@@ -48,7 +48,7 @@ public class AuthController implements AuthApi {
     @PostMapping("/signout")
     public SuccessResponse signout(@AuthenticationPrincipal CustomUserDetail userDetail,
                                    @RequestHeader(value = "Authorization") String Authorization) {
-        authService.signout(userDetail.getUserId(),Authorization);
+        authService.signout(userDetail.getUserId(), Authorization);
         return SuccessResponse.ok("탈퇴되었습니다.");
     }
 }

@@ -13,6 +13,7 @@ import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class AlarmProcessor {
     private final ParticipantJpaRepository participantJpaRepository;
     private final MeetJpaRepository meetJpaRepository;
 
+    @Async
     @Transactional
     public void process(Long meetId, AlarmType alarmType) {
 

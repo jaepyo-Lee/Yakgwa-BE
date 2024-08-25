@@ -40,11 +40,6 @@ public class TimeSlot {
         return Objects.equals(id, timeSlot.id);
     }
 
-    @Override
-    public int hashCode() {
-        return id.intValue();
-    }
-
     public static TimeSlot ofConfirm(Meet meet,LocalDateTime time){
         return TimeSlot.builder()
                 .meet(meet)

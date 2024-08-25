@@ -39,4 +39,7 @@ public class User extends BaseTimeEntity {
         this.fcmToken = null;
         this.role = null;
     }
+    public void refreshFcm(String fcmToken){
+        this.fcmToken = fcmToken;
+    }
 }

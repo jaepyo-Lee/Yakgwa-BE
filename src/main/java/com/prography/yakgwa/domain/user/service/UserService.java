@@ -22,6 +22,15 @@ public class UserService {
     @Value("${user.base.image}")
     private String baseImg;
 
+
+    @Transactional
+    public boolean updateFcm(Long userId, String newFcmToken) {
+        User user = userJpaRepository.findById(userId).orElseThrow(NotFoundUserException::new);
+        user.refreshFcm(newFcmToken);
+        return true;
+    }
+
+
     /**
      * Work) Test Code
      * Write-Date) 2024-07-29, 월, 14:20

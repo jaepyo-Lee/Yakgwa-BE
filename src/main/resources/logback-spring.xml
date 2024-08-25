@@ -1,0 +1,77 @@
+<configuration>
+    <!-- Common Properties for all profiles -->
+    <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.credentials.access_key"/>
+    <springProperty name="AWS_SECRET_KEY" source="cloud.aws.credentials.secret_key"/>
+
+    <!-- Profile-Specific Configurations -->
+
+    <!-- Configuration for blue and green profiles only -->
+    <springProfile name="blue,green">
+        <include resource="org/springframework/boot/logging/logback/base.xml"/>
+
+        <!-- Rolling File Appender -->
+        <appender name="rollingFileAppender"
+                  class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <prudent>true</prudent>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- Log files will be stored in different folders based on the profile -->
+                <fileNamePattern>./logs/${spring.profiles.active}/application.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>7</maxHistory>
+            </rollingPolicy>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] [%5level] %logger{35}[%method:%line] %m%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- Cloudwatch Appender -->
+        <appender name="cloudwatchAppender"
+                  class="ca.pjer.logback.AwsLogsAppender">
+            <layout>
+                <pattern>[%thread] [%date] [%level] [%file:%line] - %msg%n</pattern>
+            </layout>
+            <!-- Log group will be the same, but stream will differ based on profile -->
+            <logGroupName>/aws/ec2/instance/cloudwatch-log-example/application-log</logGroupName>
+            <logStreamUuidPrefix>${spring.profiles.active}-cloudwatch-log-example-</logStreamUuidPrefix>
+            <logRegion>ap-northeast-2</logRegion>
+            <maxBatchLogEvents>50</maxBatchLogEvents>
+            <maxFlushTimeMillis>30000</maxFlushTimeMillis>
+            <maxBlockTimeMillis>5000</maxBlockTimeMillis>
+            <retentionTimeDays>0</retentionTimeDays>
+            <accessKeyId>${AWS_ACCESS_KEY}</accessKeyId>
+            <secretAccessKey>${AWS_SECRET_KEY}</secretAccessKey>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>INFO</level>
+            </filter>
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] [%5level] %logger{35}[%method:%line] %m%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- Root Logger Configuration -->
+        <root level="INFO">
+            <appender-ref ref="rollingFileAppender"/>
+            <appender-ref ref="cloudwatchAppender"/>
+        </root>
+    </springProfile>
+
+    <!-- Configuration for local profile only -->
+    <springProfile name="local">
+        <!-- Only use console appender or any other simple configuration -->
+        <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <charset>UTF-8</charset>
+                <pattern>%d{HH:mm:ss.SSS} [%thread] [%5level] %logger{35}[%method:%line] %m%n</pattern>
+            </encoder>
+        </appender>
+
+        <!-- Root Logger Configuration for local -->
+        <root level="INFO">
+            <appender-ref ref="console"/>
+        </root>
+    </springProfile>
+</configuration>
