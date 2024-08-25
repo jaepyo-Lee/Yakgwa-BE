@@ -49,4 +49,21 @@ class UserTest {
                 ()-> assertThat(user.getImageUrl()).isEqualTo(baseImage)
                 );
     }
+
+    @Test
+    void 사용자FCM토큰갱신() {
+        // given
+        String newFCM = "new";
+        User user = User.builder().fcmToken("old").build();
+
+        // when
+        System.out.println("=====Logic Start=====");
+
+        user.refreshFcm(newFCM);
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertThat(user.getFcmToken()).isEqualTo(newFCM);
+
+    }
 }

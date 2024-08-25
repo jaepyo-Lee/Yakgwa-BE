@@ -147,6 +147,9 @@ dependencies {
     implementation 'net.java.dev.jna:jna:5.8.0'
     implementation 'net.java.dev.jna:jna-platform:5.8.0'
     testImplementation 'org.mockito:mockito-inline:3.11.2'
+
+    //log-to-cloudwatch
+    implementation group: 'ca.pjer', name: 'logback-awslogs-appender', version: '1.6.0'
 }
 
 /**

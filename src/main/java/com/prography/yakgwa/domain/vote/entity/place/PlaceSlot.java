@@ -68,13 +68,6 @@ public class PlaceSlot extends BaseTimeEntity {
         return Objects.equals(id, placeSlot.id);
     }
 
-    @Override
-    public int hashCode() {
-        return id.intValue();
-    }
-
-
-
     public boolean isConfirm() {
         return this.confirm.equals(TRUE);
     }

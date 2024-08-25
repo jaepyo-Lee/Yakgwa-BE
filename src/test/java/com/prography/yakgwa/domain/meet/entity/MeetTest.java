@@ -2,18 +2,11 @@ package com.prography.yakgwa.domain.meet.entity;
 
 import com.prography.yakgwa.domain.common.IntegrationTestSupport;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
-import com.prography.yakgwa.global.config.AuditingConfig;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
-import com.prography.yakgwa.testHelper.config.DeleterConfig;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -82,21 +75,5 @@ class MeetTest extends IntegrationTestSupport {
         // then
         assertAll(() -> assertThat(meet.equals(compare)).isTrue(),
                 () -> assertThat(meet.equals(compare2)).isFalse());
-    }
-
-    @Test
-    void id값해시코드() {
-        // given
-        Meet meet = Meet.builder().id(1L).build();
-
-        // when
-        System.out.println("=====Logic Start=====");
-
-        int i = meet.hashCode();
-
-        System.out.println("=====Logic End=====");
-        // then
-        assertThat(i).isEqualTo(1);
-
     }
 }
