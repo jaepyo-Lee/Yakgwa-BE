@@ -80,7 +80,7 @@ public class DummyCreater {
     }
 
     public TimeSlot createAndSaveTimeSlot(Meet saveMeet, LocalDateTime time, boolean confirm) {
-        return timeSlotJpaRepository.save(TimeSlot.builder().meet(saveMeet).time(time).confirm(confirm).build());
+        return timeSlotJpaRepository.save(TimeSlot.builder().meet(saveMeet).time(time).isConfirm(confirm).build());
     }
 
     public Meet createAndSaveMeet(int id, MeetTheme saveMeetTheme, int validInviteHour) {

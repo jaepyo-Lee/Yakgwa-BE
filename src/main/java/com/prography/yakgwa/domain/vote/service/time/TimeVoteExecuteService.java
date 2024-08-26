@@ -74,7 +74,8 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
                 .map(time -> TimeSlot.builder()
                         .meet(meet)
                         .time(time)
-                        .confirm(false).build())
+                        .isConfirm(false)
+                        .build())
                 .toList();
 
         timeSlotJpaRepository.saveAll(newTimeSlots);

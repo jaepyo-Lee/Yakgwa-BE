@@ -75,7 +75,7 @@ class TimeSlotJpaRepositoryTest extends IntegrationTestSupport {
     }
 
     private TimeSlot createAndSaveTimeSlot(Meet saveMeet, LocalDateTime time, boolean confirm) {
-        return timeSlotJpaRepository.save(TimeSlot.builder().meet(saveMeet).time(time).confirm(confirm).build());
+        return timeSlotJpaRepository.save(TimeSlot.builder().meet(saveMeet).time(time).isConfirm(confirm).build());
     }
 
     private Meet createAndSaveMeet(Long id, MeetTheme saveMeetTheme) {

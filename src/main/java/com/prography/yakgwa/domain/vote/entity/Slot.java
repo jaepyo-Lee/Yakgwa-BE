@@ -1,14 +1,15 @@
 package com.prography.yakgwa.domain.vote.entity;
 
+import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static java.lang.Boolean.TRUE;
-
-@Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn
+@Getter
+@Entity(name = "SLOT_TABLE")
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "slot_type", discriminatorType = DiscriminatorType.STRING)
 @NoArgsConstructor
 public class Slot extends BaseTimeEntity {
     @Id
@@ -17,15 +18,25 @@ public class Slot extends BaseTimeEntity {
 
     private Boolean confirm;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meet_id")
+    private Meet meet;
+
+    public Slot(Long id) {
+        this.id = id;
+    }
+
+    public Slot(Boolean confirm, Meet meet) {
+        this.confirm = confirm;
+        this.meet = meet;
+    }
+
     public void confirm() {
         confirm = true;
     }
 
     public boolean isConfirm() {
-        return this.confirm.equals(TRUE);
-    }
-
-    public Slot(Boolean confirm) {
-        this.confirm = confirm;
+        return Boolean.TRUE.equals(this.confirm);
     }
 }
+

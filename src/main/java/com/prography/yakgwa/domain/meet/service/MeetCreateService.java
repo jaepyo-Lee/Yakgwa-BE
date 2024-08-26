@@ -75,7 +75,7 @@ public class MeetCreateService {
         if (requestDto.getMeetTime() == null) {
             return;
         }
-        TimeSlot timeSlot = TimeSlot.ofConfirm(meet, requestDto.getMeetTime());
+        TimeSlot timeSlot = new TimeSlot(meet, requestDto.getMeetTime(), true);
         timeSlotJpaRepository.save(timeSlot);
     }
 
