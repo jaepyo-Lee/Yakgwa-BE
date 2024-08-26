@@ -57,4 +57,7 @@ public class Meet extends BaseTimeEntity {
         Meet meet = (Meet) o;
         return Objects.equals(id, meet.id);
     }
+    public boolean isSameId(Long id) {
+        return this.id.equals(id);
+    }
 }

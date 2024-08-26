@@ -100,8 +100,6 @@ class PlaceSlotControllerTest extends ControllerUnitTestEnvironment {
                 .telephone(telephone)
                 .build();
 
-        PlaceSlot mockPlaceSlot = mock(PlaceSlot.class);
-
         Place place = Place.builder()
                 .mapx(mapx)
                 .mapy(mapy)
@@ -113,8 +111,7 @@ class PlaceSlotControllerTest extends ControllerUnitTestEnvironment {
                 .telephone(telephone)
                 .build();
         PlaceSlotAppendRequest placeSlotAppendRequest = new PlaceSlotAppendRequest(placeInfoDto);
-        when(placeSlotService.appendPlaceSlotFrom(anyLong(), any())).thenReturn(mockPlaceSlot);
-        when(mockPlaceSlot.getPlace()).thenReturn(place);
+        when(placeSlotService.appendPlaceSlotFrom(anyLong(), any())).thenReturn(place);
 
         // when
         MvcResult mvcResult = mvc.perform(MockMvcRequestBuilders.post("/api/v1/meets/{meetId}/placeslots", 1L)

@@ -124,6 +124,6 @@ public class PlaceVoteExecuteService implements VoteExecuter<PlaceVote, Set<Long
     }
 
     private boolean isPlaceSlotMatchMeet(Long meetId, PlaceSlot placeSlot) {
-        return placeSlot.getMeet().getId().equals(meetId);
+        return placeSlot.isEqualsMeet(meetId);
     }
 }

@@ -25,8 +25,7 @@ public class PlaceSlotController implements PlaceSlotApi {
     @PostMapping("/meets/{meetId}/placeslots")
     public SuccessResponse<NewPlaceSlotResponse> appendPlaceSlotFrom(@PathVariable("meetId") Long meetId,
                                                                      @RequestBody @Valid PlaceSlotAppendRequest placeSlotAppendRequest) {
-        PlaceSlot placeSlot = placeSlotService.appendPlaceSlotFrom(meetId, placeSlotAppendRequest.getPlaceInfo());
-        Place place = placeSlot.getPlace();
+        Place place = placeSlotService.appendPlaceSlotFrom(meetId, placeSlotAppendRequest.getPlaceInfo());
         return new SuccessResponse<>(NewPlaceSlotResponse.of(place));
     }
 

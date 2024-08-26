@@ -50,9 +50,9 @@ class PlaceConfirmTest extends IntegrationTestSupport {
         System.out.println("=====Logic End=====");
         // then
         assertAll(()-> assertThat(confirmMaxOf).isTrue(),
-                ()-> assertThat(savePlaceSlot.getConfirm()).isTrue(),
-                ()-> assertThat(savePlaceSlot2.getConfirm()).isFalse(),
-                ()-> assertThat(savePlaceSlot3.getConfirm()).isFalse());
+                ()-> assertThat(savePlaceSlot.isConfirm()).isTrue(),
+                ()-> assertThat(savePlaceSlot2.isConfirm()).isFalse(),
+                ()-> assertThat(savePlaceSlot3.isConfirm()).isFalse());
     }
 
     @Test
@@ -84,9 +84,9 @@ class PlaceConfirmTest extends IntegrationTestSupport {
         System.out.println("=====Logic End=====");
         // then
         assertAll(()-> assertThat(confirmMaxOf).isFalse(),
-                ()-> assertThat(savePlaceSlot.getConfirm()).isFalse(),
-                ()-> assertThat(savePlaceSlot2.getConfirm()).isFalse(),
-                ()-> assertThat(savePlaceSlot3.getConfirm()).isFalse()
+                ()-> assertThat(savePlaceSlot.isConfirm()).isFalse(),
+                ()-> assertThat(savePlaceSlot2.isConfirm()).isFalse(),
+                ()-> assertThat(savePlaceSlot3.isConfirm()).isFalse()
                 );
     }
 

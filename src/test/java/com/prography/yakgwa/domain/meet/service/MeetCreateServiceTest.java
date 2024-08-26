@@ -108,7 +108,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(startVoteDate),
                 () -> assertThat(meet.getPeriod().getEndDate()).isEqualTo(endVoteDate),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
-                () -> assertThat(placeSlots.stream().filter(PlaceSlot::getConfirm).toList().size()).isEqualTo(1),
+                () -> assertThat(placeSlots.stream().filter(PlaceSlot::isConfirm).toList().size()).isEqualTo(1),
                 () -> assertThat(timeSlots.size()).isEqualTo(0),
                 () -> assertThat(participants.size()).isEqualTo(1),
                 () -> assertThat(participants.stream()
@@ -156,7 +156,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(meet.getValidInviteHour()).isEqualTo(24),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
                 () -> assertThat(placeSlots.stream()
-                        .filter(PlaceSlot::getConfirm)
+                        .filter(PlaceSlot::isConfirm)
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(timeSlots.size()).isEqualTo(1),
                 () -> assertThat(timeSlots.stream()
@@ -205,7 +205,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(startVoteDate),
                 () -> assertThat(meet.getPeriod().getEndDate()).isEqualTo(endVoteDate),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
-                () -> assertThat(placeSlots.stream().filter(PlaceSlot::getConfirm).toList().size()).isEqualTo(0),
+                () -> assertThat(placeSlots.stream().filter(PlaceSlot::isConfirm).toList().size()).isEqualTo(0),
                 () -> assertThat(timeSlots.size()).isEqualTo(0),
                 () -> assertThat(participants.size()).isEqualTo(1),
                 () -> assertThat(participants.stream()

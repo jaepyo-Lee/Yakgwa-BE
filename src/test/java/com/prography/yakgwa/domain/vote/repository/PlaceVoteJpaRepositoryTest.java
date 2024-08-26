@@ -234,7 +234,7 @@ class PlaceVoteJpaRepositoryTest extends IntegrationTestSupport {
         assertAll(
                 () -> assertThat(allByUserId.size()).isEqualTo(2),
                 () -> assertThat(allByUserId.stream()
-                        .filter(placeVote -> placeVote.getPlaceSlot().getMeet().getId().equals(saveMeet1.getId()))
+                        .filter(placeVote -> placeVote.getPlaceSlot().isEqualsMeet(saveMeet1.getId()))
                         .toList().size())
                         .isEqualTo(0)
         );

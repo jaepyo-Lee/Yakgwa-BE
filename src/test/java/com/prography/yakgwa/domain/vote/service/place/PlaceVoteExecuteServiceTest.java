@@ -159,7 +159,7 @@ class PlaceVoteExecuteServiceTest extends IntegrationTestSupport {
         placeVoteExecuteService.confirm(saveMeet.getId(), saveUser.getId(), savePlaceSlot.getId());
         System.out.println("=====Logic End=====");
         // then
-        assertThat(savePlaceSlot.getConfirm()).isTrue();
+        assertThat(savePlaceSlot.isConfirm()).isTrue();
 
     }
 

@@ -17,39 +17,35 @@ import static java.lang.Boolean.TRUE;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
 @Entity(name = "PLACESLOT_TABLE")
 public class PlaceSlot extends BaseTimeEntity {
+
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private Boolean confirm;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "meet_id")
     private Meet meet;
 
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "place_id")
     private Place place;
-    public boolean isSamePlace(String title, String mapx, String mapy) {
-        return isTitleCompareTo(title) && isXCompareTo(mapx) && isYCompareTo(mapy);
+
+    public boolean isSamePlaceSlot(String title, String mapx, String mapy) {
+        return place.isSamePlace(title, mapx, mapy);
     }
 
-    private boolean isYCompareTo(String mapy) {
-        return this.getPlace().getMapy().equals(mapy);
-    }
-
-    private boolean isXCompareTo(String mapx) {
-        return this.getPlace().getMapx().equals(mapx);
-    }
-
-    private boolean isTitleCompareTo(String title) {
-        return this.getPlace().getTitle().equals(title);
-    }
     public void confirm() {
         confirm = true;
     }
 
+    public boolean isEqualsMeet(Long meetId) {
+        return this.meet.isSameId(meetId);
+    }
 
     public static PlaceSlot of(Meet meet, Boolean confirm, Place place) {
         return PlaceSlot.builder()
