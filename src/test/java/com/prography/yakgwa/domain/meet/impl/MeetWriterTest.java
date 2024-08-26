@@ -60,9 +60,9 @@ class MeetWriterTest extends IntegrationTestSupport{
         // then
         assertAll(() -> assertThat(meet.getTitle()).isEqualTo(title),
                 () -> assertThat(meet.getValidInviteHour()).isEqualTo(24),
-                () -> assertThat(meet.getMeetTheme().getName()).isEqualTo(meetTheme.getName()),
-                () -> assertThat(meet.getPeriod().getEndDate()).isEqualTo(to),
-                () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(from));
+                () -> assertThat(meet.getThemeName()).isEqualTo(meetTheme.getName()),
+                () -> assertThat(meet.getVoteEndDate()).isEqualTo(to),
+                () -> assertThat(meet.getVoteStartDate()).isEqualTo(from));
     }
 
     @Test

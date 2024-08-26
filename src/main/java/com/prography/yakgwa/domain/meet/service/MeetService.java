@@ -98,7 +98,7 @@ public class MeetService {
         List<MeetWithVoteAndStatus> list = new ArrayList<>();
         for (Participant participant : participants) {
             MeetWithVoteAndStatus meetWithVoteAndStatus = createMeetWithVoteAndStatus(participant, user);
-            if (isAlreadyPassMeet(meetWithVoteAndStatus)) {
+            if (isAlreadyPassMeet(meetWithVoteAndStatus.getMeet(), meetWithVoteAndStatus.getMeetStatus(), meetWithVoteAndStatus.getTimeSlot())) {
                 continue;
             }
             list.add(meetWithVoteAndStatus);
@@ -107,10 +107,9 @@ public class MeetService {
     }
 
 
-    private boolean isAlreadyPassMeet(MeetWithVoteAndStatus meetWithVoteAndStatus) {
-        LocalDateTime now = LocalDateTime.now();
-        return (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.CONFIRM) && meetWithVoteAndStatus.getTimeSlot().getTime().plusHours(3L).isBefore(now)) ||
-                (meetWithVoteAndStatus.getMeetStatus().equals(MeetStatus.BEFORE_CONFIRM) && meetWithVoteAndStatus.getMeet().isConfirmTimeEnd());
+    private boolean isAlreadyPassMeet(Meet meet, MeetStatus meetStatus, TimeSlot timeSlot) {
+        return (meetStatus.equals(MeetStatus.CONFIRM) && timeSlot.isMeetFinish()) ||
+                (meetStatus.equals(MeetStatus.BEFORE_CONFIRM) && meet.isConfirmTimeEnd());
     }
 
     private TimeSlot getConfirmTimeSlot(Meet meet) {

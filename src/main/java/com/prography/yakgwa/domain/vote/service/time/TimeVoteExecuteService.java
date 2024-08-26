@@ -74,7 +74,8 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
                 .map(time -> TimeSlot.builder()
                         .meet(meet)
                         .time(time)
-                        .confirm(false).build())
+                        .isConfirm(false)
+                        .build())
                 .toList();
 
         timeSlotJpaRepository.saveAll(newTimeSlots);
@@ -143,7 +144,7 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
     private List<LocalDateTime> findNotExistTimeInTimeSlot(EnableTimeRequestDto requestDto, List<TimeSlot> allTimeSlotsInMeet) {
         return requestDto.getEnableTimes().stream()
                 .filter(time -> allTimeSlotsInMeet.stream()
-                        .noneMatch(timeSlot -> timeSlot.getTime().isEqual(time)))
+                        .noneMatch(timeSlot -> timeSlot.isTimeEquals(time)))
                 .toList();
     }
 
@@ -153,14 +154,14 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
     }
 
     private boolean isAlreadyConfirm(List<TimeSlot> allTimeSlotsInMeet) {
-        return allTimeSlotsInMeet.stream().anyMatch(TimeSlot::getConfirm);
+        return allTimeSlotsInMeet.stream().anyMatch(TimeSlot::isConfirm);
     }
 
     private static boolean isWithinVotePeriodFrom(Meet meet, LocalDateTime enableTime) {
-        return meet.getPeriod().getEndDate().isBefore(enableTime.toLocalDate()) || meet.getPeriod().getStartDate().isAfter(enableTime.toLocalDate());
+        return meet.isWithinVotePeriod(enableTime);
     }
 
     private static boolean isOverVotePeriodFrom(Meet meet) {
-        return meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now());
+        return meet.isVoteTimeEnd();
     }
 }

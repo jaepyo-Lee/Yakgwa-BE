@@ -14,7 +14,7 @@ class UserInfoResponseTest {
     void of테스트() {
         // given
         User user = User.builder()
-                .name("name").imageUrl("imageUrl").isNew(true).fcmToken("fcmtoken").role(Role.ROLE_ADMIN).authType(AuthType.KAKAO).id(1L)
+                .name("name").imageUrl("imageUrl").fcmToken("fcmtoken").role(Role.ROLE_ADMIN).authType(AuthType.KAKAO).id(1L)
                 .build();
         UserInfoResponse userInfoResponse = UserInfoResponse.of(user);
 

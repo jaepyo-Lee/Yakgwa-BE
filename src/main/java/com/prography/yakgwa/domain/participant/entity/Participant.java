@@ -9,10 +9,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
 @Entity(name = "PARTICIPANT_TABLE")
 public class Participant {
     @Id
@@ -29,7 +29,9 @@ public class Participant {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
-
+    public String getFcmTokenOfUserInMeet(){
+        return user.getFcmToken();
+    }
     public boolean isLeader() {
         return meetRole == MeetRole.LEADER;
     }

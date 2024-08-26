@@ -11,8 +11,6 @@ import lombok.Getter;
 public class LoginResponseDto {
     @Schema(description = "인증 jwt토큰")
     private TokenSet tokenSet;
-    @Schema(description = "로그인한 사용자가 신규 회원인지 확인하는 값")
-    private Boolean isNew;
     @Schema(description = "사용자 권한")
     private Role role;
 }

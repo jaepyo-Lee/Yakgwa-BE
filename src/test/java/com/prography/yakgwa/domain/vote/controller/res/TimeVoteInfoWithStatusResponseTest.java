@@ -89,8 +89,8 @@ class TimeVoteInfoWithStatusResponseTest {
         // then
         assertAll(() -> assertThat(response.getMeetStatus()).isEqualTo(VoteStatus.BEFORE_VOTE),
                 () -> assertThat(response.getTimeInfos()).isNull(),
-                () -> assertThat(response.getVoteDate().getStartVoteDate()).isEqualTo(saveMeet.getPeriod().getStartDate()),
-                () -> assertThat(response.getVoteDate().getEndVoteDate()).isEqualTo(saveMeet.getPeriod().getEndDate()));
+                () -> assertThat(response.getVoteDate().getStartVoteDate()).isEqualTo(saveMeet.getVoteStartDate()),
+                () -> assertThat(response.getVoteDate().getEndVoteDate()).isEqualTo(saveMeet.getVoteEndDate()));
     }
 
     @Test
@@ -111,8 +111,8 @@ class TimeVoteInfoWithStatusResponseTest {
         // then
         assertAll(() -> assertThat(response.getMeetStatus()).isEqualTo(VoteStatus.VOTE),
                 () -> assertThat(response.getTimeInfos().size()).isEqualTo(2),
-                () -> assertThat(response.getVoteDate().getStartVoteDate()).isEqualTo(saveMeet.getPeriod().getStartDate()),
-                () -> assertThat(response.getVoteDate().getEndVoteDate()).isEqualTo(saveMeet.getPeriod().getEndDate()));
+                () -> assertThat(response.getVoteDate().getStartVoteDate()).isEqualTo(saveMeet.getVoteStartDate()),
+                () -> assertThat(response.getVoteDate().getEndVoteDate()).isEqualTo(saveMeet.getVoteEndDate()));
     }
 
 }

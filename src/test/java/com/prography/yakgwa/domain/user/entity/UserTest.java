@@ -13,7 +13,7 @@ class UserTest {
     void 사용자의이미지변경기능_테스트() {
         // given
         User user = User.builder()
-                .name("user").isNew(true).authId("authId1").authType(KAKAO).imageUrl("original")
+                .name("user").authId("authId1").authType(KAKAO).imageUrl("original")
                 .build();
 
         // when
@@ -31,7 +31,7 @@ class UserTest {
     void 사용자탈퇴() {
         // given
         User user = User.builder()
-                .name("user").isNew(true).authId("authId1").authType(KAKAO).imageUrl("original")
+                .name("user").authId("authId1").authType(KAKAO).imageUrl("original")
                 .build();
         String baseImage = "baseImage";
 

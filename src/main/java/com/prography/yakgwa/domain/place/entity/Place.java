@@ -29,6 +29,19 @@ public class Place {
     private String mapx;
     private String mapy;
 
+    public boolean isSamePlace(String title, String mapx, String mapy) {
+        return isSameTitle(title) && isSameX(mapx) && isSameY(mapy);
+    }
+
+    private  boolean isSameY(String compareY){
+        return mapy.equals(compareY);
+    }
+    private boolean isSameX(String compareX){
+        return mapx.equals(compareX);
+    }
+    private boolean isSameTitle(String compareTitle){
+        return title.equals(compareTitle);
+    }
     public PlaceInfoDto toInfoDto(){
         return PlaceInfoDto.builder()
                 .mapx(mapx)

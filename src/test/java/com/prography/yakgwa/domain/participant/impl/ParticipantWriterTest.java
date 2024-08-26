@@ -35,7 +35,7 @@ class ParticipantWriterTest extends IntegrationTestSupport {
     void 리더로_참가하기Test() {
         // given
         User user = User.builder()
-                .name("name").isNew(true).authId("authId").authType(AuthType.KAKAO).fcmToken("fcmtoken").imageUrl("imageurl")
+                .name("name").authId("authId").authType(AuthType.KAKAO).fcmToken("fcmtoken").imageUrl("imageurl")
                 .build();
         User saveUser = userJpaRepository.save(user);
 
@@ -67,7 +67,7 @@ class ParticipantWriterTest extends IntegrationTestSupport {
     void 참가자로_참가하기Test() {
         // given
         User user = User.builder()
-                .name("name").isNew(true).authId("authId").authType(AuthType.KAKAO).fcmToken("fcmtoken").imageUrl("imageurl")
+                .name("name").authId("authId").authType(AuthType.KAKAO).fcmToken("fcmtoken").imageUrl("imageurl")
                 .build();
         User saveUser = userJpaRepository.save(user);
 
@@ -99,7 +99,7 @@ class ParticipantWriterTest extends IntegrationTestSupport {
     void 이미참여중인모임_참가했을때_예외Test() {
         // given
         User user = User.builder()
-                .name("name").isNew(true).authId("authId").authType(AuthType.KAKAO).fcmToken("fcmtoken").imageUrl("imageurl")
+                .name("name").authId("authId").authType(AuthType.KAKAO).fcmToken("fcmtoken").imageUrl("imageurl")
                 .build();
         User saveUser = userJpaRepository.save(user);
 

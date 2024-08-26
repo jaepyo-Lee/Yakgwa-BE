@@ -62,7 +62,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(placeSlots.size()).isEqualTo(0),
                 () -> assertThat(allByMeetId.size()).isEqualTo(1),
                 () -> assertThat(allByMeetId.stream()
-                        .filter(TimeSlot::getConfirm)
+                        .filter(TimeSlot::isConfirm)
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(allParticipant.size()).isEqualTo(1),
                 () -> assertThat(allParticipant.stream()
@@ -108,7 +108,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(startVoteDate),
                 () -> assertThat(meet.getPeriod().getEndDate()).isEqualTo(endVoteDate),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
-                () -> assertThat(placeSlots.stream().filter(PlaceSlot::getConfirm).toList().size()).isEqualTo(1),
+                () -> assertThat(placeSlots.stream().filter(PlaceSlot::isConfirm).toList().size()).isEqualTo(1),
                 () -> assertThat(timeSlots.size()).isEqualTo(0),
                 () -> assertThat(participants.size()).isEqualTo(1),
                 () -> assertThat(participants.stream()
@@ -156,11 +156,11 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(meet.getValidInviteHour()).isEqualTo(24),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
                 () -> assertThat(placeSlots.stream()
-                        .filter(PlaceSlot::getConfirm)
+                        .filter(PlaceSlot::isConfirm)
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(timeSlots.size()).isEqualTo(1),
                 () -> assertThat(timeSlots.stream()
-                        .filter(TimeSlot::getConfirm)
+                        .filter(TimeSlot::isConfirm)
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(allParticipant.size()).isEqualTo(1),
                 () -> assertThat(allParticipant.stream()
@@ -202,10 +202,10 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
 
         assertAll(
                 () -> assertThat(meet.getTitle()).isEqualTo(title),
-                () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(startVoteDate),
-                () -> assertThat(meet.getPeriod().getEndDate()).isEqualTo(endVoteDate),
+                () -> assertThat(meet.getVoteStartDate()).isEqualTo(startVoteDate),
+                () -> assertThat(meet.getVoteEndDate()).isEqualTo(endVoteDate),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
-                () -> assertThat(placeSlots.stream().filter(PlaceSlot::getConfirm).toList().size()).isEqualTo(0),
+                () -> assertThat(placeSlots.stream().filter(PlaceSlot::isConfirm).toList().size()).isEqualTo(0),
                 () -> assertThat(timeSlots.size()).isEqualTo(0),
                 () -> assertThat(participants.size()).isEqualTo(1),
                 () -> assertThat(participants.stream()

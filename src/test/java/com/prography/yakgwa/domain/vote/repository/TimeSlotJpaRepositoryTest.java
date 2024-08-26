@@ -1,6 +1,7 @@
 package com.prography.yakgwa.domain.vote.repository;
 
 import com.prography.yakgwa.domain.common.IntegrationTestSupport;
+import com.prography.yakgwa.domain.vote.entity.Slot;
 import com.prography.yakgwa.testHelper.config.DeleterConfig;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
@@ -20,11 +21,13 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TimeSlotJpaRepositoryTest extends IntegrationTestSupport {
-
+    @Autowired
+    SlotJpaRepository slotJpaRepository;
     @AfterEach
     void init() {
         deleter.deleteAll();
@@ -75,7 +78,7 @@ class TimeSlotJpaRepositoryTest extends IntegrationTestSupport {
     }
 
     private TimeSlot createAndSaveTimeSlot(Meet saveMeet, LocalDateTime time, boolean confirm) {
-        return timeSlotJpaRepository.save(TimeSlot.builder().meet(saveMeet).time(time).confirm(confirm).build());
+        return timeSlotJpaRepository.save(TimeSlot.builder().meet(saveMeet).time(time).isConfirm(confirm).build());
     }
 
     private Meet createAndSaveMeet(Long id, MeetTheme saveMeetTheme) {

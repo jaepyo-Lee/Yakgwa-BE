@@ -18,6 +18,6 @@ public class PlaceConfirmChecker implements ConfirmChecker{
     @Override
     public boolean isConfirm(Meet meet) {
         List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meet.getId());
-        return placeSlots.stream().anyMatch(placeSlot -> placeSlot.getConfirm().equals(TRUE));
+        return placeSlots.stream().anyMatch(PlaceSlot::isConfirm);
     }
 }

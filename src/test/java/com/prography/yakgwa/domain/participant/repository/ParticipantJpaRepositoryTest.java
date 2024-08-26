@@ -47,10 +47,10 @@ class ParticipantJpaRepositoryTest extends IntegrationTestSupport {
     void 모임에속한참여자_전체조회Test() {
         // given
         User user1 = User.builder()
-                .name("user1").isNew(true).authId("authId1").authType(KAKAO)
+                .name("user1").authId("authId1").authType(KAKAO)
                 .build();
         User user2 = User.builder()
-                .name("user2").isNew(true).authId("authId2").authType(KAKAO)
+                .name("user2").authId("authId2").authType(KAKAO)
                 .build();
         User saveUser1 = userJpaRepository.save(user1);
         User saveUser2 = userJpaRepository.save(user2);
@@ -81,7 +81,7 @@ class ParticipantJpaRepositoryTest extends IntegrationTestSupport {
     void 사용자의참가자_전체조회Test() {
         // given
         User user1 = User.builder()
-                .name("user1").isNew(true).authId("authId1").authType(KAKAO)
+                .name("user1").authId("authId1").authType(KAKAO)
                 .build();
         User saveUser1 = userJpaRepository.save(user1);
 
@@ -137,7 +137,7 @@ class ParticipantJpaRepositoryTest extends IntegrationTestSupport {
     void 특정모임에사용자가참여중일때_참가여부조회_Test() {
         // given
         User user1 = User.builder()
-                .name("user1").isNew(true).authId("authId1").authType(KAKAO)
+                .name("user1").authId("authId1").authType(KAKAO)
                 .build();
         User saveUser1 = userJpaRepository.save(user1);
 
@@ -165,7 +165,7 @@ class ParticipantJpaRepositoryTest extends IntegrationTestSupport {
     void 특정모임에사용자가참여중이아닐때_참가여부조회_Test() {
         // given
         User user1 = User.builder()
-                .name("user1").isNew(true).authId("authId1").authType(KAKAO)
+                .name("user1").authId("authId1").authType(KAKAO)
                 .build();
         User saveUser1 = userJpaRepository.save(user1);
 
@@ -189,7 +189,7 @@ class ParticipantJpaRepositoryTest extends IntegrationTestSupport {
     void 특정모임에사용자가참여중이아닐때_참가정보조회_Test() {
         // given
         User user1 = User.builder()
-                .name("user1").isNew(true).authId("authId1").authType(KAKAO)
+                .name("user1").authId("authId1").authType(KAKAO)
                 .build();
         User saveUser1 = userJpaRepository.save(user1);
 
@@ -219,7 +219,7 @@ class ParticipantJpaRepositoryTest extends IntegrationTestSupport {
     void 특정모임에사용자가참여중일때_참가정보조회_Test() {
         // given
         User user1 = User.builder()
-                .name("user1").isNew(true).authId("authId1").authType(KAKAO)
+                .name("user1").authId("authId1").authType(KAKAO)
                 .build();
         User saveUser1 = userJpaRepository.save(user1);
 
