@@ -106,8 +106,7 @@ class AuthServiceTest {
 
         System.out.println("=====Logic End=====");
         // then
-        assertAll(() -> assertThat(responseDto.getIsNew()).isTrue(),
-                () -> assertThat(responseDto.getRole()).isEqualTo(Role.ROLE_USER),
+        assertAll(() -> assertThat(responseDto.getRole()).isEqualTo(Role.ROLE_USER),
                 () -> assertThat(responseDto.getTokenSet().getAccessToken()).isEqualTo(tokenSet.getAccessToken()),
                 () -> assertThat(responseDto.getTokenSet().getRefreshToken()).isEqualTo(tokenSet.getRefreshToken()));
         verify(kakaoClient, times(1)).getUserData(anyString(), anyString());
@@ -154,8 +153,7 @@ class AuthServiceTest {
 
         System.out.println("=====Logic End=====");
         // then
-        assertAll(() -> assertThat(responseDto.getIsNew()).isTrue(),
-                () -> assertThat(responseDto.getRole()).isEqualTo(Role.ROLE_USER),
+        assertAll(() -> assertThat(responseDto.getRole()).isEqualTo(Role.ROLE_USER),
                 () -> assertThat(responseDto.getTokenSet().getAccessToken()).isEqualTo(tokenSet.getAccessToken()),
                 () -> assertThat(responseDto.getTokenSet().getRefreshToken()).isEqualTo(tokenSet.getRefreshToken()),
                 () -> assertThat(userJpaRepository.findAll().size()).isOne());

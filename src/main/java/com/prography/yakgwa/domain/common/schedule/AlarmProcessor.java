@@ -49,7 +49,7 @@ public class AlarmProcessor {
 
     private void sendNotification(Participant participant, String title, String body) {
         try {
-            String message = fcmMessageConverter.makeMessage(participant.getUser().getFcmToken(), title, body);
+            String message = fcmMessageConverter.makeMessage(participant.getFcmTokenOfUserInMeet(), title, body);
             log.info("{} 알림전송작업 진행",title);
             firebaseMessageSender.sendMessageTo(message);
             log.info("{} 알림전송작업 완료",title);

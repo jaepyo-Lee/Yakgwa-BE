@@ -56,7 +56,6 @@ public class AuthService {
         registerRefreshToken(user, tokenSet);
         return LoginResponseDto.builder()
                 .role(user.getRole())
-                .isNew(user.getIsNew())
                 .tokenSet(tokenSet)
                 .build();
     }
@@ -81,7 +80,6 @@ public class AuthService {
                     .authId(String.valueOf(userData.getId()))
                     .authType(KAKAO)
                     .name(userData.getProperties().getNickname())
-                    .isNew(true)
                     .fcmToken(requestDto.getFcmToken())
                     .build();
         }

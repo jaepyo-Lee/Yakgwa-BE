@@ -16,14 +16,19 @@ public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Getter
     @Enumerated(EnumType.STRING)
     private AuthType authType;
+    @Getter
     private String  authId;
+    @Getter
     private String name;
-    private Boolean isNew;
+    @Getter
     private String imageUrl;
+    @Getter
     private String fcmToken;
 
+    @Getter
     @Builder.Default
     @Enumerated(EnumType.STRING)
     private Role role= Role.ROLE_USER;
@@ -34,7 +39,6 @@ public class User extends BaseTimeEntity {
     public void signout(String baseImage){
         this.authType = null;
         this.authId = null;
-        this.isNew = null;
         this.imageUrl = baseImage;
         this.fcmToken = null;
         this.role = null;

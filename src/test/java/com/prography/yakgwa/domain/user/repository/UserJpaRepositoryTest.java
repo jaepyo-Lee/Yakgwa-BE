@@ -30,7 +30,7 @@ class UserJpaRepositoryTest extends IntegrationTestSupport {
         String authId = "authId";
         AuthType authType = AuthType.KAKAO;
         User user = User.builder()
-                .name("name").isNew(true).authId(authId).authType(authType).fcmToken("fcmToken").imageUrl("imageUrl")
+                .name("name").authId(authId).authType(authType).fcmToken("fcmToken").imageUrl("imageUrl")
                 .build();
         userJpaRepository.save(user);
 
