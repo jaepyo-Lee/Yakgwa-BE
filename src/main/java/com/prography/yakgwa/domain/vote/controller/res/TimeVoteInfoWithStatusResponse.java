@@ -51,8 +51,8 @@ public class TimeVoteInfoWithStatusResponse {
         VoteDateDto voteDateDto = null;
         if (voteStatus == VoteStatus.BEFORE_VOTE || voteStatus == VoteStatus.VOTE) {
             voteDateDto = VoteDateDto.builder()
-                    .startVoteDate(meet.getPeriod().getStartDate())
-                    .endVoteDate(meet.getPeriod().getEndDate())
+                    .startVoteDate(meet.getVoteStartDate())
+                    .endVoteDate(meet.getVoteEndDate())
                     .build();
         }
         return TimeVoteInfoWithStatusResponse.builder()

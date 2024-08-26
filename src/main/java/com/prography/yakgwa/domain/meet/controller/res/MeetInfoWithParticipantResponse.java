@@ -59,7 +59,7 @@ public class MeetInfoWithParticipantResponse {
                                 .build())
                         .toList())
                 .meetInfo(MeetInfo.builder()
-                        .themeName(meet.getMeetTheme().getName())
+                        .themeName(meet.getThemeName())
                         .meetTitle(meet.getTitle())
                         .description(meet.getDescription())
                         .build())

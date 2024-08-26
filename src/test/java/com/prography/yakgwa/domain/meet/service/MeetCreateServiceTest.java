@@ -202,8 +202,8 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
 
         assertAll(
                 () -> assertThat(meet.getTitle()).isEqualTo(title),
-                () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(startVoteDate),
-                () -> assertThat(meet.getPeriod().getEndDate()).isEqualTo(endVoteDate),
+                () -> assertThat(meet.getVoteStartDate()).isEqualTo(startVoteDate),
+                () -> assertThat(meet.getVoteEndDate()).isEqualTo(endVoteDate),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
                 () -> assertThat(placeSlots.stream().filter(PlaceSlot::isConfirm).toList().size()).isEqualTo(0),
                 () -> assertThat(timeSlots.size()).isEqualTo(0),

@@ -157,10 +157,10 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
     }
 
     private static boolean isWithinVotePeriodFrom(Meet meet, LocalDateTime enableTime) {
-        return meet.getPeriod().getEndDate().isBefore(enableTime.toLocalDate()) || meet.getPeriod().getStartDate().isAfter(enableTime.toLocalDate());
+        return meet.isWithinVotePeriod(enableTime);
     }
 
     private static boolean isOverVotePeriodFrom(Meet meet) {
-        return meet.getCreatedDate().plusHours(meet.getValidInviteHour()).isBefore(LocalDateTime.now());
+        return meet.isVoteTimeEnd();
     }
 }
