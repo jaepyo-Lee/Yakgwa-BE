@@ -143,7 +143,7 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
     private List<LocalDateTime> findNotExistTimeInTimeSlot(EnableTimeRequestDto requestDto, List<TimeSlot> allTimeSlotsInMeet) {
         return requestDto.getEnableTimes().stream()
                 .filter(time -> allTimeSlotsInMeet.stream()
-                        .noneMatch(timeSlot -> timeSlot.getTime().isEqual(time)))
+                        .noneMatch(timeSlot -> timeSlot.isTimeEquals(time)))
                 .toList();
     }
 
@@ -153,7 +153,7 @@ public class TimeVoteExecuteService implements VoteExecuter<TimeVote, EnableTime
     }
 
     private boolean isAlreadyConfirm(List<TimeSlot> allTimeSlotsInMeet) {
-        return allTimeSlotsInMeet.stream().anyMatch(TimeSlot::getConfirm);
+        return allTimeSlotsInMeet.stream().anyMatch(TimeSlot::isConfirm);
     }
 
     private static boolean isWithinVotePeriodFrom(Meet meet, LocalDateTime enableTime) {

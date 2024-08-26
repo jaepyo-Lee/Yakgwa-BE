@@ -18,7 +18,7 @@ class TimeSlotTest {
 
         System.out.println("=====Logic End=====");
         // then
-        assertThat(timeSlot.getConfirm()).isTrue();
+        assertThat(timeSlot.isConfirm()).isTrue();
     }
 
     @Test

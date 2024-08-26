@@ -9,17 +9,18 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 import static java.lang.Boolean.TRUE;
+import static java.time.LocalDateTime.now;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Getter
 @Entity(name = "TIMESLOT_TABLE")
 public class TimeSlot {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    @Getter
     private LocalDateTime time;
     private Boolean confirm;
 
@@ -47,8 +48,14 @@ public class TimeSlot {
                 .confirm(true)
                 .build();
     }
-
+    public boolean isMeetFinish(){
+        return time.plusHours(3L).isBefore(now());
+    }
     public boolean isConfirm(){
         return this.confirm.equals(TRUE);
+    }
+
+    public boolean isTimeEquals(LocalDateTime time) {
+        return this.time.isEqual(time);
     }
 }

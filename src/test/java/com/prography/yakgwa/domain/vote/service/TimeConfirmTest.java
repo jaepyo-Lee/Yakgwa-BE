@@ -50,9 +50,9 @@ class TimeConfirmTest extends IntegrationTestSupport {
         System.out.println("=====Logic End=====");
         // then
         assertAll(() -> assertThat(confirmMaxOf).isTrue(),
-                () -> assertThat(saveTimeSlot1.getConfirm()).isTrue(),
-                () -> assertThat(saveTimeSlot2.getConfirm()).isFalse(),
-                () -> assertThat(saveTimeSlot3.getConfirm()).isFalse());
+                () -> assertThat(saveTimeSlot1.isConfirm()).isTrue(),
+                () -> assertThat(saveTimeSlot2.isConfirm()).isFalse(),
+                () -> assertThat(saveTimeSlot3.isConfirm()).isFalse());
     }
 
     @Test
@@ -83,8 +83,8 @@ class TimeConfirmTest extends IntegrationTestSupport {
         System.out.println("=====Logic End=====");
         // then
         assertAll(()-> assertThat(confirmMaxOf).isFalse(),
-                ()-> assertThat(saveTimeSlot1.getConfirm()).isFalse(),
-                ()-> assertThat(saveTimeSlot2.getConfirm()).isFalse(),
-                ()-> assertThat(saveTimeSlot3.getConfirm()).isFalse());
+                ()-> assertThat(saveTimeSlot1.isConfirm()).isFalse(),
+                ()-> assertThat(saveTimeSlot2.isConfirm()).isFalse(),
+                ()-> assertThat(saveTimeSlot3.isConfirm()).isFalse());
     }
 }

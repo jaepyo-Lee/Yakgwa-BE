@@ -19,6 +19,6 @@ public class TimeConfirmChecker implements ConfirmChecker{
     @Override
     public boolean isConfirm(Meet meet) {
         List<TimeSlot> timeSlots = timeSlotJpaRepository.findAllByMeetId(meet.getId());
-        return timeSlots.stream().anyMatch(timeSlot -> timeSlot.getConfirm().equals(TRUE));
+        return timeSlots.stream().anyMatch(TimeSlot::isConfirm);
     }
 }

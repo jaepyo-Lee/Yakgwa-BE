@@ -62,7 +62,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(placeSlots.size()).isEqualTo(0),
                 () -> assertThat(allByMeetId.size()).isEqualTo(1),
                 () -> assertThat(allByMeetId.stream()
-                        .filter(TimeSlot::getConfirm)
+                        .filter(TimeSlot::isConfirm)
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(allParticipant.size()).isEqualTo(1),
                 () -> assertThat(allParticipant.stream()
@@ -160,7 +160,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(timeSlots.size()).isEqualTo(1),
                 () -> assertThat(timeSlots.stream()
-                        .filter(TimeSlot::getConfirm)
+                        .filter(TimeSlot::isConfirm)
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(allParticipant.size()).isEqualTo(1),
                 () -> assertThat(allParticipant.stream()
