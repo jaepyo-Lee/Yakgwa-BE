@@ -65,7 +65,7 @@ public class PlaceSlotService {
         Place place = placeJpaRepository.findByMapxAndMapy(placeInfo.getMapx(), placeInfo.getMapy())
                 .orElseGet(() -> placeJpaRepository.save(placeInfo.toEntity()));
 
-        placeSlotJpaRepository.save(PlaceSlot.of(meet, Boolean.FALSE, place));
+        placeSlotJpaRepository.save(new PlaceSlot(Boolean.FALSE,meet, place));
         return place;
     }
 

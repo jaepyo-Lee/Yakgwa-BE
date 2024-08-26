@@ -105,9 +105,9 @@ public class MeetCreateService {
 
     private PlaceSlot createPlaceSlot(Meet meet, boolean isConfirmPlace, Place place) {
         return PlaceSlot.builder()
+                .place(place)
                 .meet(meet)
                 .confirm(isConfirmPlace)
-                .place(place)
                 .build();
     }
 }
