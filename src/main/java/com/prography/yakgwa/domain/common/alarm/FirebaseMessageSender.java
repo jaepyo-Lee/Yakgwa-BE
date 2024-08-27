@@ -18,6 +18,9 @@ public class FirebaseMessageSender {
     @Value("${fcm.url}")
     private String API_URL;
 
+    /**
+     * 원래 동기였던거를 비동기로 처리함 -> 그에대한 이점 생각해보기! 자소서에 녹이면 좋을듯!
+    */
     public void sendMessageTo(String message) throws IOException {
         WebClient webClient = WebClient.create();
         webClient.post()
@@ -26,9 +29,7 @@ public class FirebaseMessageSender {
                 .bodyValue(message)
                 .header("Authorization", "Bearer " + getAccessToken())
                 .retrieve()
-                .bodyToMono(String.class)
-                .retry(3)
-                .block();
+                .bodyToMono(String.class).subscribe();
     }
 
 

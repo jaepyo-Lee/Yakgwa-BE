@@ -32,7 +32,7 @@ public class AlarmProcessor {
 
     @Async
     @Transactional
-    public void process(Long meetId, AlarmType alarmType) {
+    public void sendAllFrom(Long meetId, AlarmType alarmType) {
 
         Meet meet = meetJpaRepository.findById(meetId).orElseThrow(NotFoundMeetException::new);
         String title = "약속잡는과정";
@@ -41,13 +41,15 @@ public class AlarmProcessor {
 
         List<Participant> participants = participantJpaRepository.findAllByMeetId(meet.getId());
         for (Participant participant : participants) {
-            sendNotification(participant, title, body);
+            send(participant, title, body);
         }
-        Alarm alarm = alarmJpaRepository.findByMeetIdAndAlarmType(meet.getId(),alarmType).orElseThrow(() -> new RuntimeException("없는알람입니다."));
-        alarm.send();
+        Alarm alarm = Alarm.builder().alarmType(alarmType).meet(meet).build();
+        alarmJpaRepository.save(alarm);
+//        Alarm alarm = alarmJpaRepository.findByMeetIdAndAlarmType(meet.getId(),alarmType).orElseThrow(() -> new RuntimeException("없는알람입니다."));
+//        alarm.send();
     }
 
-    private void sendNotification(Participant participant, String title, String body) {
+    private void send(Participant participant, String title, String body) {
         try {
             String message = fcmMessageConverter.makeMessage(participant.getFcmTokenOfUserInMeet(), title, body);
             log.info("{} 알림전송작업 진행",title);

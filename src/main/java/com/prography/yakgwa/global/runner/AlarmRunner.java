@@ -23,9 +23,9 @@ public class AlarmRunner implements ApplicationRunner {
         log.info("AlarmRunner: 알람조회");
         List<Alarm> all = alarmJpaRepository.findAll();
         log.info("AlarmRunner: 알람등록진행");
-        all.stream()
+        /*all.stream()
                 .filter(alarm -> !alarm.isSend())
-                .forEach(alarm -> alarmScheduler.regist(alarm.getMeet(), alarm.getAlarmType()));
+                .forEach(alarm -> alarmScheduler.regist(alarm.getMeet()));*/
         log.info("AlarmRunner: 알람등록완료");
     }
 }
