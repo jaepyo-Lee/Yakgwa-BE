@@ -8,6 +8,8 @@ import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import com.prography.yakgwa.testHelper.mock.WithCustomMockUser;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +27,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class UserServiceTest extends IntegrationTestSupport {
-
 
     @Value("${user.base.image}")
     private String baseImg;
@@ -104,7 +105,6 @@ class UserServiceTest extends IntegrationTestSupport {
     void FCM갱신() {
         // given
         User saveUser = dummyCreater.createAndSaveUser(1);
-
         // when
         System.out.println("=====Logic Start=====");
 
@@ -113,6 +113,7 @@ class UserServiceTest extends IntegrationTestSupport {
 
         System.out.println("=====Logic End=====");
         // then
+
         User user = userJpaRepository.findById(saveUser.getId()).get();
 
         assertAll(() -> assertThat(user.getFcmToken()).isEqualTo(newFcmToken),
