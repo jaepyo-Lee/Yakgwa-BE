@@ -56,6 +56,25 @@ jobs:
           port: 22
           source: ./infra/docker/docker-compose.yaml
           target: "/home/ubuntu/"
+      - name: Send nginx.blue
+        uses: appleboy/scp-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.AWS_HOST }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: 22
+          source: ./infra/nginx/nginx.blue.conf
+          target: "/home/ubuntu/data"
+
+      - name: Send nginx.green
+        uses: appleboy/scp-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.AWS_HOST }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: 22
+          source: ./infra/nginx/nginx.green.conf
+          target: "/home/ubuntu/data"
 
       - name: make firebase key
         run: |
