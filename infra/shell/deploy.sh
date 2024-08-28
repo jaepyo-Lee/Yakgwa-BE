@@ -20,7 +20,7 @@ if [ -z "$IS_GREEN" ]; then # green이 없으면 blue를 실행합니다.
   while [ $attempts -lt $max_attempts ]; do
     echo "3. green health check... Attempt $((attempts + 1))"
     sleep 10
-    REQUEST=$(curl --max-time 10 http://127.0.0.1:8082/health-check)
+    REQUEST=$(curl --max-time 10 http://127.0.0.1:8082/actuator/health)
 
     if [ -n "$REQUEST" ]; then
       echo "health check success"
@@ -60,7 +60,7 @@ else
   while [ $attempts -lt $max_attempts ]; do
     echo "3. blue health check... Attempt $((attempts + 1))"
     sleep 10
-    REQUEST=$(curl --max-time 10 http://127.0.0.1:8081/health-check)
+    REQUEST=$(curl --max-time 10 http://127.0.0.1:8081/actuator/health)
 
     if [ -n "$REQUEST" ]; then
       echo "health check success"
