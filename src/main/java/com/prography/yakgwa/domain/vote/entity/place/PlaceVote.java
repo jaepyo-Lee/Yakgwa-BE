@@ -1,7 +1,5 @@
 package com.prography.yakgwa.domain.vote.entity.place;
 
-import com.prography.yakgwa.domain.meet.entity.Meet;
-import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

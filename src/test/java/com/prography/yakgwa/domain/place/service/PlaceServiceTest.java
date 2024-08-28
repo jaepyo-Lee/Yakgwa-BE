@@ -7,7 +7,7 @@ import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.global.repository.RedisRepository;
+import com.prography.yakgwa.domain.common.redis.RedisRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

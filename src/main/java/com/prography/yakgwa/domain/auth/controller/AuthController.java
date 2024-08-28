@@ -7,12 +7,9 @@ import com.prography.yakgwa.domain.auth.service.request.LoginRequestDto;
 import com.prography.yakgwa.domain.auth.service.response.LoginResponseDto;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.success.SuccessResponse;
-import com.prography.yakgwa.global.util.HeaderUtil;
-import io.swagger.v3.oas.annotations.Operation;
+import com.prography.yakgwa.domain.common.util.HeaderUtil;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 

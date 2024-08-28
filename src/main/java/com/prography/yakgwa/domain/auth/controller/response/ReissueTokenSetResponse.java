@@ -1,6 +1,6 @@
 package com.prography.yakgwa.domain.auth.controller.response;
 
-import com.prography.yakgwa.global.util.jwt.TokenSet;
+import com.prography.yakgwa.domain.common.util.jwt.TokenSet;
 import lombok.Builder;
 import lombok.Getter;
 

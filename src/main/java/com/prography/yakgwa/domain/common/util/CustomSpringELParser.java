@@ -1,4 +1,4 @@
-package com.prography.yakgwa.global.util;
+package com.prography.yakgwa.domain.common.util;
 
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;

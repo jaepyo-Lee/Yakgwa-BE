@@ -51,16 +51,16 @@ public class TimeVoteInfoWithStatusResponse {
         VoteDateDto voteDateDto = null;
         if (voteStatus == VoteStatus.BEFORE_VOTE || voteStatus == VoteStatus.VOTE) {
             voteDateDto = VoteDateDto.builder()
-                    .startVoteDate(meet.getPeriod().getStartDate())
-                    .endVoteDate(meet.getPeriod().getEndDate())
+                    .startVoteDate(meet.getVoteStartDate())
+                    .endVoteDate(meet.getVoteEndDate())
                     .build();
         }
         return TimeVoteInfoWithStatusResponse.builder()
                 .meetStatus(voteStatus)
                 .timeInfos(timeSlots.isEmpty() ? null : timeSlots.stream()
-                        .map(timeVote -> VoteTimeInfo.builder()
-                                .timeId(timeVote.getId())
-                                .voteTime(timeVote.getTime())
+                        .map(timeSlot -> VoteTimeInfo.builder()
+                                .timeId(timeSlot.getId())
+                                .voteTime(timeSlot.getTime())
                                 .build())
                         .toList())
                 .voteDate(voteDateDto)

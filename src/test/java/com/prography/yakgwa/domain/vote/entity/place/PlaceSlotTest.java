@@ -19,7 +19,7 @@ class PlaceSlotTest {
 
         System.out.println("=====Logic End=====");
         // then
-        assertThat(placeSlot.getConfirm()).isTrue();
+        assertThat(placeSlot.isConfirm()).isTrue();
     }
 
     @Test
@@ -46,7 +46,7 @@ class PlaceSlotTest {
 
         // when
         System.out.println("=====Logic Start=====");
-        boolean samePlace = placeSlot.isSamePlace(title, mapx, mapy);
+        boolean samePlace = placeSlot.isSamePlaceSlot(title, mapx, mapy);
         System.out.println("=====Logic End=====");
 
         // then
@@ -56,8 +56,8 @@ class PlaceSlotTest {
     @Test
     void id값이같으면같은객체() {
         // given
-        PlaceSlot placeSlot = PlaceSlot.builder().id(1L).build();
-        PlaceSlot compare = PlaceSlot.builder().id(1L).build();
+        PlaceSlot placeSlot = new PlaceSlot(1L);
+        PlaceSlot compare = new PlaceSlot(1L);
 
         // when
         System.out.println("=====Logic Start=====");
@@ -68,7 +68,7 @@ class PlaceSlotTest {
     @Test
     void 같은참조객체라면같은객체() {
         // given
-        PlaceSlot placeSlot = PlaceSlot.builder().id(1L).build();
+        PlaceSlot placeSlot = new PlaceSlot(1L);
 
         // when
         System.out.println("=====Logic Start=====");

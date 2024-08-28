@@ -90,7 +90,7 @@ public class TaskScheduleManager {
 
     private Optional<TimeSlot> getConfirmedTimeSlot(Meet meet) {
         return timeSlotJpaRepository.findAllByMeetId(meet.getId()).stream()
-                .filter(TimeSlot::getConfirm)
+                .filter(TimeSlot::isConfirm)
                 .findFirst();
     }
 }

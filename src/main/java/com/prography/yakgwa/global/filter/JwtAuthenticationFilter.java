@@ -1,8 +1,8 @@
 package com.prography.yakgwa.global.filter;
 
 import com.prography.yakgwa.global.entity.AuthToken;
-import com.prography.yakgwa.global.util.HeaderUtil;
-import com.prography.yakgwa.global.util.jwt.TokenProvider;
+import com.prography.yakgwa.domain.common.util.HeaderUtil;
+import com.prography.yakgwa.domain.common.util.jwt.TokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

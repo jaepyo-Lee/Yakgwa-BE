@@ -8,15 +8,15 @@ import com.prography.yakgwa.domain.user.entity.SignoutUser;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.SignoutUserJpaRepository;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
-import com.prography.yakgwa.global.client.auth.KakaoClient;
+import com.prography.yakgwa.domain.common.client.auth.KakaoClient;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
 import com.prography.yakgwa.global.format.exception.auth.NotSupportLoginTypeException;
 import com.prography.yakgwa.global.format.exception.auth.jwt.InvalidRefreshTokenException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
-import com.prography.yakgwa.global.repository.RedisRepository;
-import com.prography.yakgwa.global.util.HeaderUtil;
-import com.prography.yakgwa.global.util.jwt.TokenProvider;
-import com.prography.yakgwa.global.util.jwt.TokenSet;
+import com.prography.yakgwa.domain.common.redis.RedisRepository;
+import com.prography.yakgwa.domain.common.util.HeaderUtil;
+import com.prography.yakgwa.domain.common.util.jwt.TokenProvider;
+import com.prography.yakgwa.domain.common.util.jwt.TokenSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -56,7 +56,6 @@ public class AuthService {
         registerRefreshToken(user, tokenSet);
         return LoginResponseDto.builder()
                 .role(user.getRole())
-                .isNew(user.getIsNew())
                 .tokenSet(tokenSet)
                 .build();
     }
@@ -81,7 +80,6 @@ public class AuthService {
                     .authId(String.valueOf(userData.getId()))
                     .authType(KAKAO)
                     .name(userData.getProperties().getNickname())
-                    .isNew(true)
                     .fcmToken(requestDto.getFcmToken())
                     .build();
         }

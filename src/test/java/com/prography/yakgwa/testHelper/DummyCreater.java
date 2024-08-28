@@ -59,7 +59,7 @@ public class DummyCreater {
 
     public User createAndSaveUser(int id) {
         User user = User.builder()
-                .name("user" + id).isNew(true).authId("" + id).authType(KAKAO).fcmToken("fcmToken" + id)
+                .name("user" + id).authId("" + id).authType(KAKAO).fcmToken("fcmToken" + id)
                 .build();
         return userJpaRepository.save(user);
     }
@@ -80,7 +80,7 @@ public class DummyCreater {
     }
 
     public TimeSlot createAndSaveTimeSlot(Meet saveMeet, LocalDateTime time, boolean confirm) {
-        return timeSlotJpaRepository.save(TimeSlot.builder().meet(saveMeet).time(time).confirm(confirm).build());
+        return timeSlotJpaRepository.save(TimeSlot.builder().meet(saveMeet).time(time).isConfirm(confirm).build());
     }
 
     public Meet createAndSaveMeet(int id, MeetTheme saveMeetTheme, int validInviteHour) {

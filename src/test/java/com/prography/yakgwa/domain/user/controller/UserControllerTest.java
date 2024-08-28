@@ -50,7 +50,7 @@ class UserControllerTest extends ControllerUnitTestEnvironment {
         // given
 
         User user = User.builder()
-                .id(1L).name("username").isNew(true).role(Role.ROLE_USER).authId("123123").authType(AuthType.KAKAO).fcmToken("token").imageUrl("image")
+                .id(1L).name("username").role(Role.ROLE_USER).authId("123123").authType(AuthType.KAKAO).fcmToken("token").imageUrl("image")
                 .build();
         when(userService.find(anyLong())).thenReturn(user);
 
@@ -82,7 +82,7 @@ class UserControllerTest extends ControllerUnitTestEnvironment {
         // given
 
         User user = User.builder()
-                .id(1L).name("username").isNew(true).role(Role.ROLE_USER).authId("123123").authType(AuthType.KAKAO).fcmToken("token").imageUrl("image")
+                .id(1L).name("username").role(Role.ROLE_USER).authId("123123").authType(AuthType.KAKAO).fcmToken("token").imageUrl("image")
                 .build();
 
         MockMultipartFile file = new MockMultipartFile("userImage", "image.jpg", "image/jpeg", "test image content".getBytes());
@@ -114,7 +114,7 @@ class UserControllerTest extends ControllerUnitTestEnvironment {
         // given
 
         User user = User.builder()
-                .id(1L).name("username").isNew(true).role(Role.ROLE_USER).authId("123123").authType(AuthType.KAKAO).fcmToken("token").imageUrl("image")
+                .id(1L).name("username").role(Role.ROLE_USER).authId("123123").authType(AuthType.KAKAO).fcmToken("token").imageUrl("image")
                 .build();
 
         MockMultipartFile file = new MockMultipartFile("userImage", "image.jpg", "image/jpeg", "test image content".getBytes());

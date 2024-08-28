@@ -1,4 +1,4 @@
-package com.prography.yakgwa.global.util;
+package com.prography.yakgwa.domain.common.util;
 
 public class HeaderUtil {
     private final static String TOKEN_PREFIX = "Bearer ";
