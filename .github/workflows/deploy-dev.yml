@@ -44,7 +44,7 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: 22
-          source: deploy.sh
+          source: ./infra/shell/deploy.sh
           target: "/home/ubuntu/"
 
       - name: Send docker-compose.yaml
@@ -54,7 +54,7 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: 22
-          source: docker-compose.yaml
+          source: ./infra/docker/docker-compose.yaml
           target: "/home/ubuntu/"
 
       - name: make firebase key
@@ -79,10 +79,10 @@ jobs:
 
       - name: Docker build & push
         run: |
-          docker build -f Dockerfile.green -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:green .
+          docker build -f ./infra/docker/Dockerfile.green -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:green .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:green
 
-          docker build -f Dockerfile.blue -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue .
+          docker build -f ./infra/docker/Dockerfile.blue -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue
 
       - name: Deploy to dev
