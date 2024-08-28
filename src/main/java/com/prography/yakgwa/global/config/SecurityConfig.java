@@ -2,7 +2,7 @@ package com.prography.yakgwa.global.config;
 
 import com.prography.yakgwa.global.filter.JwtAuthenticationFilter;
 import com.prography.yakgwa.global.filter.JwtExceptionFilter;
-import com.prography.yakgwa.global.util.jwt.TokenProvider;
+import com.prography.yakgwa.domain.common.util.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

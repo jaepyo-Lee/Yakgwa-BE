@@ -1,27 +1,16 @@
 package com.prography.yakgwa.domain.vote.repository;
 
 import com.prography.yakgwa.domain.common.IntegrationTestSupport;
-import com.prography.yakgwa.testHelper.config.DeleterConfig;
-import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.entity.MeetTheme;
 import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
-import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
-import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
-import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
 import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceVote;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -234,7 +223,7 @@ class PlaceVoteJpaRepositoryTest extends IntegrationTestSupport {
         assertAll(
                 () -> assertThat(allByUserId.size()).isEqualTo(2),
                 () -> assertThat(allByUserId.stream()
-                        .filter(placeVote -> placeVote.getPlaceSlot().getMeet().getId().equals(saveMeet1.getId()))
+                        .filter(placeVote -> placeVote.getPlaceSlot().isEqualsMeet(saveMeet1.getId()))
                         .toList().size())
                         .isEqualTo(0)
         );
@@ -272,7 +261,7 @@ class PlaceVoteJpaRepositoryTest extends IntegrationTestSupport {
 
     private User createAndSave(Long id) {
         User user = User.builder()
-                .name("user" + id).isNew(true).authId("authId1").authType(KAKAO)
+                .name("user" + id).authId("authId1").authType(KAKAO)
                 .build();
         return userJpaRepository.save(user);
     }

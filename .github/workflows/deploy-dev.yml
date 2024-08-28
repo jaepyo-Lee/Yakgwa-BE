@@ -44,7 +44,7 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: 22
-          source: deploy.sh
+          source: ./infra/shell/deploy.sh
           target: "/home/ubuntu/"
 
       - name: Send docker-compose.yaml
@@ -54,8 +54,29 @@ jobs:
           host: ${{ secrets.AWS_HOST }}
           key: ${{ secrets.AWS_PRIVATE_KEY }}
           port: 22
-          source: docker-compose.yaml
+          source: ./infra/docker/docker-compose.yaml
           target: "/home/ubuntu/"
+      - name: Send nginx.blue
+        uses: appleboy/scp-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.AWS_HOST }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: 22
+          source: ./infra/nginx/nginx.blue.conf
+          target: "/home/ubuntu/data"
+          strip_components: 3
+
+      - name: Send nginx.green
+        uses: appleboy/scp-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.AWS_HOST }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: 22
+          source: ./infra/nginx/nginx.green.conf
+          target: "/home/ubuntu/data"
+          strip_components: 3
 
       - name: make firebase key
         run: |
@@ -79,10 +100,10 @@ jobs:
 
       - name: Docker build & push
         run: |
-          docker build -f Dockerfile.green -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:green .
+          docker build -f ./infra/docker/Dockerfile.green -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:green .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:green
 
-          docker build -f Dockerfile.blue -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue .
+          docker build -f ./infra/docker/Dockerfile.blue -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue .
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PROJECT_NAME }}:blue
 
       - name: Deploy to dev

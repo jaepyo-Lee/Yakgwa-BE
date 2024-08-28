@@ -1,8 +1,8 @@
 package com.prography.yakgwa.global.util.jwt;
 
+import com.prography.yakgwa.domain.common.util.jwt.TokenSet;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 

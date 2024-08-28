@@ -42,7 +42,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(confirmTime).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(null).placeInfo(List.of()).confirmPlace(false)
                 .build();
-        doNothing().when(scheduler).registerAlarm(any(), any());
+        doNothing().when(taskScheduleManager).registerAlarm(any(), any());
 
         // when
         System.out.println("=====Logic Start=====");
@@ -62,15 +62,15 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(placeSlots.size()).isEqualTo(0),
                 () -> assertThat(allByMeetId.size()).isEqualTo(1),
                 () -> assertThat(allByMeetId.stream()
-                        .filter(TimeSlot::getConfirm)
+                        .filter(TimeSlot::isConfirm)
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(allParticipant.size()).isEqualTo(1),
                 () -> assertThat(allParticipant.stream()
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
-        verify(scheduler, times(1)).registerAlarm(any(), eq(AlarmType.END_VOTE));
-        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
+        verify(taskScheduleManager, times(1)).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(taskScheduleManager, never()).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
 
 
     }
@@ -90,7 +90,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(null).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(voteDateDto).placeInfo(List.of(placeInfoDto)).confirmPlace(true)
                 .build();
-        doNothing().when(scheduler).registerAlarm(any(), any());
+        doNothing().when(taskScheduleManager).registerAlarm(any(), any());
 
         // when
         System.out.println("=====Logic Start=====");
@@ -108,15 +108,15 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(startVoteDate),
                 () -> assertThat(meet.getPeriod().getEndDate()).isEqualTo(endVoteDate),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
-                () -> assertThat(placeSlots.stream().filter(PlaceSlot::getConfirm).toList().size()).isEqualTo(1),
+                () -> assertThat(placeSlots.stream().filter(PlaceSlot::isConfirm).toList().size()).isEqualTo(1),
                 () -> assertThat(timeSlots.size()).isEqualTo(0),
                 () -> assertThat(participants.size()).isEqualTo(1),
                 () -> assertThat(participants.stream()
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
-        verify(scheduler, times(1)).registerAlarm(any(), eq(AlarmType.END_VOTE));
-        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
+        verify(taskScheduleManager, times(1)).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(taskScheduleManager, never()).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
     }
 
     @Test
@@ -136,7 +136,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(confirmTime).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(null).placeInfo(List.of(placeInfoDto)).confirmPlace(true)
                 .build();
-        doNothing().when(scheduler).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        doNothing().when(taskScheduleManager).registerAlarm(any(), eq(AlarmType.END_VOTE));
 
         // when
         System.out.println("=====Logic Start=====");
@@ -156,19 +156,19 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
                 () -> assertThat(meet.getValidInviteHour()).isEqualTo(24),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
                 () -> assertThat(placeSlots.stream()
-                        .filter(PlaceSlot::getConfirm)
+                        .filter(PlaceSlot::isConfirm)
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(timeSlots.size()).isEqualTo(1),
                 () -> assertThat(timeSlots.stream()
-                        .filter(TimeSlot::getConfirm)
+                        .filter(TimeSlot::isConfirm)
                         .toList().size()).isEqualTo(1),
                 () -> assertThat(allParticipant.size()).isEqualTo(1),
                 () -> assertThat(allParticipant.stream()
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
-        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.END_VOTE));
-        verify(scheduler, times(1)).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
+        verify(taskScheduleManager, never()).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(taskScheduleManager, times(1)).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
     }
 
     @Test
@@ -187,7 +187,7 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
         MeetCreateRequestDto createRequestDto = MeetCreateRequestDto.builder()
                 .title(title).meetTime(null).meetThemeId(saveMeetTheme.getId()).description(description).creatorId(saveUser.getId()).voteDateDto(voteDateDto).placeInfo(List.of(placeInfoDto)).confirmPlace(false)
                 .build();
-        doNothing().when(scheduler).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        doNothing().when(taskScheduleManager).registerAlarm(any(), eq(AlarmType.END_VOTE));
 
         // when
         System.out.println("=====Logic Start=====");
@@ -202,18 +202,18 @@ class MeetCreateServiceTest extends IntegrationTestSupport {
 
         assertAll(
                 () -> assertThat(meet.getTitle()).isEqualTo(title),
-                () -> assertThat(meet.getPeriod().getStartDate()).isEqualTo(startVoteDate),
-                () -> assertThat(meet.getPeriod().getEndDate()).isEqualTo(endVoteDate),
+                () -> assertThat(meet.getVoteStartDate()).isEqualTo(startVoteDate),
+                () -> assertThat(meet.getVoteEndDate()).isEqualTo(endVoteDate),
                 () -> assertThat(placeSlots.size()).isEqualTo(1),
-                () -> assertThat(placeSlots.stream().filter(PlaceSlot::getConfirm).toList().size()).isEqualTo(0),
+                () -> assertThat(placeSlots.stream().filter(PlaceSlot::isConfirm).toList().size()).isEqualTo(0),
                 () -> assertThat(timeSlots.size()).isEqualTo(0),
                 () -> assertThat(participants.size()).isEqualTo(1),
                 () -> assertThat(participants.stream()
                         .filter(participant -> participant.getMeetRole().equals(MeetRole.LEADER))
                         .toList().size()).isEqualTo(1)
         );
-        verify(scheduler, times(1)).registerAlarm(any(), eq(AlarmType.END_VOTE));
-        verify(scheduler, never()).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
+        verify(taskScheduleManager, times(1)).registerAlarm(any(), eq(AlarmType.END_VOTE));
+        verify(taskScheduleManager, never()).registerAlarm(any(), eq(AlarmType.PROMISE_DAY));
     }
 
 }

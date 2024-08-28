@@ -1,4 +1,4 @@
-package com.prography.yakgwa.global.util.jwt;
+package com.prography.yakgwa.domain.common.util.jwt;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

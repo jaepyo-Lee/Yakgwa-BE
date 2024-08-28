@@ -64,7 +64,7 @@ public class PostConfirmMeetInfoResponse {
                             .meetInfo(MeetInfo.builder()
                                     .meetDateTime(meetWithVoteAndStatus.getTimeSlot() == null ? null : meetWithVoteAndStatus.getTimeSlot().getTime())
                                     .meetId(meet.getId())
-                                    .meetThemeName(meet.getMeetTheme().getName())
+                                    .meetThemeName(meet.getThemeName())
                                     .placeName(meetWithVoteAndStatus.getPlaceSlot() == null ? null : meetWithVoteAndStatus.getPlaceSlot().getPlace().getTitle())
                                     .meetTitle(meet.getTitle())
                                     .build())

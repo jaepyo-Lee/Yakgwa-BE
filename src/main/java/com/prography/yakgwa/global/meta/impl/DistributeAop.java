@@ -1,7 +1,7 @@
 package com.prography.yakgwa.global.meta.impl;
 
 import com.prography.yakgwa.global.meta.DistributeLock;
-import com.prography.yakgwa.global.util.CustomSpringELParser;
+import com.prography.yakgwa.domain.common.util.CustomSpringELParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;

@@ -1,4 +1,4 @@
-package com.prography.yakgwa.global.client.auth;
+package com.prography.yakgwa.domain.common.client.auth;
 
 import com.prography.yakgwa.domain.user.entity.User;
 

@@ -3,6 +3,8 @@ package com.prography.yakgwa.domain.common;
 import com.prography.yakgwa.domain.auth.service.AuthService;
 import com.prography.yakgwa.domain.common.alarm.repository.AlarmJpaRepository;
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
+import com.prography.yakgwa.domain.common.schedule.ScheduleJpaRepository;
+import com.prography.yakgwa.domain.common.schedule.ScheduleRegister;
 import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
 import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
 import com.prography.yakgwa.domain.meet.impl.MeetWriter;
@@ -33,8 +35,8 @@ import com.prography.yakgwa.domain.vote.service.place.PlaceVoteExecuteService;
 import com.prography.yakgwa.domain.vote.service.place.res.PlaceInfosByMeetStatus;
 import com.prography.yakgwa.domain.vote.service.time.req.EnableTimeRequestDto;
 import com.prography.yakgwa.domain.vote.service.time.res.TimeInfosByMeetStatus;
-import com.prography.yakgwa.global.repository.RedisRepository;
-import com.prography.yakgwa.global.util.jwt.TokenProvider;
+import com.prography.yakgwa.domain.common.redis.RedisRepository;
+import com.prography.yakgwa.domain.common.util.jwt.TokenProvider;
 import com.prography.yakgwa.testHelper.DummyCreater;
 import com.prography.yakgwa.testHelper.RepositoryDeleter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,8 @@ import java.util.Set;
 @ActiveProfiles("test")
 @SpringBootTest
 public class IntegrationTestSupport {
+    @Autowired
+    protected ScheduleJpaRepository scheduleJpaRepository;
     @Autowired
     protected MeetThemeJpaRepository meetThemeJpaRepository;
     @Autowired
@@ -112,7 +116,7 @@ public class IntegrationTestSupport {
     protected PlaceVoteJpaRepository placeVoteJpaRepository;
 
     @MockBean
-    protected TaskScheduleManager scheduler;
+    protected TaskScheduleManager taskScheduleManager;
     @MockBean
     protected AwsS3Util awsS3Util;
 
@@ -134,4 +138,6 @@ public class IntegrationTestSupport {
     protected PlaceConfirm placeConfirm;
     @Autowired
     protected TimeConfirm timeConfirm;
+    @MockBean
+    protected ScheduleRegister scheduleRegister;
 }

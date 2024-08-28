@@ -6,9 +6,9 @@ import com.prography.yakgwa.domain.place.service.dto.NaverMapResponseDto;
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
-import com.prography.yakgwa.global.client.map.NaverClient;
+import com.prography.yakgwa.domain.common.client.map.NaverClient;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
-import com.prography.yakgwa.global.repository.RedisRepository;
+import com.prography.yakgwa.domain.common.redis.RedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

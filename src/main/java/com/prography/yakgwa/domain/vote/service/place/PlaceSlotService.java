@@ -3,7 +3,6 @@ package com.prography.yakgwa.domain.vote.service.place;
 import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.impl.ConfirmChecker;
 import com.prography.yakgwa.domain.meet.impl.MeetConfirmChecker;
-import com.prography.yakgwa.domain.meet.impl.MeetStatusJudger;
 import com.prography.yakgwa.domain.meet.impl.PlaceConfirmChecker;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
@@ -18,7 +17,6 @@ import com.prography.yakgwa.domain.vote.service.place.res.PlaceSlotWithUserRespo
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.format.exception.slot.AlreadyAppendPlaceException;
 import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,7 +54,7 @@ public class PlaceSlotService {
      * Write-Date) 2024-07-29, 월, 14:20
      * Finish-Date) 2024-08-02
      */
-    public PlaceSlot appendPlaceSlotFrom(Long meetId, PlaceInfoDto placeInfo) {
+    public Place appendPlaceSlotFrom(Long meetId, PlaceInfoDto placeInfo) {
 
         if (isExistSamePlaceSlotFrom(meetId, placeInfo)) {
             throw new AlreadyAppendPlaceException();
@@ -67,13 +65,14 @@ public class PlaceSlotService {
         Place place = placeJpaRepository.findByMapxAndMapy(placeInfo.getMapx(), placeInfo.getMapy())
                 .orElseGet(() -> placeJpaRepository.save(placeInfo.toEntity()));
 
-        return placeSlotJpaRepository.save(PlaceSlot.of(meet, Boolean.FALSE, place));
+        placeSlotJpaRepository.save(new PlaceSlot(Boolean.FALSE,meet, place));
+        return place;
     }
 
     private boolean isExistSamePlaceSlotFrom(Long meetId, PlaceInfoDto placeInfo) {
         List<PlaceSlot> placeSlots = placeSlotJpaRepository.findAllByMeetId(meetId);
         return placeSlots.stream().anyMatch(placeSlot ->
-                placeSlot.isSamePlace(placeInfo.getTitle(), placeInfo.getMapx(), placeInfo.getMapy()));
+                placeSlot.isSamePlaceSlot(placeInfo.getTitle(), placeInfo.getMapx(), placeInfo.getMapy()));
     }
 
     /**
