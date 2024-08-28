@@ -8,6 +8,7 @@ import com.prography.yakgwa.domain.meet.entity.Meet;
 import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
+import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.global.format.enumerate.AlarmType;
 import com.prography.yakgwa.global.format.exception.meet.NotFoundMeetException;
 import com.prography.yakgwa.global.meta.ImplService;
@@ -41,12 +42,11 @@ public class AlarmProcessor {
 
         List<Participant> participants = participantJpaRepository.findAllByMeetId(meet.getId());
         for (Participant participant : participants) {
+            User user = participant.getUser();
+            Alarm alarm = Alarm.builder().alarmType(alarmType).user(user).build();
+            alarmJpaRepository.save(alarm);
             send(participant, title, body);
         }
-        Alarm alarm = Alarm.builder().alarmType(alarmType).meet(meet).build();
-        alarmJpaRepository.save(alarm);
-//        Alarm alarm = alarmJpaRepository.findByMeetIdAndAlarmType(meet.getId(),alarmType).orElseThrow(() -> new RuntimeException("없는알람입니다."));
-//        alarm.send();
     }
 
     private void send(Participant participant, String title, String body) {

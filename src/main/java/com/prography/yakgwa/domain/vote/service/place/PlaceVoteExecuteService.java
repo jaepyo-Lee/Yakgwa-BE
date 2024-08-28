@@ -19,15 +19,15 @@ import com.prography.yakgwa.global.format.exception.participant.NotFoundParticip
 import com.prography.yakgwa.global.format.exception.slot.NotFoundPlaceSlotException;
 import com.prography.yakgwa.global.format.exception.slot.NotMatchSlotInMeetException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
-import com.prography.yakgwa.global.format.exception.vote.*;
+import com.prography.yakgwa.global.format.exception.vote.AlreadyPlaceConfirmException;
+import com.prography.yakgwa.global.format.exception.vote.NotValidConfirmTimeException;
+import com.prography.yakgwa.global.format.exception.vote.NotValidVotePlaceException;
+import com.prography.yakgwa.global.format.exception.vote.NotValidVoteTimeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 

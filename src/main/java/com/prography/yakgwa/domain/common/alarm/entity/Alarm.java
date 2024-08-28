@@ -10,8 +10,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 import static jakarta.persistence.EnumType.STRING;
 
 @Builder
@@ -24,16 +22,10 @@ public class Alarm extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Builder.Default
-    private boolean send = false;
-
     @Enumerated(STRING)
     private AlarmType alarmType;
-    @ManyToOne
-    @JoinColumn(name = "meet_id")
-    private Meet meet;
 
-    public void send() {
-        this.send = true;
-    }
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

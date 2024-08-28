@@ -1,6 +1,5 @@
 package com.prography.yakgwa.domain.meet.entity;
 
-import com.amazonaws.services.kms.model.CreateGrantRequest;
 import com.prography.yakgwa.domain.meet.entity.embed.VotePeriod;
 import com.prography.yakgwa.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;

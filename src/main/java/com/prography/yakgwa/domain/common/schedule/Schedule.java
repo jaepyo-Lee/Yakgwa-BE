@@ -16,15 +16,10 @@ public class Schedule {
     private Long meetId;
     @Enumerated(EnumType.STRING)
     private AlarmType alarmType;
-    private boolean send;
 
     @Builder
     public Schedule(Long meetId, AlarmType alarmType) {
         this.meetId = meetId;
         this.alarmType = alarmType;
-        this.send = false;
-    }
-    public void send(){
-        this.send = true;
     }
 }

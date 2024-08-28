@@ -16,8 +16,6 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 public class FcmTestController {
-    private final FcmMessageConverter fcmMessageConverter;
-    private final FirebaseMessageSender firebaseMessageSender;
     private final MeetJpaRepository meetJpaRepository;
     private final TaskScheduleManager taskScheduleManager;
 
@@ -26,8 +24,6 @@ public class FcmTestController {
         log.info("테스트 동작");
 
         Meet meet1 = meetJpaRepository.findById(1L).orElse(null);
-//        taskScheduleManager.regist(meet1);
-        /*String message = fcmMessageConverter.makeMessage(receiverToken, "testTitle", "testBody");
-        firebaseMessageSender.sendMessageTo(message);*/
+        taskScheduleManager.regist(meet1,AlarmType.PROMISE_DAY);
     }
 }
