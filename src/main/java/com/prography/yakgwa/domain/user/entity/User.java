@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(indexes = {@Index(name = "authId_idx", columnList = "authId")})
 @Entity(name = "USER_TABLE")
 public class User extends BaseTimeEntity {
     @Id
