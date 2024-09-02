@@ -24,6 +24,6 @@ public class FcmTestController {
         log.info("테스트 동작");
 
         Meet meet1 = meetJpaRepository.findById(1L).orElse(null);
-        taskScheduleManager.regist(meet1,AlarmType.PROMISE_DAY);
+        taskScheduleManager.regist(meet1,AlarmType.END_VOTE);
     }
 }
