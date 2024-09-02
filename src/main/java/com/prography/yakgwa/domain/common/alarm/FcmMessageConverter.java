@@ -3,12 +3,12 @@ package com.prography.yakgwa.domain.common.alarm;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.prography.yakgwa.domain.common.alarm.dto.FcmMessage;
-import com.prography.yakgwa.global.meta.ImplService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-@ImplService
+@Component
 public class FcmMessageConverter {
     private final ObjectMapper objectMapper;
     @Value("${user.base.image}")

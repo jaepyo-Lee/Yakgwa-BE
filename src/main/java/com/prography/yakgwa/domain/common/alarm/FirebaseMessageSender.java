@@ -8,7 +8,11 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Component
@@ -37,11 +41,18 @@ public class FirebaseMessageSender {
     private String getAccessToken() throws IOException {
         String firebaseConfigPath = "firebase/firebase-key.json";
 
-        GoogleCredentials googleCredentials = GoogleCredentials
-                .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
-                .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
+        // try-with-resources 사용하여 InputStream 자원 관리
+        try (InputStream inputStream = new ClassPathResource(firebaseConfigPath).getInputStream()) {
+            GoogleCredentials googleCredentials = GoogleCredentials
+                    .fromStream(inputStream)
+                    .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
 
-        googleCredentials.refreshIfExpired();
-        return googleCredentials.getAccessToken().getTokenValue();
+            googleCredentials.refreshIfExpired();
+            return googleCredentials.getAccessToken().getTokenValue();
+        } catch (FileNotFoundException e) {
+            throw new IOException("Firebase configuration file not found at path: " + firebaseConfigPath, e);
+        } catch (IOException e) {
+            throw new IOException("Failed to load Google Credentials from file: " + firebaseConfigPath, e);
+        }
     }
 }

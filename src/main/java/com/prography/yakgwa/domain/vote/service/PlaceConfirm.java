@@ -25,7 +25,7 @@ public class PlaceConfirm implements VoteConfirm {
         List<PlaceSlot> placeSlots = voteCounter.findMaxVotePlaceSlotFrom(meet);
         // 해당 메서드를 호출하는곳은 스케줄러밖에 없는데, 조건때문에 before걸어놓으면 확정 못시킬수있음
         // 최댓값이 존재할때만 확정짓는다.
-        if (placeSlots.size() <= 1) {
+        if (placeSlots.size() == 1) {
             placeSlots.forEach(PlaceSlot::confirm);
             return true;
         }

@@ -4,19 +4,19 @@ import com.prography.yakgwa.domain.auth.service.request.LoginRequestDto;
 import com.prography.yakgwa.domain.auth.service.response.KakaoUserResponseDto;
 import com.prography.yakgwa.domain.auth.service.response.LoginResponseDto;
 import com.prography.yakgwa.domain.auth.service.response.ReissueTokenSetResponseDto;
-import com.prography.yakgwa.domain.user.entity.SignoutUser;
-import com.prography.yakgwa.domain.user.entity.User;
-import com.prography.yakgwa.domain.user.repository.SignoutUserJpaRepository;
-import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.common.client.auth.KakaoClient;
-import com.prography.yakgwa.global.filter.CustomUserDetail;
-import com.prography.yakgwa.global.format.exception.auth.NotSupportLoginTypeException;
-import com.prography.yakgwa.global.format.exception.auth.jwt.InvalidRefreshTokenException;
-import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import com.prography.yakgwa.domain.common.redis.RedisRepository;
 import com.prography.yakgwa.domain.common.util.HeaderUtil;
 import com.prography.yakgwa.domain.common.util.jwt.TokenProvider;
 import com.prography.yakgwa.domain.common.util.jwt.TokenSet;
+import com.prography.yakgwa.domain.user.entity.SignoutUser;
+import com.prography.yakgwa.domain.user.entity.User;
+import com.prography.yakgwa.domain.user.repository.SignoutUserJpaRepository;
+import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
+import com.prography.yakgwa.global.filter.CustomUserDetail;
+import com.prography.yakgwa.global.format.exception.auth.NotSupportLoginTypeException;
+import com.prography.yakgwa.global.format.exception.auth.jwt.InvalidRefreshTokenException;
+import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -127,8 +127,8 @@ public class AuthService {
     }
 
     private void removeRefreshTokenForBlockingReissue() {
-        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken)SecurityContextHolder.getContext().getAuthentication();
-        CustomUserDetail details = (CustomUserDetail)authentication.getPrincipal();
+        UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+        CustomUserDetail details = (CustomUserDetail) authentication.getPrincipal();
         Long userId = details.getUserId();
         if (redisRepository.getRefreshToken(REFRESH_ID + userId) != null) {
             redisRepository.removeRefreshToken(REFRESH_ID + userId);
