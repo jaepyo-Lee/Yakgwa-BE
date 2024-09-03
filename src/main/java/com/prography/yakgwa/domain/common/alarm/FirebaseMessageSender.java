@@ -8,10 +8,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -26,6 +23,7 @@ public class FirebaseMessageSender {
      * 원래 동기였던거를 비동기로 처리함 -> 그에대한 이점 생각해보기! 자소서에 녹이면 좋을듯!
     */
     public void sendMessageTo(String message) throws IOException {
+        printFirebaseConfigFileContents();
         WebClient webClient = WebClient.create();
         webClient.post()
                 .uri(API_URL)
@@ -43,6 +41,7 @@ public class FirebaseMessageSender {
 
         // try-with-resources 사용하여 InputStream 자원 관리
         try (InputStream inputStream = new ClassPathResource(firebaseConfigPath).getInputStream()) {
+
             GoogleCredentials googleCredentials = GoogleCredentials
                     .fromStream(inputStream)
                     .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
@@ -53,6 +52,29 @@ public class FirebaseMessageSender {
             throw new IOException("Firebase configuration file not found at path: " + firebaseConfigPath, e);
         } catch (IOException e) {
             throw new IOException("Failed to load Google Credentials from file: " + firebaseConfigPath, e);
+        }
+    }
+    // New method to read and print the contents of the firebase config file
+    public void printFirebaseConfigFileContents() throws IOException {
+        String firebaseConfigPath = "firebase/firebase-key.json";
+
+        try (InputStream inputStream = new ClassPathResource(firebaseConfigPath).getInputStream();
+             InputStreamReader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+             BufferedReader reader = new BufferedReader(streamReader)) {
+
+            StringBuilder fileContents = new StringBuilder();
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                fileContents.append(line).append(System.lineSeparator());
+            }
+
+            System.out.println("Firebase configuration file contents:\n" + fileContents);
+
+        } catch (FileNotFoundException e) {
+            throw new IOException("Firebase configuration file not found at path: " + firebaseConfigPath, e);
+        } catch (IOException e) {
+            throw new IOException("Failed to read Firebase configuration file: " + firebaseConfigPath, e);
         }
     }
 }
