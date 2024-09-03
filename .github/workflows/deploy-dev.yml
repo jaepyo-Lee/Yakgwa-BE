@@ -81,10 +81,23 @@ jobs:
       - name: make firebase key
         run: |
           mkdir -p ./src/main/resources/firebase
-          cd ./src/main/resources/firebase
-          touch firebase-key.json
-          echo "${{ secrets.FIREBASE_DEV }}" > firebase-key.json
         shell: bash
+
+      - name: create-json
+        id: create-json
+        uses: jsdaniell/create-json@v1.2.3
+        with:
+          name: "firebase-key.json"
+          json: ${{ secrets.FIREBASE_DEV }}
+          dir: './src/main/resources/firebase'
+
+#      - name: make firebase key
+#        run: |
+#          mkdir -p ./src/main/resources/firebase
+#          cd ./src/main/resources/firebase
+#          touch firebase-key.json
+#          echo "${{ secrets.FIREBASE_DEV }}" > firebase-key.json
+#        shell: bash
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
