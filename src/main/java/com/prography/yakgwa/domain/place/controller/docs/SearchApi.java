@@ -19,5 +19,5 @@ public interface SearchApi {
             @Parameter(required = true,
                     description = "검색하고자하는 장소입력")
             @RequestParam("search") String search,
-                                       @AuthenticationPrincipal CustomUserDetail user);
+                                       @AuthenticationPrincipal CustomUserDetail user) throws Exception;
 }

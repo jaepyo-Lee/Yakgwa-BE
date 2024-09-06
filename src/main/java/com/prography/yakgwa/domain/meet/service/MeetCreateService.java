@@ -20,6 +20,8 @@ import com.prography.yakgwa.global.format.enumerate.AlarmType;
 import com.prography.yakgwa.global.format.exception.meet.ConfirmPlaceCountException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 @Service
 public class MeetCreateService {
+    private static final Logger log = LoggerFactory.getLogger(MeetCreateService.class);
     private final TaskScheduleManager alarmScheduler;
     private final MeetWriter meetWriter;
     private final ParticipantWriter participantWriter;

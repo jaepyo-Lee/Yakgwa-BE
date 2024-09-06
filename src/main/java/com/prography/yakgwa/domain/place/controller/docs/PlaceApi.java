@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.place.controller.docs;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.prography.yakgwa.domain.place.controller.req.LikePlaceRequest;
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.global.filter.CustomUserDetail;
@@ -20,7 +21,7 @@ public interface PlaceApi {
             description = "해당 장소를 등록할시 true, 등록 취소시 false 보내주세요")
                                        @RequestParam("like") boolean like,
                                        @AuthenticationPrincipal CustomUserDetail user,
-                                       @RequestBody LikePlaceRequest likePlaceRequest);
+                                       @RequestBody LikePlaceRequest likePlaceRequest) throws JsonProcessingException;
 
     @Operation(summary = "나의 장소 조회 API")
     SuccessResponse<List<PlaceInfoWithUserLike>> findLikePlace(@AuthenticationPrincipal CustomUserDetail user);

@@ -9,8 +9,10 @@ import com.prography.yakgwa.domain.participant.entity.Participant;
 import com.prography.yakgwa.domain.participant.entity.enumerate.MeetRole;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
 import com.prography.yakgwa.domain.place.entity.Place;
+import com.prography.yakgwa.domain.place.entity.PlaceLike;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
+import com.prography.yakgwa.domain.place.repository.PlaceLikeJpaRepository;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.vote.entity.place.PlaceSlot;
@@ -49,6 +51,11 @@ public class DummyCreater {
     private TimeSlotJpaRepository timeSlotJpaRepository;
     @Autowired
     private ParticipantJpaRepository participantJpaRepository;
+    @Autowired
+    private PlaceLikeJpaRepository placeLikeJpaRepository;
+    public PlaceLike createAndSavePlaceLike(User user, Place place) {
+        return placeLikeJpaRepository.save(PlaceLike.builder().place(place).user(user).build());
+    }
 
     public MeetTheme createAndSaveMeetTheme(int id) {
         MeetTheme theme = MeetTheme.builder()

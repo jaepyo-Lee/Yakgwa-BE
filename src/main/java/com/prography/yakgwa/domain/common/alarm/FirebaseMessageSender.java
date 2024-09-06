@@ -23,7 +23,7 @@ public class FirebaseMessageSender {
      * 원래 동기였던거를 비동기로 처리함 -> 그에대한 이점 생각해보기! 자소서에 녹이면 좋을듯!
     */
     public void sendMessageTo(String message) throws IOException {
-        printFirebaseConfigFileContents();
+//        printFirebaseConfigFileContents();
         WebClient webClient = WebClient.create();
         webClient.post()
                 .uri(API_URL)
