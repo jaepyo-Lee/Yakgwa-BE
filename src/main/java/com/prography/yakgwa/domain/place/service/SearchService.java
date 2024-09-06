@@ -11,6 +11,7 @@ import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
+import com.prography.yakgwa.global.meta.UserPlaceLikeCache;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +38,7 @@ public class SearchService {
      * redis가 필요할때마다(key)가 없을경우, 조회해서 캐싱올림
      * 
     */
+    @UserPlaceLikeCache
     public List<PlaceInfoWithUserLike> search(String search, Long userId) throws Exception {
         User user = userJpaRepository.findById(userId)
                 .orElseThrow(NotFoundUserException::new);
