@@ -54,3 +54,6 @@ spring:
         format_sql: true
         use_sql_comments: true
     defer-datasource-initialization: true
+schedule:
+  cron:
+    cacheToDB: 0 0 0 * * SUN
