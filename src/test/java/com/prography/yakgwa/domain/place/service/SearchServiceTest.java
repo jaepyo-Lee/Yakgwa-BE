@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.place.service;
 
+import com.prography.yakgwa.domain.common.redis.PlaceRedisRepository;
 import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
 import com.prography.yakgwa.domain.place.impl.PlaceWriter;
 import com.prography.yakgwa.domain.place.service.dto.NaverMapResponseDto;
@@ -27,16 +28,16 @@ class SearchServiceTest {
     @Mock
     NaverClient naverClient;
     @Mock
-    RedisRepository redisRepository;
-    @Mock
     UserJpaRepository userJpaRepository;
     @InjectMocks
     SearchService service;
     @Mock
     PlaceWriter placeWriter;
+    @Mock
+    PlaceRedisRepository placeRedisRepository;
 
     @Test
-    void 사용자가검색한장소가좋아요가눌렸는지_조회() {
+    void 사용자가검색한장소가좋아요가눌렸는지_조회() throws Exception {
         // given
         PlaceInfoDto placeInfoDtoDummy = createPlaceInfoDtoDummy(1);
         PlaceInfoDto placeInfoDtoDummy1 = createPlaceInfoDtoDummy(2);
@@ -52,7 +53,7 @@ class SearchServiceTest {
         User user = new User();
         when(userJpaRepository.findById(anyLong())).thenReturn(Optional.of(user));
         when(naverClient.searchNaverAPIClient(anyString())).thenReturn(build);
-        when(redisRepository.isUserGoodPlace(any(), any(), any(), any())).thenReturn(true);
+        when(placeRedisRepository.isUserGoodPlace(any(), any())).thenReturn(true);
         doNothing().when(placeWriter).writeIfNotExist(any());
 
         // when
@@ -60,7 +61,7 @@ class SearchServiceTest {
         Long userId = 1L;
         System.out.println("=====Logic Start=====");
 
-        List<PlaceInfoWithUserLike> search = service.search(searchString, userId);
+        List<PlaceInfoWithUserLike> search = service.search(userId,searchString);
 
         System.out.println("=====Logic End=====");
 
@@ -73,20 +74,20 @@ class SearchServiceTest {
         // Verify that mocks were called as expected
         verify(userJpaRepository).findById(userId);
         verify(naverClient).searchNaverAPIClient(searchString);
-        verify(redisRepository, times(3)).isUserGoodPlace(any(), any(), any(), any());
+        verify(placeRedisRepository, times(3)).isUserGoodPlace(any(), any());
     }
 
     private PlaceInfoDto createPlaceInfoDtoDummy(int i) {
         return PlaceInfoDto.builder()
-                .title("title"+i)
-                .link("link"+i)
-                .mapy("mapy"+i)
-                .mapx("mapx"+i)
-                .description("description"+i)
-                .address("address"+i)
-                .roadAddress("roadAddress"+i)
-                .telephone("telephone"+i)
-                .category("category"+i)
+                .title("title" + i)
+                .link("link" + i)
+                .mapy("mapy" + i)
+                .mapx("mapx" + i)
+                .description("description" + i)
+                .address("address" + i)
+                .roadAddress("roadAddress" + i)
+                .telephone("telephone" + i)
+                .category("category" + i)
                 .build();
     }
 }

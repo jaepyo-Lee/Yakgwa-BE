@@ -3,6 +3,7 @@ package com.prography.yakgwa.domain.common;
 import com.prography.yakgwa.domain.auth.service.AuthService;
 import com.prography.yakgwa.domain.common.alarm.repository.AlarmJpaRepository;
 import com.prography.yakgwa.domain.common.impl.AwsS3Util;
+import com.prography.yakgwa.domain.common.redis.PlaceRedisRepository;
 import com.prography.yakgwa.domain.common.schedule.ScheduleJpaRepository;
 import com.prography.yakgwa.domain.common.schedule.ScheduleRegister;
 import com.prography.yakgwa.domain.common.schedule.TaskScheduleManager;
@@ -52,6 +53,8 @@ import java.util.Set;
 @ActiveProfiles("test")
 @SpringBootTest
 public class IntegrationTestSupport {
+    @Autowired
+    protected PlaceRedisRepository placeRedisRepository;
     @Autowired
     protected ScheduleJpaRepository scheduleJpaRepository;
     @Autowired

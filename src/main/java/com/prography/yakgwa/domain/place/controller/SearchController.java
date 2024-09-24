@@ -19,7 +19,7 @@ public class SearchController implements SearchApi {
 
     @GetMapping("/search")
     public SuccessResponse<List<PlaceInfoWithUserLike>> search(@RequestParam("search") String search,
-                                                               @AuthenticationPrincipal CustomUserDetail user) {
-        return new SuccessResponse<>(service.search(search, user.getUserId()));
+                                                               @AuthenticationPrincipal CustomUserDetail user) throws Exception {
+        return new SuccessResponse<>(service.search(user.getUserId(),search));
     }
 }

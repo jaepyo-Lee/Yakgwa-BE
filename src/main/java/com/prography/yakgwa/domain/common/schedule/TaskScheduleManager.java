@@ -40,6 +40,7 @@ public class TaskScheduleManager {
 
     public void regist(Meet meet, AlarmType type) {
         Runnable runnable = () -> {
+            log.info("예약실행");
             scheduleJpaRepository.findByMeetIdAndAlarmType(meet.getId(), type).ifPresent(scheduleJpaRepository::delete);
             redisPublisher.publish(MessageDto.builder()
                     .meetId(meet.getId())

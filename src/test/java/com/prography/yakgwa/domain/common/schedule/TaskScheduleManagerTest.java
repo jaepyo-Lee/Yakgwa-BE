@@ -15,18 +15,5 @@ class TaskScheduleManagerTest extends IntegrationTestSupport {
         deleter.deleteAll();
     }
 
-    @Test
-    void () {
-        // given
-        doNothing().when(scheduleRegister).schedule(any(), any());
-
-        // when
-        System.out.println("=====Logic Start=====");
-
-
-
-        System.out.println("=====Logic End=====");
-        // then
-    }
 
 }

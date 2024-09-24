@@ -5,6 +5,7 @@ import com.prography.yakgwa.domain.meet.repository.MeetJpaRepository;
 import com.prography.yakgwa.domain.meet.repository.MeetThemeJpaRepository;
 import com.prography.yakgwa.domain.participant.repository.ParticipantJpaRepository;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
+import com.prography.yakgwa.domain.place.repository.PlaceLikeJpaRepository;
 import com.prography.yakgwa.domain.user.repository.SignoutUserJpaRepository;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.PlaceSlotJpaRepository;
@@ -12,12 +13,15 @@ import com.prography.yakgwa.domain.vote.repository.PlaceVoteJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeSlotJpaRepository;
 import com.prography.yakgwa.domain.vote.repository.TimeVoteJpaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 @Component
 public class RepositoryDeleter {
+    @Autowired
+    PlaceLikeJpaRepository placeLikeJpaRepository;
     @Autowired
     AlarmJpaRepository alarmJpaRepository;
     @Autowired
@@ -41,6 +45,7 @@ public class RepositoryDeleter {
     @Autowired
     SignoutUserJpaRepository signoutUserJpaRepository;
     public void deleteAll() {
+        placeLikeJpaRepository.deleteAll();
         alarmJpaRepository.deleteAll();
         signoutUserJpaRepository.deleteAll();
         placeVoteJpaRepository.deleteAll();

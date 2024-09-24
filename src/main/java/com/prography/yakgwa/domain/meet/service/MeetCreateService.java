@@ -20,11 +20,15 @@ import com.prography.yakgwa.global.format.enumerate.AlarmType;
 import com.prography.yakgwa.global.format.exception.meet.ConfirmPlaceCountException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -63,10 +67,10 @@ public class MeetCreateService {
     }
 
     private void registAlarm(Meet meet) {
-        if (confirmChecker.isMeetConfirm(meet)) {
+        boolean isConfirm = confirmChecker.isMeetConfirm(meet);
+        if (isConfirm) {
             alarmScheduler.registerAlarm(meet, AlarmType.PROMISE_DAY);
-        }
-        else{
+        } else {
             alarmScheduler.registerAlarm(meet, AlarmType.END_VOTE);
         }
     }

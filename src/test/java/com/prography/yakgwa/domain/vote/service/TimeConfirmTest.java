@@ -20,7 +20,26 @@ class TimeConfirmTest extends IntegrationTestSupport {
     void init() {
         deleter.deleteAll();
     }
+    @Test
+    void 후보지가없는것_확정이아니다() {
+        // given
+        MeetTheme saveMeetTheme = dummyCreater.createAndSaveMeetTheme(1);
+        Meet saveMeet = dummyCreater.createAndSaveMeet(1, saveMeetTheme, 24);
+        User saveUser = dummyCreater.createAndSaveUser(1);
+        User saveUser2 = dummyCreater.createAndSaveUser(2);
+        User saveUser3 = dummyCreater.createAndSaveUser(3);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser, MeetRole.LEADER);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser2, MeetRole.PARTICIPANT);
+        dummyCreater.createAndSaveParticipant(saveMeet, saveUser3, MeetRole.PARTICIPANT);
+        // when
+        System.out.println("=====Logic Start=====");
 
+        boolean confirmMaxOf = timeConfirm.confirmMaxOf(saveMeet);
+
+        System.out.println("=====Logic End=====");
+        // then
+        assertAll(() -> assertThat(confirmMaxOf).isFalse());
+    }
     @Test
     void 가장득표를많이한시간이있는경우() {
         // given

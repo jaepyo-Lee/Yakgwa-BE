@@ -1,5 +1,6 @@
 package com.prography.yakgwa.domain.place.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.prography.yakgwa.domain.place.controller.docs.PlaceApi;
 import com.prography.yakgwa.domain.place.controller.req.LikePlaceRequest;
 import com.prography.yakgwa.domain.place.service.PlaceService;
@@ -21,7 +22,7 @@ public class PlaceController implements PlaceApi {
     @PostMapping("/place/like")
     public SuccessResponse<Boolean> likePlace(@RequestParam("like") boolean like,
                                               @AuthenticationPrincipal CustomUserDetail user,
-                                              @RequestBody LikePlaceRequest likePlaceRequest) {
+                                              @RequestBody LikePlaceRequest likePlaceRequest) throws JsonProcessingException {
         placeService.decideLike(user.getUserId(), like, likePlaceRequest);
         return new SuccessResponse<>(like);
     }
