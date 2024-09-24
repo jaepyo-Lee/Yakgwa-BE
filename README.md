@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 1ba59f8baf02564fa549a865a98af4a0af3d95bc
 ## 약과
+
 ---
 > 약속잡는과정 [Prography 9기]
 
@@ -25,11 +21,11 @@
   <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=yellow">
   <img src="https://img.shields.io/badge/junit5-25A162?style=for-the-badge&logo=junit5&logoColor=yellow">
   <img src="https://img.shields.io/badge/Spring Data Jpa-6DB33F?style=for-the-badge&logo=spring&logoColor=yellow">
-  <img src="https://img.shields.io/badge/jsonwebtokens-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=yellow">
 </div>
 
 <h4>✔️ Infra</h4>
 <div style="display: flex; flex-wrap: wrap;">
+  <img src="https://img.shields.io/badge/jsonwebtokens-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=yellow">
   <img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"> 
   <img src="https://img.shields.io/badge/docker-2496ED?style=for-the-badge&logo=docker&logoColor=white">
   <img src="https://img.shields.io/badge/amazonec2-FF9900?style=for-the-badge&logo=amazonec2&logoColor=white">
@@ -43,8 +39,4 @@
 
 
 ### 아키텍처 구조
-<<<<<<< HEAD
 <img src="https://github.com/user-attachments/assets/b414a4b5-7679-4279-8e1a-d72904af2baa" width="400">
-=======
-<img src="https://github.com/user-attachments/assets/b414a4b5-7679-4279-8e1a-d72904af2baa" width="400">
->>>>>>> 1ba59f8baf02564fa549a865a98af4a0af3d95bc
