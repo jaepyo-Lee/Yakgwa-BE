@@ -1,5 +1,8 @@
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 1ba59f8baf02564fa549a865a98af4a0af3d95bc
 ## 약과
 ---
 > 약속잡는과정 [Prography 9기]
@@ -40,4 +43,8 @@
 
 
 ### 아키텍처 구조
+<<<<<<< HEAD
 <img src="https://github.com/user-attachments/assets/b414a4b5-7679-4279-8e1a-d72904af2baa" width="400">
+=======
+<img src="https://github.com/user-attachments/assets/b414a4b5-7679-4279-8e1a-d72904af2baa" width="400">
+>>>>>>> 1ba59f8baf02564fa549a865a98af4a0af3d95bc
