@@ -2,15 +2,15 @@ package com.prography.yakgwa.domain.common.redis;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prography.yakgwa.domain.place.entity.dto.PlaceRedisDto;
+import com.prography.yakgwa.domain.place.entity.Place;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.stereotype.Repository;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
@@ -19,6 +19,16 @@ public class PlaceRedisRepository {
     private final RedisTemplate<String, Object> redisTemplate;
     private final ObjectMapper objectMapper;
 
+    public List<Integer> getGoodPlaceUserId() {
+        ScanOptions scanOptions = ScanOptions.scanOptions().count(100L).match(GOOD_PLACE_USER + "*").build();
+        Cursor<String> cursor = redisTemplate.scan(scanOptions);
+        return cursor.stream()
+                .map(s -> Integer.parseInt(s.substring(GOOD_PLACE_USER.length())))
+                .toList();
+    }
+    public void deletePlaceLikeByUserId(Long userId){
+        redisTemplate.delete(likePlaceKeyCreate(userId));
+    }
     public boolean isUserGoodPlace(Long userId, Object placeEntity) throws JsonProcessingException {
         String key = likePlaceKeyCreate(userId);
         String value = objectMapper.writeValueAsString(placeEntity);
@@ -34,7 +44,7 @@ public class PlaceRedisRepository {
         String value = objectMapper.writeValueAsString(placeEntity);
         String key = likePlaceKeyCreate(userId);
         redisTemplate.opsForSet().add(key, value);
-        redisTemplate.expire(key, Duration.ofHours(24));
+        redisTemplate.expire(key, Duration.ofDays(8L));
     }
 
     public void cancelLikePlace(Long userId, Object placeEntity) throws JsonProcessingException {
@@ -44,7 +54,7 @@ public class PlaceRedisRepository {
         redisTemplate.opsForSet().remove(key, value);
     }
 
-    public List<PlaceRedisDto> findLikePlaceInfos(Long userId) {
+    public List<Place> findLikePlaceInfos(Long userId) {
         ObjectMapper objectMapper = new ObjectMapper();
         Set<Object> userLikeplaces = redisTemplate.opsForSet().members(likePlaceKeyCreate(userId));
 
@@ -53,7 +63,7 @@ public class PlaceRedisRepository {
                     try {
                         // Redis에서 가져온 Object를 문자열로 캐스팅하고 역직렬화
                         String json = o.toString();  // 저장된 데이터가 JSON 형태라면
-                        return objectMapper.readValue(json, PlaceRedisDto.class);
+                        return objectMapper.readValue(json, Place.class);
                     } catch (JsonProcessingException e) {
                         // 예외가 발생할 경우, 적절한 처리를 하거나 로그를 남기고 null 반환
                         e.printStackTrace(); // 필요에 따라 예외 처리

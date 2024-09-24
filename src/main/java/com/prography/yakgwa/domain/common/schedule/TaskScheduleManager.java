@@ -56,6 +56,6 @@ public class TaskScheduleManager {
                     .findFirst().get();
             scheduleTime = timeSlot.getTime();
         }
-        triggerScheduler.schedule(runnable,LocalDateTime.now().plusSeconds(5L)/* scheduleTime*/);
+        triggerScheduler.schedule(runnable, scheduleTime);
     }
 }

@@ -150,6 +150,9 @@ dependencies {
 
     //log-to-cloudwatch
     implementation group: 'ca.pjer', name: 'logback-awslogs-appender', version: '1.6.0'
+
+    //awaitility
+    testImplementation 'org.awaitility:awaitility:4.2.2'
 }
 
 /**

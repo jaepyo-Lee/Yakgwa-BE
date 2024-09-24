@@ -4,24 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.prography.yakgwa.domain.common.redis.PlaceRedisRepository;
 import com.prography.yakgwa.domain.place.controller.req.LikePlaceRequest;
 import com.prography.yakgwa.domain.place.entity.Place;
-import com.prography.yakgwa.domain.place.entity.PlaceLike;
-import com.prography.yakgwa.domain.place.entity.dto.PlaceInfoDto;
-import com.prography.yakgwa.domain.place.entity.dto.PlaceRedisDto;
 import com.prography.yakgwa.domain.place.repository.PlaceJpaRepository;
-import com.prography.yakgwa.domain.place.repository.PlaceLikeJpaRepository;
 import com.prography.yakgwa.domain.place.service.dto.PlaceInfoWithUserLike;
 import com.prography.yakgwa.domain.user.entity.User;
 import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.format.exception.place.NotFoundPlaceException;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
-import com.prography.yakgwa.domain.common.redis.RedisRepository;
 import com.prography.yakgwa.global.meta.UserPlaceLikeCache;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -30,7 +25,6 @@ public class PlaceService {
     private final PlaceRedisRepository redisRepository;
     private final PlaceJpaRepository placeJpaRepository;
     private final UserJpaRepository userJpaRepository;
-    private final PlaceLikeJpaRepository placeLikeJpaRepository;
 
     /**
      * Work) Test Code
@@ -53,24 +47,14 @@ public class PlaceService {
                 likePlaceRequest.getMapy()
         ).orElseThrow(NotFoundPlaceException::new);
 
-        /*boolean isUserGoodPlaceCache = redisRepository.isUserGoodPlaceCache(user.getId());
-        if (!isUserGoodPlaceCache) {
-            List<PlaceLike> placeLikes = placeLikeJpaRepository.findAllByUserId(user.getId());
-            for (PlaceLike placeLike : placeLikes) {
-                PlaceRedisDto redisDto = placeLike.getPlace().toRedisDto();
-                redisRepository.likePlace(user.getId(), redisDto);
-            }
-        }*/
-
-
-        boolean isPlaceLiked = redisRepository.isUserGoodPlace(user.getId(), place.toRedisDto());
+        boolean isPlaceLiked = redisRepository.isUserGoodPlace(user.getId(), place);
         if (like) {
             if (!isPlaceLiked) {
-                redisRepository.likePlace(user.getId(),place.toRedisDto());
+                redisRepository.likePlace(user.getId(),place);
             }
         } else {
             if (isPlaceLiked) {
-                redisRepository.cancelLikePlace(userId, place.toRedisDto());
+                redisRepository.cancelLikePlace(userId, place);
             }
         }
     }
@@ -84,11 +68,11 @@ public class PlaceService {
     @UserPlaceLikeCache
     public List<PlaceInfoWithUserLike> findLike(Long userId) {
         log.info("나의 즐겨찾기 조회시작");
-        List<PlaceRedisDto> likePlaceInfos = redisRepository.findLikePlaceInfos(userId);
+        List<Place> likePlaceInfos = redisRepository.findLikePlaceInfos(userId);
         return likePlaceInfos.stream()
                 .map(place -> PlaceInfoWithUserLike.builder()
                         .isUserLike(true)
-                        .placeInfoDto(place.toEntity().toInfoDto())
+                        .placeInfoDto(place.toInfoDto())
                         .build())
                 .filter(Objects::nonNull)
                 .toList();

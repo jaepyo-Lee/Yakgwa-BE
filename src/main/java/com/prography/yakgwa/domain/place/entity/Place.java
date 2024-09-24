@@ -57,6 +57,7 @@ public class Place {
 
     public PlaceRedisDto toRedisDto(){
         return PlaceRedisDto.builder()
+                .id(id)
                 .mapx(mapx)
                 .mapy(mapy)
                 .link(link)

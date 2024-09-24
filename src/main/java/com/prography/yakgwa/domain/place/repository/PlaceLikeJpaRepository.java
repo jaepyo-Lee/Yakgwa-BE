@@ -17,4 +17,6 @@ public interface PlaceLikeJpaRepository extends JpaRepository<PlaceLike,Long> {
 
     boolean existsByPlaceIdAndUserId(@Param("placeId") Long placeId, @Param("userId") Long userId);
     void deleteByPlaceIdAndUserId(@Param("placeId") Long placeId, @Param("userId") Long userId);
+
+    void deleteAllByUserId(@Param("userId") Long userId);
 }

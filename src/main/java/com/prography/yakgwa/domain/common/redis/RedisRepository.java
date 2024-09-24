@@ -15,12 +15,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Repository
 public class RedisRepository {
-    public static final String GOOD_PLACE_USER = "GOOD_PLACE_USER:";
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ObjectMapper objectMapper;
-
-
-
 
     public void removeAllFrom(String key) {
         redisTemplate.delete(key);

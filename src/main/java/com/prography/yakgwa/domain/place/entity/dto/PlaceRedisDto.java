@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 public class PlaceRedisDto {
+    private Long id;
     private String title;
     private String link;
     private String category;
@@ -23,6 +24,7 @@ public class PlaceRedisDto {
     private String mapy;
     public Place toEntity() {
         return Place.builder()
+                .id(id)
                 .title(title)
                 .link(link)
                 .category(category)

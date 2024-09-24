@@ -13,8 +13,6 @@ import com.prography.yakgwa.domain.user.repository.UserJpaRepository;
 import com.prography.yakgwa.global.format.exception.user.NotFoundUserException;
 import com.prography.yakgwa.global.meta.UserPlaceLikeCache;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,12 +32,11 @@ public class SearchService {
      * Finish-Date)
      */
     /**
-     * redis로 다 받고, 12시마다 Batch로 저장시킴
+     * redis로 다 받고, 매주 캐시저장함
      * redis가 필요할때마다(key)가 없을경우, 조회해서 캐싱올림
-     * 
-    */
+     */
     @UserPlaceLikeCache
-    public List<PlaceInfoWithUserLike> search(String search, Long userId) throws Exception {
+    public List<PlaceInfoWithUserLike> search(Long userId, String search) throws Exception {
         User user = userJpaRepository.findById(userId)
                 .orElseThrow(NotFoundUserException::new);
 
@@ -54,12 +51,10 @@ public class SearchService {
     }
 
     private PlaceInfoWithUserLike createPlaceInfoWithUserLike(Place place, User user) throws JsonProcessingException {
-        boolean userGoodPlace1 = redisRepository.isUserGoodPlace(user.getId(),place.toRedisDto());
+        boolean userGoodPlace1 = redisRepository.isUserGoodPlace(user.getId(), place.toRedisDto());
         return PlaceInfoWithUserLike.builder()
                 .placeInfoDto(place.toInfoDto())
                 .isUserLike(userGoodPlace1)
                 .build();
     }
-
-
 }

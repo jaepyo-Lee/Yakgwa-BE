@@ -70,6 +70,7 @@ class PlaceServiceTest {
                 .title(title).mapx(mapx).mapy(mapy)
                 .build();
         key = GOOD_PLACE_KEYWORD + saveUser.getId();
+        redisRepository.removeAllFrom(key);
         // when
         System.out.println("=====Logic Start=====");
 
@@ -77,7 +78,7 @@ class PlaceServiceTest {
 
         System.out.println("=====Logic End=====");
         // then
-        List<PlaceRedisDto> likePlaceInfos = placeRedisRepository.findLikePlaceInfos(saveUser.getId());
+        List<Place> likePlaceInfos = placeRedisRepository.findLikePlaceInfos(saveUser.getId());
         assertThat(likePlaceInfos.size()).isOne();
     }
 
@@ -94,6 +95,7 @@ class PlaceServiceTest {
                 .title("title").mapx("mapx").mapy("mapy")
                 .build();
         key = GOOD_PLACE_KEYWORD + saveUser.getId();
+        redisRepository.removeAllFrom(key);
 
         placeService.decideLike(saveUser.getId(), true, request);
 
@@ -104,7 +106,7 @@ class PlaceServiceTest {
 
         System.out.println("=====Logic End=====");
         // then
-        List<PlaceRedisDto> likePlaces = placeRedisRepository.findLikePlaceInfos(saveUser.getId());
+        List<Place> likePlaces = placeRedisRepository.findLikePlaceInfos(saveUser.getId());
         assertThat(likePlaces.size()).isEqualTo(0);
     }
 
@@ -121,6 +123,8 @@ class PlaceServiceTest {
                 .title("title2").mapx("mapx2").mapy("mapy2")
                 .build();
         key = GOOD_PLACE_KEYWORD + saveUser.getId();
+        redisRepository.removeAllFrom(key);
+
         placeJpaRepository.save(Place.builder().title("title1").mapx("mapx1").mapy("mapy1").build());
         placeJpaRepository.save(Place.builder().title("title2").mapx("mapx2").mapy("mapy2").build());
 
@@ -167,7 +171,7 @@ class PlaceServiceTest {
 
         System.out.println("=====Logic End=====");
         // then
-        List<PlaceRedisDto> likePlaceInfos = placeRedisRepository.findLikePlaceInfos(saveUser.getId());
+        List<Place> likePlaceInfos = placeRedisRepository.findLikePlaceInfos(saveUser.getId());
         assertThat(likePlaceInfos.size()).isEqualTo(2);
 
     }

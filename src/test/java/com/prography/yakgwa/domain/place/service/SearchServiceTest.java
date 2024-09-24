@@ -61,7 +61,7 @@ class SearchServiceTest {
         Long userId = 1L;
         System.out.println("=====Logic Start=====");
 
-        List<PlaceInfoWithUserLike> search = service.search(searchString, userId);
+        List<PlaceInfoWithUserLike> search = service.search(userId,searchString);
 
         System.out.println("=====Logic End=====");
 
